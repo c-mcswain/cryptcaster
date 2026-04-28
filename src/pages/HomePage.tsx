@@ -32,12 +32,17 @@ export function HomePage() {
   }, []);
   const displayZine = zine || {
     intro: 'The terminal flickers with the weight of unspeakable records...',
-    announcements: ['Establishing link to the void...', 'Archives loading...'],
+    announcements: [
+      "The Shadow Market: Now accepting crypt currency",
+      "(Un)Alive Reading: Time, Date, and Realm TBD",
+      "Submit your chronicles or be forgotten",
+      "Vampire Facial Giveaway: Win a pint of O-Negative"
+    ],
     featuredStoryId: null,
     coverImageUrl: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop',
     lastUpdated: Date.now(),
     editorName: 'CreepQueen',
-    advertisement: "Sponsorship slot available. Sacrifice your gold for airtime."
+    advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
   };
   const featuredStory = displayZine.featuredStoryId ? stories.find(s => s.id === displayZine.featuredStoryId) : null;
   // Stylized gothic issue display

@@ -23,20 +23,25 @@ export class ZineEntity extends IndexedEntity<ZineContent> {
   static readonly initialState: ZineContent = {
     id: "singleton",
     intro: "Welcome to the first edition of the Midnight Zine. The shadows are long tonight...",
-    announcements: ["New broadcast incoming Friday", "The crypt is now open for public submissions"],
+    announcements: [
+      "The Shadow Market: Now accepting crypt currency",
+      "(Un)Alive Reading: Time, Date, and Realm TBD",
+      "Submit your chronicles or be forgotten",
+      "Vampire Facial Giveaway: Win a pint of O-Negative"
+    ],
     featuredStoryId: null,
     coverImageUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop",
     lastUpdated: Date.now(),
     editorName: "CreepQueen",
-    advertisement: "THIS BROADCAST IS SPONSORED BY 'O-NEGATIVE ENERGY DRINK' - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
+    advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
   };
   static seedData = [
     {
       id: "singleton",
       intro: "Shadows whisper across the terminal, carrying the weight of a thousand unread screams. The Midnight Zine has returned to chronicle the morally grim. Stay vigilant.",
       announcements: [
-        "The Shadow Market: Merch drop at midnight",
-        "Live Reading: The Mojave Static - Friday",
+        "The Shadow Market: Now accepting crypt currency",
+        "(Un)Alive Reading: Time, Date, and Realm TBD",
         "Submit your chronicles or be forgotten",
         "Vampire Facial Giveaway: Win a pint of O-Negative"
       ],
@@ -44,7 +49,7 @@ export class ZineEntity extends IndexedEntity<ZineContent> {
       coverImageUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop",
       lastUpdated: Date.now(),
       editorName: "CreepQueen",
-      advertisement: "THIS BROADCAST IS SPONSORED BY 'O-NEGATIVE ENERGY DRINK' - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
+      advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
     }
   ];
 }
