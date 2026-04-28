@@ -13,12 +13,14 @@ export default {
         gothic: ['Cinzel', 'serif']
   		},
   		colors: {
-        'blood-red': '#4A0404',
-        'nocturnal-purple': '#12001F',
-        'crypt-purple': '#1A002E',
-        'slime-green': '#32CD32',
-        'phantom-pink': '#D4145A',
-        'hot-pink': '#D4145A',
+        'blood-red': '#3D0303',
+        'nocturnal-purple': '#0D001A',
+        'crypt-purple': '#120021',
+        'slime-green': '#28A745',
+        'lichen-green': '#4A5D4E',
+        'phantom-pink': '#B31B4D',
+        'noir-gray': '#1A1A1A',
+        'hot-pink': '#B31B4D',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			muted: {
@@ -54,9 +56,9 @@ export default {
   			input: 'hsl(var(--input))',
   		},
   		boxShadow: {
-  			retro: '3px 3px 0px 0px rgba(50, 205, 50, 0.8)',
-        'retro-pink': '3px 3px 0px 0px rgba(212, 20, 90, 0.8)',
-        'retro-lg': '6px 6px 0px 0px rgba(50, 205, 50, 0.6)',
+  			retro: '2px 2px 0px 0px rgba(40, 167, 69, 0.5)',
+        'retro-pink': '2px 2px 0px 0px rgba(179, 27, 77, 0.5)',
+        'retro-lg': '4px 4px 0px 0px rgba(40, 167, 69, 0.4)',
   		},
   		keyframes: {
   			'blink': {
@@ -64,18 +66,18 @@ export default {
   				'50%': { opacity: '0' }
   			},
         'pulse-glow': {
-          '0%, 100%': { opacity: '1', filter: 'drop-shadow(0 0 5px rgba(50, 205, 50, 0.5))' },
-          '50%': { opacity: '0.8', filter: 'drop-shadow(0 0 15px rgba(50, 205, 50, 0.2))' }
+          '0%, 100%': { opacity: '1', filter: 'drop-shadow(0 0 3px rgba(40, 167, 69, 0.3))' },
+          '50%': { opacity: '0.8', filter: 'drop-shadow(0 0 10px rgba(40, 167, 69, 0.15))' }
         },
         'mist-flow': {
-          '0%': { transform: 'translateX(-10%)' },
-          '100%': { transform: 'translateX(10%)' }
+          '0%': { transform: 'translateX(-5%)' },
+          '100%': { transform: 'translateX(5%)' }
         }
   		},
   		animation: {
-  			'blink': 'blink 1.5s step-end infinite',
-        'pulse-glow': 'pulse-glow 4s ease-in-out infinite',
-        'mist': 'mist-flow 20s ease-in-out infinite alternate',
+  			'blink': 'blink 2s step-end infinite',
+        'pulse-glow': 'pulse-glow 6s ease-in-out infinite',
+        'mist': 'mist-flow 30s ease-in-out infinite alternate',
   		},
   	}
   },

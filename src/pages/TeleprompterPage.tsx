@@ -10,7 +10,7 @@ export function TeleprompterPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [story, setStory] = useState<Story | null>(null);
-  const [fontSize, setFontSize] = useState(42);
+  const [fontSize, setFontSize] = useState(48);
   const [isRecording, setIsRecording] = useState(false);
   const [stealthMode, setStealthMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -19,7 +19,6 @@ export function TeleprompterPage() {
   const requestRef = useRef<number>();
   const isScrollingRef = useRef(isScrolling);
   const scrollSpeedRef = useRef(scrollSpeed);
-  // Keep refs in sync with state to avoid stale closures in requestAnimationFrame
   useEffect(() => {
     isScrollingRef.current = isScrolling;
   }, [isScrolling]);
@@ -39,7 +38,7 @@ export function TeleprompterPage() {
     const currentScroll = element.scrollTop;
     if (isScrollingRef.current) {
       if (currentScroll < totalHeight - 5) {
-        window.scrollBy(0, scrollSpeedRef.current / 5);
+        window.scrollBy(0, scrollSpeedRef.current / 4);
       } else {
         setIsScrolling(false);
       }
@@ -53,12 +52,9 @@ export function TeleprompterPage() {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
   }, [animate]);
-  // Stealth mode escape listener
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setStealthMode(false);
-      }
+      if (e.key === 'Escape') setStealthMode(false);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -90,78 +86,80 @@ Status: TOMB SEALED
       toast.error('Failed to seal the tomb');
     }
   };
-  if (!story) return <div className="bg-black min-h-screen flex items-center justify-center font-gothic text-2xl text-white">UNSEALING...</div>;
+  if (!story) return <div className="bg-black min-h-screen flex items-center justify-center font-gothic text-3xl text-white/20 tracking-widest">UNSEALING...</div>;
   return (
-    <div className={cn("bg-[#020005] min-h-screen transition-opacity duration-1000", stealthMode && "cursor-none")}>
+    <div className={cn("bg-[#010003] min-h-screen transition-all duration-1000", stealthMode && "cursor-none")}>
       {!stealthMode && (
-        <div className="border-b border-white/10 p-4 md:px-8 flex flex-col md:flex-row justify-between items-center bg-black/95 sticky top-0 z-50 backdrop-blur-2xl gap-4">
-          <div className="flex items-center gap-4 md:gap-8 w-full md:w-auto">
-            <Link to="/" className="text-white hover:text-slime-green transition-all"><ArrowLeft className="w-8 h-8" /></Link>
+        <div className="border-b border-white/5 p-6 md:px-12 flex flex-col md:flex-row justify-between items-center bg-black/95 sticky top-0 z-50 backdrop-blur-3xl gap-6">
+          <div className="flex items-center gap-6 md:gap-10 w-full md:w-auto">
+            <Link to="/" className="text-white/40 hover:text-slime-green transition-all"><ArrowLeft className="w-10 h-10" /></Link>
             <div className="min-w-0">
-              <div className="flex items-center gap-3">
-                {story.kind === 'email' ? <Mail className="w-5 h-5 text-phantom-pink" /> : <ScrollText className="w-5 h-5 text-slime-green" />}
-                <h1 className="font-gothic text-xl text-white truncate max-w-xs uppercase">{story.title}</h1>
-                <span className={cn("font-pixel text-[10px] px-2 border", story.kind === 'email' ? "border-phantom-pink text-phantom-pink" : "border-slime-green text-slime-green")}>
+              <div className="flex items-center gap-4">
+                {story.kind === 'email' ? <Mail className="w-6 h-6 text-phantom-pink" /> : <ScrollText className="w-6 h-6 text-slime-green" />}
+                <h1 className="font-gothic text-2xl text-white/90 truncate max-w-sm uppercase tracking-wider">{story.title}</h1>
+                <span className={cn("font-pixel text-xs px-3 py-0.5 border", story.kind === 'email' ? "border-phantom-pink text-phantom-pink" : "border-slime-green text-slime-green")}>
                   {story.kind?.toUpperCase() || 'STORY'}
                 </span>
               </div>
-              <p className="font-pixel text-[10px] text-white/40 mt-1 uppercase tracking-widest">
+              <p className="font-pixel text-xs text-white/30 mt-2 uppercase tracking-[0.2em]">
                 {story.source} {story.metadata?.ticketId && `// ID: ${story.metadata.ticketId}`}
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-4 lg:gap-8">
-            <div className="flex items-center bg-black/60 border border-white/10 p-1 rounded-sm">
-              <button 
-                onClick={() => setIsScrolling(prev => !prev)} 
-                className={cn("p-2 rounded-sm", isScrolling ? "bg-phantom-pink text-white" : "text-white/40")}
+          <div className="flex flex-wrap items-center gap-6 lg:gap-12">
+            <div className="flex items-center bg-noir-gray/80 border border-white/5 p-1.5 rounded-sm">
+              <button
+                onClick={() => setIsScrolling(prev => !prev)}
+                className={cn("p-3 rounded-sm transition-colors", isScrolling ? "bg-phantom-pink text-white" : "text-white/30 hover:text-white")}
               >
-                {isScrolling ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                {isScrolling ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
               </button>
-              <div className="flex items-center gap-2 px-3">
-                <input type="range" min="1" max="20" value={scrollSpeed} onChange={(e) => setScrollSpeed(Number(e.target.value))} className="w-20 accent-slime-green" />
+              <div className="flex items-center gap-4 px-5">
+                <span className="font-pixel text-sm text-white/20">SPD</span>
+                <input type="range" min="1" max="20" value={scrollSpeed} onChange={(e) => setScrollSpeed(Number(e.target.value))} className="w-24 accent-slime-green opacity-60 hover:opacity-100 transition-opacity" />
               </div>
             </div>
-            <div className="flex bg-black/60 border border-white/10 rounded-sm font-pixel text-xs">
-              <button onClick={() => setFontSize(s => Math.max(16, s - 4))} className="px-3 py-1 hover:bg-white hover:text-black">-</button>
-              <div className="px-4 py-1 border-x border-white/10 min-w-[50px] text-center">{fontSize}</div>
-              <button onClick={() => setFontSize(s => Math.min(96, s + 4))} className="px-3 py-1 hover:bg-white hover:text-black">+</button>
+            <div className="flex bg-noir-gray/80 border border-white/5 rounded-sm font-pixel text-base">
+              <button onClick={() => setFontSize(s => Math.max(16, s - 4))} className="px-5 py-2 hover:bg-white/10 text-white/40">-</button>
+              <div className="px-8 py-2 border-x border-white/5 min-w-[70px] text-center text-white/80">{fontSize}</div>
+              <button onClick={() => setFontSize(s => Math.min(128, s + 4))} className="px-5 py-2 hover:bg-white/10 text-white/40">+</button>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-4">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button onClick={() => setStealthMode(true)} className="p-2 border border-white/10 hover:border-white text-white/40 hover:text-white">
-                      <Eye className="w-5 h-5" />
+                    <button onClick={() => setStealthMode(true)} className="p-3 border border-white/10 hover:border-white/40 text-white/30 hover:text-white transition-all">
+                      <Eye className="w-6 h-6" />
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent className="font-pixel">STEALTH MODE (ESC)</TooltipContent>
+                  <TooltipContent className="font-pixel text-sm bg-black border border-white/20">STEALTH MODE (ESC)</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <button onClick={markRecorded} className="bg-white text-black px-6 py-2 font-gothic text-sm font-bold uppercase shadow-retro hover:bg-slime-green">SEAL TOMB</button>
+              <button onClick={markRecorded} className="bg-white/90 text-black px-10 py-3 font-gothic text-base font-black uppercase shadow-retro hover:bg-slime-green hover:text-black transition-all">SEAL TOMB</button>
             </div>
           </div>
         </div>
       )}
       <div className="fixed bottom-0 left-0 w-full h-1 bg-black z-[100]">
-        <div className="h-full bg-blood-red transition-all duration-300" style={{ width: `${scrollProgress}%` }} />
+        <div className="h-full bg-blood-red/80 transition-all duration-300 shadow-[0_0_10px_rgba(61,3,3,0.5)]" style={{ width: `${scrollProgress}%` }} />
       </div>
-      <main className="max-w-4xl mx-auto px-8 pt-32 pb-80">
-        <div className="font-mono text-white/90 leading-[1.8] whitespace-pre-wrap select-none" style={{ fontSize: `${fontSize}px` }}>
+      <main className="max-w-4xl mx-auto px-10 pt-40 pb-96">
+        <div className="font-mono text-white/80 leading-[1.7] whitespace-pre-wrap select-none tracking-normal" style={{ fontSize: `${fontSize}px` }}>
           {story.content}
         </div>
-        <div className="mt-64 text-center opacity-20 border-t border-white/10 pt-20">
-          <Skull className="w-16 h-16 mx-auto mb-8" />
-          <p className="font-gothic text-4xl tracking-widest uppercase">TOMB SEALED: END OF BROADCAST</p>
+        <div className="mt-80 text-center opacity-10 border-t border-white/5 pt-32">
+          <Skull className="w-24 h-24 mx-auto mb-12" />
+          <p className="font-gothic text-5xl tracking-[0.3em] uppercase">TOMB SEALED</p>
+          <p className="font-pixel text-xl mt-6 tracking-widest uppercase">END OF BROADCAST SESSION</p>
         </div>
       </main>
-      <div className="fixed bottom-10 right-10 flex flex-col items-end gap-3 z-50">
-        <button 
-          onClick={() => setIsRecording(prev => !prev)} 
-          className={cn("flex items-center gap-3 px-6 py-3 font-gothic border-2 transition-all", isRecording ? "bg-blood-red border-phantom-pink text-white animate-pulse" : "bg-black text-white/40 border-white/10 hover:border-white")}
+      <div className="fixed bottom-12 right-12 flex flex-col items-end gap-6 z-50">
+        <button
+          onClick={() => setIsRecording(prev => !prev)}
+          className={cn("flex items-center gap-5 px-10 py-5 font-gothic text-xl border transition-all duration-700", isRecording ? "bg-blood-red/90 border-phantom-pink text-white shadow-[0_0_30px_rgba(179,27,77,0.4)]" : "bg-black/60 text-white/20 border-white/5 hover:border-white/20")}
         >
-          <div className={cn("w-2 h-2 rounded-full", isRecording ? "bg-white animate-blink" : "bg-white/10")} />
-          <span>{isRecording ? 'ON AIR' : 'START SESSION'}</span>
+          <div className={cn("w-3 h-3 rounded-full", isRecording ? "bg-white animate-blink" : "bg-white/10")} />
+          <span className="tracking-[0.2em]">{isRecording ? 'ON AIR' : 'START SESSION'}</span>
         </button>
       </div>
     </div>

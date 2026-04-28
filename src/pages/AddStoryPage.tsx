@@ -13,20 +13,20 @@ export function AddStoryPage() {
   const [loading, setLoading] = useState(false);
   const [isFocusMode, setIsFocusMode] = useState(false);
   const isInitialized = useRef(false);
-  const [activeTab, setActiveTab] = useState<'story' | 'email'>('story');
   // Persistent drafts
   const [storyDraft, setStoryDraft, clearStoryDraft] = useLocalStorage('cryptcaster_story_draft', { title: '', source: '', content: '' });
   const [emailDraft, setEmailDraft, clearEmailDraft] = useLocalStorage('cryptcaster_email_draft', { senderEmail: '', subject: '', content: '' });
   const [storyForm, setStoryForm] = useState({ title: '', source: '', content: '' });
   const [emailForm, setEmailForm] = useState({ senderEmail: '', subject: '', content: '' });
-  // Sync draft to form only on mount
+  // Sync draft to form only on mount - Using ref to prevent double run or loop
   useEffect(() => {
     if (!isInitialized.current) {
       setStoryForm(storyDraft);
       setEmailForm(emailDraft);
       isInitialized.current = true;
     }
-  }, []); // Run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); 
   // Save form changes to drafts with debounce
   useEffect(() => {
     if (!isInitialized.current) return;
@@ -92,117 +92,117 @@ export function AddStoryPage() {
     }
   };
   return (
-    <div className={`min-h-screen flex flex-col relative transition-colors duration-1000 ${isFocusMode ? 'bg-black' : 'bg-nocturnal-purple/20'}`}>
+    <div className={`min-h-screen flex flex-col relative transition-colors duration-1000 ${isFocusMode ? 'bg-black' : 'bg-nocturnal-purple/10'}`}>
       <VampiricAtmosphere />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
-        <div className="py-8 md:py-10 lg:py-12">
+        <div className="py-12 md:py-16">
           {!isFocusMode && (
-            <Link to="/" className="text-white font-pixel text-xl hover:text-slime-green flex items-center gap-3 mb-10 group w-fit transition-all">
-              <ArrowLeft className="w-6 h-6 group-hover:-translate-x-2 transition-transform" />
-              <span className="tracking-widest uppercase">BACK TO CRYPT</span>
+            <Link to="/" className="text-white/60 font-pixel text-2xl hover:text-slime-green flex items-center gap-4 mb-12 group w-fit transition-all tracking-widest">
+              <ArrowLeft className="w-7 h-7 group-hover:-translate-x-3 transition-transform" />
+              <span className="uppercase">BACK TO CRYPT</span>
             </Link>
           )}
           <div className={`grid grid-cols-1 ${isFocusMode ? '' : 'lg:grid-cols-12'} gap-12`}>
             <div className={`${isFocusMode ? 'max-w-4xl mx-auto w-full' : 'lg:col-span-8'}`}>
-              <Tabs defaultValue="story" onValueChange={(v) => setActiveTab(v as any)} className="w-full">
+              <Tabs defaultValue="story" className="w-full">
                 {!isFocusMode && (
-                  <TabsList className="grid w-full grid-cols-2 bg-black/40 border-2 border-white/10 p-1 mb-8 h-auto">
-                    <TabsTrigger value="story" className="font-gothic py-3 data-[state=active]:bg-slime-green data-[state=active]:text-black">
+                  <TabsList className="grid w-full grid-cols-2 bg-black/60 border border-white/5 p-1.5 mb-10 h-auto">
+                    <TabsTrigger value="story" className="font-gothic text-xl py-4 data-[state=active]:bg-slime-green data-[state=active]:text-black tracking-widest">
                       GRIM NARRATIVE
                     </TabsTrigger>
-                    <TabsTrigger value="email" className="font-gothic py-3 data-[state=active]:bg-phantom-pink data-[state=active]:text-black">
+                    <TabsTrigger value="email" className="font-gothic text-xl py-4 data-[state=active]:bg-phantom-pink data-[state=active]:text-black tracking-widest">
                       MIDNIGHT POST
                     </TabsTrigger>
                   </TabsList>
                 )}
                 <TabsContent value="story">
-                  <div className="retro-window border-slime-green/30">
-                    <div className="retro-window-header bg-slime-green text-black">
-                      <div className="flex items-center gap-3">
-                        <ScrollText className="w-4 h-4" />
-                        <span>INGESTION_PROTOCOL_V4.0</span>
+                  <div className="retro-window border-slime-green/20">
+                    <div className="retro-window-header bg-slime-green/80 text-black">
+                      <div className="flex items-center gap-4">
+                        <ScrollText className="w-5 h-5" />
+                        <span className="tracking-widest">INGESTION_PROTOCOL_V4.1</span>
                       </div>
-                      <button onClick={() => setIsFocusMode(!isFocusMode)} className="text-[10px] uppercase border border-black/20 px-2 py-0.5">
+                      <button onClick={() => setIsFocusMode(!isFocusMode)} className="text-sm font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-slime-green transition-colors">
                         {isFocusMode ? 'MINIMIZE' : 'EXPAND'}
                       </button>
                     </div>
-                    <form onSubmit={handleStorySubmit} className="p-6 md:p-10 space-y-8 bg-black/60">
+                    <form onSubmit={handleStorySubmit} className="p-8 md:p-12 space-y-10 bg-black/40">
                       <div>
-                        <label className="block font-pixel text-xs mb-2 text-slime-green opacity-70">TALE TITLE</label>
+                        <label className="block font-pixel text-sm mb-3 text-slime-green/60 tracking-widest uppercase">TALE TITLE</label>
                         <input
                           required value={storyForm.title}
                           onChange={(e) => setStoryForm(prev => ({ ...prev, title: e.target.value }))}
-                          className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-gothic text-xl focus:border-slime-green transition-all outline-none"
+                          className="w-full bg-noir-gray border border-white/10 p-5 text-white font-gothic text-2xl focus:border-slime-green transition-all outline-none"
                         />
                       </div>
                       <div>
-                        <label className="block font-pixel text-xs mb-2 text-slime-green opacity-70">ORIGIN SOURCE</label>
+                        <label className="block font-pixel text-sm mb-3 text-slime-green/60 tracking-widest uppercase">ORIGIN SOURCE</label>
                         <input
                           value={storyForm.source}
                           onChange={(e) => setStoryForm(prev => ({ ...prev, source: e.target.value }))}
-                          className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-mono focus:border-slime-green transition-all outline-none"
+                          className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-slime-green transition-all outline-none"
                         />
                       </div>
                       <div>
-                        <div className="flex justify-between mb-2">
-                          <label className="block font-pixel text-xs text-slime-green opacity-70">BODY CONTENT</label>
-                          <span className="font-pixel text-[10px] text-white/40">{stats.story.words} WORDS</span>
+                        <div className="flex justify-between mb-3">
+                          <label className="block font-pixel text-sm text-slime-green/60 tracking-widest uppercase">BODY CONTENT</label>
+                          <span className="font-pixel text-xs text-white/20 tracking-tighter">{stats.story.words} WORDS / EST. {stats.story.time}</span>
                         </div>
                         <textarea
-                          required rows={12} value={storyForm.content}
+                          required rows={14} value={storyForm.content}
                           onChange={(e) => setStoryForm(prev => ({ ...prev, content: e.target.value }))}
-                          className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-mono leading-relaxed focus:border-slime-green transition-all outline-none resize-none"
+                          className="w-full bg-noir-gray border border-white/10 p-6 text-white font-mono text-lg leading-relaxed focus:border-slime-green transition-all outline-none resize-none"
                         />
                       </div>
-                      <button type="submit" disabled={loading} className="retro-button w-full text-2xl font-gothic py-5">
+                      <button type="submit" disabled={loading} className="retro-button w-full text-2xl font-gothic py-6 tracking-[0.2em]">
                         {loading ? 'INGESTING...' : 'SUMMON TO CRYPT'}
                       </button>
                     </form>
                   </div>
                 </TabsContent>
                 <TabsContent value="email">
-                  <div className="retro-window border-phantom-pink/30">
-                    <div className="retro-window-header bg-phantom-pink text-black">
-                      <div className="flex items-center gap-3">
-                        <Mail className="w-4 h-4" />
-                        <span>MIDNIGHT_POST_TICKET_V1.2</span>
+                  <div className="retro-window border-phantom-pink/20">
+                    <div className="retro-window-header bg-phantom-pink/80 text-black">
+                      <div className="flex items-center gap-4">
+                        <Mail className="w-5 h-5" />
+                        <span className="tracking-widest">MIDNIGHT_POST_TICKET_V1.3</span>
                       </div>
-                      <button onClick={() => setIsFocusMode(!isFocusMode)} className="text-[10px] uppercase border border-black/20 px-2 py-0.5">
+                      <button onClick={() => setIsFocusMode(!isFocusMode)} className="text-sm font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-phantom-pink transition-colors">
                         {isFocusMode ? 'MINIMIZE' : 'EXPAND'}
                       </button>
                     </div>
-                    <form onSubmit={handleEmailSubmit} className="p-6 md:p-10 space-y-8 bg-black/60">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <form onSubmit={handleEmailSubmit} className="p-8 md:p-12 space-y-10 bg-black/40">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div>
-                          <label className="block font-pixel text-xs mb-2 text-phantom-pink opacity-70">SENDER EMAIL</label>
+                          <label className="block font-pixel text-sm mb-3 text-phantom-pink/60 tracking-widest uppercase">SENDER EMAIL</label>
                           <input
                             type="email" value={emailForm.senderEmail}
                             onChange={(e) => setEmailForm(prev => ({ ...prev, senderEmail: e.target.value }))}
-                            className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-mono focus:border-phantom-pink transition-all outline-none"
+                            className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-phantom-pink transition-all outline-none"
                             placeholder="listener@void.com"
                           />
                         </div>
                         <div>
-                          <label className="block font-pixel text-xs mb-2 text-phantom-pink opacity-70">SUBJECT LINE</label>
+                          <label className="block font-pixel text-sm mb-3 text-phantom-pink/60 tracking-widest uppercase">SUBJECT LINE</label>
                           <input
                             required value={emailForm.subject}
                             onChange={(e) => setEmailForm(prev => ({ ...prev, subject: e.target.value }))}
-                            className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-mono focus:border-phantom-pink transition-all outline-none"
+                            className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-phantom-pink transition-all outline-none"
                           />
                         </div>
                       </div>
                       <div>
-                        <div className="flex justify-between mb-2">
-                          <label className="block font-pixel text-xs text-phantom-pink opacity-70">EMAIL BODY</label>
-                          <span className="font-pixel text-[10px] text-white/40">{stats.email.words} WORDS</span>
+                        <div className="flex justify-between mb-3">
+                          <label className="block font-pixel text-sm text-phantom-pink/60 tracking-widest uppercase">EMAIL BODY</label>
+                          <span className="font-pixel text-xs text-white/20 tracking-tighter">{stats.email.words} WORDS</span>
                         </div>
                         <textarea
-                          required rows={12} value={emailForm.content}
+                          required rows={14} value={emailForm.content}
                           onChange={(e) => setEmailForm(prev => ({ ...prev, content: e.target.value }))}
-                          className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-mono leading-relaxed focus:border-phantom-pink transition-all outline-none resize-none"
+                          className="w-full bg-noir-gray border border-white/10 p-6 text-white font-mono text-lg leading-relaxed focus:border-phantom-pink transition-all outline-none resize-none"
                         />
                       </div>
-                      <button type="submit" disabled={loading} className="retro-button-pink w-full text-2xl font-gothic py-5">
+                      <button type="submit" disabled={loading} className="retro-button-pink w-full text-2xl font-gothic py-6 tracking-[0.2em]">
                         {loading ? 'FILING...' : 'GENERATE TICKET'}
                       </button>
                     </form>
@@ -211,19 +211,19 @@ export function AddStoryPage() {
               </Tabs>
             </div>
             {!isFocusMode && (
-              <aside className="lg:col-span-4 space-y-8">
-                <div className="retro-panel bg-white/5 border-white/10">
-                  <h3 className="font-gothic text-xl mb-4 text-white flex items-center gap-2">
-                    <Info className="w-5 h-5 text-slime-green" /> PROTOCOL
+              <aside className="lg:col-span-4 space-y-10">
+                <div className="retro-panel bg-white/[0.02] border-white/5 p-8">
+                  <h3 className="font-gothic text-2xl mb-6 text-white flex items-center gap-3">
+                    <Info className="w-6 h-6 text-slime-green/60" /> BROADCAST PROTOCOL
                   </h3>
-                  <div className="font-pixel text-sm text-white/60 space-y-4">
+                  <div className="font-pixel text-base text-white/40 space-y-6 leading-relaxed">
                     <p>• NARRATIVES: Long-form stories destined for the main show block.</p>
                     <p>• TICKETS: Listener submissions requiring review or shorter segments.</p>
                     <p>• AUTOMATION: Tickets are auto-prefixed with unique identifiers.</p>
                   </div>
                 </div>
-                <div className="flex justify-center opacity-10 py-10">
-                  <Skull className="w-32 h-32" />
+                <div className="flex justify-center opacity-5 py-20">
+                  <Skull className="w-48 h-48" />
                 </div>
               </aside>
             )}

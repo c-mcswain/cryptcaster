@@ -4,32 +4,32 @@
 @tailwind utilities;
 @layer base {
   :root {
-    --background: 275 100% 3%;
-    --foreground: 120 100% 50%;
-    --primary: 120 100% 50%;
-    --primary-foreground: 275 100% 3%;
-    --muted: 275 50% 10%;
-    --muted-foreground: 345 100% 45%;
-    --border: 120 100% 50%;
-    --ring: 345 100% 45%;
-    --card: 275 100% 5%;
-    --card-foreground: 120 100% 50%;
-    --popover: 275 100% 3%;
-    --popover-foreground: 120 100% 50%;
-    --secondary: 345 100% 45%;
-    --secondary-foreground: 0 0% 100%;
-    --accent: 120 100% 50%;
-    --accent-foreground: 275 100% 3%;
-    --destructive: 0 100% 30%;
+    --background: 275 100% 2%;
+    --foreground: 120 45% 50%;
+    --primary: 120 45% 50%;
+    --primary-foreground: 275 100% 2%;
+    --muted: 275 30% 8%;
+    --muted-foreground: 345 60% 40%;
+    --border: 120 45% 40%;
+    --ring: 345 60% 40%;
+    --card: 275 100% 4%;
+    --card-foreground: 120 45% 50%;
+    --popover: 275 100% 2%;
+    --popover-foreground: 120 45% 50%;
+    --secondary: 345 60% 40%;
+    --secondary-foreground: 0 0% 90%;
+    --accent: 120 45% 50%;
+    --accent-foreground: 275 100% 2%;
+    --destructive: 0 100% 20%;
     --destructive-foreground: 0 0% 100%;
-    --input: 275 50% 10%;
+    --input: 275 30% 8%;
     --radius: 0px;
   }
   body {
     @apply bg-black text-slime-green font-mono min-h-screen relative overflow-x-hidden;
-    background-color: #05000a;
+    background-color: #030008;
   }
-  /* Refined CRT Scanline Effect */
+  /* Subtle CRT Scanline Effect */
   body::before {
     content: " ";
     display: block;
@@ -38,42 +38,45 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.08) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.005), rgba(0, 0, 255, 0.01));
     z-index: 100;
-    background-size: 100% 2px, 2px 100%;
+    background-size: 100% 3px, 3px 100%;
     pointer-events: none;
-    opacity: 0.4;
+    opacity: 0.25;
   }
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
-    width: 12px;
+    width: 10px;
   }
   ::-webkit-scrollbar-track {
     @apply bg-black;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-blood-red border border-nocturnal-purple hover:bg-phantom-pink transition-colors;
+    @apply bg-blood-red border border-noir-gray hover:bg-phantom-pink transition-colors;
   }
 }
 .retro-panel {
-  @apply bg-nocturnal-purple/80 border-2 border-slime-green/50 shadow-retro p-6 backdrop-blur-sm;
+  @apply bg-nocturnal-purple/60 border border-slime-green/30 shadow-retro p-6 backdrop-blur-md;
 }
 .retro-window {
-  @apply bg-nocturnal-purple/90 border-2 border-slime-green/60 shadow-retro flex flex-col backdrop-blur-md;
+  @apply bg-nocturnal-purple/80 border border-slime-green/40 shadow-retro flex flex-col backdrop-blur-lg;
 }
 .retro-window-header {
-  @apply bg-slime-green text-black px-3 py-1.5 flex justify-between items-center font-pixel text-base font-bold border-b-2 border-slime-green;
+  @apply bg-slime-green text-black px-3 py-1.5 flex justify-between items-center font-pixel text-lg font-bold border-b border-slime-green;
 }
 .retro-button {
-  @apply border-2 border-slime-green bg-black text-slime-green px-6 py-2 uppercase font-bold transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:bg-slime-green hover:text-black shadow-retro;
+  @apply border border-slime-green bg-black text-slime-green px-6 py-2 uppercase font-bold transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:bg-slime-green hover:text-black shadow-retro;
 }
 .retro-button-pink {
-  @apply border-2 border-phantom-pink bg-black text-phantom-pink px-6 py-2 uppercase font-bold transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:bg-phantom-pink hover:text-black shadow-retro-pink;
+  @apply border border-phantom-pink bg-black text-phantom-pink px-6 py-2 uppercase font-bold transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:bg-phantom-pink hover:text-black shadow-retro-pink;
 }
 .glow-text {
-  text-shadow: 0 0 8px rgba(50, 205, 50, 0.6);
+  text-shadow: 0 0 6px rgba(40, 167, 69, 0.4);
 }
 .gothic-header {
-  @apply font-gothic tracking-wider uppercase text-white;
-  text-shadow: 0 0 15px rgba(212, 20, 90, 0.4);
+  @apply font-gothic tracking-widest uppercase text-white;
+  text-shadow: 0 0 10px rgba(179, 27, 77, 0.3);
+}
+.font-pixel {
+  @apply text-base md:text-lg; /* 20-30% bump */
 }
