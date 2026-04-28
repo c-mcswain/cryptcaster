@@ -32,19 +32,21 @@ export function HomePage() {
     fetchData();
   }, []);
   const displayZine = zine || {
-    intro: 'The terminal flickers with the weight of unspeakable records...',
+    intro: 'The sweet scent of forbidden orchards drifts through the terminal tonight, carrying the weight of a thousand unread screams. The Midnight Zine has returned to chronicle the morally grim. Stay vigilant.',
     announcements: [
       "The Shadow Market: Now accepting crypt currency",
-      "Submit your chronicles or be forgotten"
+      "(Un)Alive Reading: Time, Date, and Realm TBD",
+      "Submit your chronicles or be forgotten",
+      "Vampire Facial Giveaway: Win a pint of O-Negative"
     ],
     featuredStoryId: 's8',
     coverImageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     lastUpdated: Date.now(),
     editorName: 'CreepQueen',
-    advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD."
+    advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
   };
   const featuredStory = displayZine.featuredStoryId ? stories.find(s => s.id === displayZine.featuredStoryId) : null;
-  const voidCoverUrl = 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
+  const voidCoverUrl = 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
   const isBreaking = featuredStory?.title?.includes('ILLEGAL') || featuredStory?.id === 's8';
   const issueDate = new Date(displayZine.lastUpdated);
   const month = String(issueDate.getMonth() + 1).padStart(2, '0');
@@ -55,7 +57,6 @@ export function HomePage() {
       <VampiricAtmosphere />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
         <div className="py-8 md:py-12">
-          {/* PUBLIC HEADER */}
           <div className="flex justify-between items-center mb-12 md:mb-16">
             <div className="flex items-center gap-4 group cursor-default">
               <Skull className="w-8 h-8 text-slime-green group-hover:rotate-180 transition-transform duration-700" />
@@ -76,7 +77,6 @@ export function HomePage() {
               )}
             </div>
           </div>
-          {/* MAIN ZINE CONTENT */}
           {!loading && (
             <section className="space-y-16 md:space-y-24 mb-20 md:mb-32">
               <div className="text-center relative">
@@ -89,7 +89,6 @@ export function HomePage() {
                 </p>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-14 items-start">
-                {/* Left Side: Introit & Ad */}
                 <div className="lg:col-span-4 flex flex-col gap-10">
                    <div className="retro-window border-white/5 flex-1 shadow-2xl">
                       <div className="retro-window-header bg-white/5 text-white/60 italic tracking-widest">Editorial_Introit.log</div>
@@ -123,7 +122,6 @@ export function HomePage() {
                       </ul>
                    </div>
                 </div>
-                {/* Right Side: Featured Story Card */}
                 <div className="lg:col-span-8 h-full">
                   <div className={cn(
                     "relative aspect-video lg:aspect-[4/3] border-4 md:border-8 group overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] transition-all duration-700",
@@ -135,7 +133,6 @@ export function HomePage() {
                       alt="Zine Cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                    {/* TERMINAL_LIVE Indicator */}
                     <div className="absolute top-8 right-8 flex items-center gap-3 px-4 py-1.5 bg-black/80 border border-slime-green/40 font-pixel text-[10px] text-slime-green tracking-[0.3em] z-20">
                       <Activity className="w-3 h-3 animate-pulse" /> TERMINAL_LIVE
                     </div>
@@ -164,7 +161,7 @@ export function HomePage() {
                       </div>
                       {featuredStory && (
                         <Link
-                          to={`/read/${featuredStory.id}`}
+                          to={isAuthenticated ? `/read/${featuredStory.id}` : "/login"}
                           className={cn(
                             "font-pixel text-lg px-10 py-5 transition-all uppercase tracking-[0.3em] flex items-center gap-4 mt-4",
                             isBreaking
@@ -182,7 +179,6 @@ export function HomePage() {
             </section>
           )}
           <SubmissionHero />
-          {/* MISSION SECTION */}
           <section className="py-24 md:py-40 border-t border-white/5 mt-24 md:mt-32 max-w-5xl mx-auto text-center space-y-16">
             <div className="flex justify-center gap-12 md:gap-20 opacity-10">
               <Ghost className="w-12 h-12 md:w-20 md:h-20" />

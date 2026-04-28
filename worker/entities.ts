@@ -15,11 +15,11 @@ export class StoryEntity extends IndexedEntity<Story> {
     mediaUrl: "",
     metadata: {}
   };
-  static seedData = MOCK_STORIES.map(s => ({ 
-    ...s, 
-    kind: (s.id === 's8' || s.title.includes('[SUBMISSION]')) ? s.kind || 'story' : 'story' as const, 
-    metadata: s.metadata || {}, 
-    mediaUrl: s.mediaUrl || "" 
+  static seedData = MOCK_STORIES.map(s => ({
+    ...s,
+    kind: (s.id === 's8' || s.title.includes('[SUBMISSION]')) ? s.kind || 'story' : 'story' as const,
+    metadata: s.metadata || {},
+    mediaUrl: s.mediaUrl || ""
   }));
 }
 export class ZineEntity extends IndexedEntity<ZineContent> {
@@ -27,7 +27,7 @@ export class ZineEntity extends IndexedEntity<ZineContent> {
   static readonly indexName = "zines";
   static readonly initialState: ZineContent = {
     id: "singleton",
-    intro: "The sweet scent of forbidden orchards drifts through the terminal tonight. Shadows have grown long and the hum of the crypt is louder than usual. Welcome to the Midnight Zine.",
+    intro: "The sweet scent of forbidden orchards drifts through the terminal tonight, carrying the weight of a thousand unread screams. The Midnight Zine has returned to chronicle the morally grim. Stay vigilant.",
     announcements: [
       "The Shadow Market: Now accepting crypt currency",
       "(Un)Alive Reading: Time, Date, and Realm TBD",
