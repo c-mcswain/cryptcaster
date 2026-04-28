@@ -11,7 +11,23 @@ import { SubmissionHero } from '@/components/SubmissionHero';
 export function HomePage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [zine, setZine] = useState<ZineContent | null>(null);
+
+  const demoZine: ZineContent = {
+    id: 'singleton',
+    intro: 'Shadows whisper across the terminal, carrying the weight of a thousand unread screams. The Midnight Zine has returned to chronicle the morally grim. Stay vigilant.',
+    announcements: [
+      'The Shadow Market: Merch drop at midnight',
+      'Live Reading: The Mojave Static - Friday',
+      'Submit your chronicles or be forgotten'
+    ],
+    featuredStoryId: 's4',
+    coverImageUrl: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop',
+    lastUpdated: Date.now(),
+    editorName: 'CreepQueen'
+  };
+
   const [loading, setLoading] = useState(true);
+  const displayZine = zine ?? demoZine;
   const { isAuthenticated } = useAuth();
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +46,7 @@ export function HomePage() {
     };
     fetchData();
   }, []);
-  const featuredStory = zine?.featuredStoryId ? stories.find(s => s.id === zine.featuredStoryId) : null;
+  const featuredStory = displayZine.featuredStoryId ? stories.find(s => s.id === displayZine.featuredStoryId) : null;
   return (
     <div className="min-h-screen flex flex-col relative bg-black overflow-x-hidden">
       <VampiricAtmosphere />
@@ -58,11 +74,13 @@ export function HomePage() {
             </div>
           </div>
           {/* MAIN ZINE CONTENT */}
-          {!loading && zine && (
+          {!loading && (
             <section className="space-y-16 md:space-y-20 mb-20 md:mb-24">
               <div className="text-center">
                 <h1 className="gothic-header text-6xl md:text-8xl lg:text-[10rem] mb-4 tracking-[0.3em] animate-pulse-glow leading-none">THE MIDNIGHT ZINE</h1>
-                <p className="font-pixel text-xl md:text-2xl text-slime-green/60 uppercase tracking-[0.5em]">Issue: {new Date(zine.lastUpdated).toLocaleDateString()} // VOL. 04</p>
+                <p className="font-pixel text-xl md:text-2xl text-slime-green/60 uppercase tracking-[0.5em]">
+                  Issue: {zine ? new Date(zine.lastUpdated).toLocaleDateString() : 'DEMO'} // VOL. 04
+                </p>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10">
                 {/* Left Side: Introit */}
@@ -70,16 +88,16 @@ export function HomePage() {
                    <div className="retro-window border-white/10 flex-1">
                       <div className="retro-window-header bg-white/10 text-white italic">Editorial Introit</div>
                       <div className="p-6 md:p-8 bg-black/60 font-mono text-base leading-relaxed text-white/50 italic space-y-6">
-                        <p className="indent-8 leading-loose">"{zine.intro}"</p>
+                        <p className="indent-8 leading-loose">"{displayZine.intro}"</p>
                         <div className="pt-6 border-t border-white/5 font-pixel text-xs text-slime-green tracking-widest not-italic">
-                          — {zine.editorName.toUpperCase()}
+                          — {displayZine.editorName.toUpperCase()}
                         </div>
                       </div>
                    </div>
                    <div className="retro-panel bg-phantom-pink/5 border-phantom-pink/20">
                       <h3 className="font-gothic text-xl text-phantom-pink tracking-widest uppercase mb-6">Grim Announcements</h3>
                       <ul className="space-y-4 font-pixel text-base text-white/40 tracking-widest uppercase">
-                        {zine.announcements.map((a, i) => (
+                        {displayZine.announcements.map((a, i) => (
                           <li key={i} className="flex gap-4">
                             <span className="text-phantom-pink animate-blink">»</span> {a}
                           </li>
@@ -91,7 +109,7 @@ export function HomePage() {
                 <div className="lg:col-span-8">
                   <div className="relative aspect-video lg:aspect-auto lg:h-full border-4 border-white/10 group overflow-hidden shadow-2xl">
                     <img
-                      src={zine.coverImageUrl}
+                      src={displayZine.coverImageUrl}
                       className="absolute inset-0 w-full h-full object-cover grayscale-[0.8] group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
                       alt="Zine Cover"
                     />
