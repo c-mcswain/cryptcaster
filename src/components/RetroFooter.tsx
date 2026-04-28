@@ -1,5 +1,5 @@
 import React from 'react';
-import { Youtube, Instagram, Twitter, ExternalLink, Skull } from 'lucide-react';
+import { Video, Hash, AtSign, ExternalLink, Skull } from 'lucide-react';
 export function RetroFooter() {
   const currentYear = new Date().getFullYear();
   return (
@@ -36,13 +36,13 @@ export function RetroFooter() {
         <div className="flex flex-col items-center md:items-end gap-4">
           <div className="flex gap-4">
             <a href="#" className="p-2 bg-black border-4 border-slime-green hover:bg-slime-green hover:text-black transition-all">
-              <Youtube className="w-6 h-6" />
+              <Video className="w-6 h-6" />
             </a>
             <a href="#" className="p-2 bg-black border-4 border-slime-green hover:bg-slime-green hover:text-black transition-all">
-              <Instagram className="w-6 h-6" />
+              <Hash className="w-6 h-6" />
             </a>
             <a href="#" className="p-2 bg-black border-4 border-slime-green hover:bg-slime-green hover:text-black transition-all">
-              <Twitter className="w-6 h-6" />
+              <AtSign className="w-6 h-6" />
             </a>
           </div>
           <div className="flex items-center gap-2 font-pixel text-sm text-hot-pink hover:underline cursor-pointer group">

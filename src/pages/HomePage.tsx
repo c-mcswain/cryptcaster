@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Play, CheckCircle, Skull, X, Minus, Square, Moon, Zap } from 'lucide-react';
+import { Plus, Play, CheckCircle, Skull, X, Minus, Square, Moon, Zap, Archive, BookOpen, Clock, FileText } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story } from '@shared/types';
 import { Toaster, toast } from 'sonner';
 import { RetroFooter } from '@/components/RetroFooter';
 import { VampiricAtmosphere } from '@/components/VampiricAtmosphere';
+import { wordCount, estimateReadTime } from '@/lib/utils';
 export function HomePage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread' | 'recorded'>('all');
+  const hasDraft = useMemo(() => {
+    const draft = localStorage.getItem('cryptcaster_draft');
+    if (!draft) return false;
+    const parsed = JSON.parse(draft);
+    return !!(parsed.title || parsed.content);
+  }, []);
   const fetchStories = async () => {
     try {
       const response = await api<{ items: Story[] }>('/api/stories');
@@ -32,7 +39,7 @@ export function HomePage() {
   return (
     <div className="min-h-screen flex flex-col relative bg-nocturnal-purple/20">
       <VampiricAtmosphere />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
         <div className="py-12 md:py-16 lg:py-20">
           <header className="mb-20 text-center">
             <div className="inline-block relative">
@@ -47,9 +54,14 @@ export function HomePage() {
               </div>
             </div>
             <div className="mt-16 flex flex-wrap justify-center gap-8">
-              <Link to="/add" className="retro-button-pink flex items-center gap-3 text-2xl px-10 py-4 group transition-all">
-                <Plus className="w-7 h-7 group-hover:rotate-90 transition-transform" /> 
-                <span className="font-gothic">Ingest Tale</span>
+              <Link to="/add" className="retro-button-pink flex flex-col items-center gap-1 px-10 py-4 group transition-all relative">
+                <div className="flex items-center gap-3">
+                  <Plus className="w-7 h-7 group-hover:rotate-90 transition-transform" />
+                  <span className="font-gothic text-2xl">Ingest Tale</span>
+                </div>
+                {hasDraft && (
+                  <span className="font-pixel text-[10px] text-white animate-pulse absolute -bottom-6">DRAFT RECOVERABLE</span>
+                )}
               </Link>
             </div>
           </header>
@@ -98,20 +110,28 @@ export function HomePage() {
                       </span>
                       {story.isRecorded ? (
                         <div className="flex items-center gap-1.5 text-slime-green font-pixel text-xs">
-                          <CheckCircle className="w-4 h-4" /> ARCHIVED
+                          <Archive className="w-4 h-4" /> ARCHIVED
                         </div>
                       ) : (
                         <div className="text-white font-pixel text-xs animate-pulse flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 bg-blood-red rounded-full animate-ping" /> PENDING
+                          <BookOpen className="w-4 h-4" /> PENDING
                         </div>
                       )}
                     </div>
-                    <h3 className="font-gothic text-3xl mb-4 text-white group-hover:text-slime-green transition-colors leading-tight">
+                    <h3 className="font-gothic text-3xl mb-4 text-white group-hover:text-slime-green transition-colors leading-tight line-clamp-2 min-h-[4rem]">
                       {story.title}
                     </h3>
-                    <p className="font-pixel text-sm text-phantom-pink/80 mb-6 italic border-l-2 border-phantom-pink/20 pl-3">
+                    <p className="font-pixel text-sm text-phantom-pink/80 mb-6 italic border-l-2 border-phantom-pink/20 pl-3 truncate">
                       SENDER: {story.source}
                     </p>
+                    <div className="flex gap-6 font-pixel text-[10px] text-white/40 mb-6 uppercase tracking-wider">
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-3 h-3" /> {wordCount(story.content)} WORDS
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-3 h-3" /> {estimateReadTime(story.content)}
+                      </div>
+                    </div>
                     <div className="flex-1">
                       <p className="font-mono text-sm text-foreground/60 line-clamp-3 mb-10 leading-relaxed group-hover:text-foreground/90 transition-colors">
                         {story.content}
@@ -121,7 +141,7 @@ export function HomePage() {
                       to={`/read/${story.id}`}
                       className="retro-button w-full flex items-center justify-center gap-3 mt-auto text-xl py-3 group/btn"
                     >
-                      <Play className="w-5 h-5 fill-current group-hover/btn:scale-110 transition-transform" /> 
+                      <Play className="w-5 h-5 fill-current group-hover/btn:scale-110 transition-transform" />
                       <span className="font-gothic">Open Tome</span>
                     </Link>
                   </div>

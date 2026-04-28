@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Radio, Maximize2, Minimize2, Info, Eye, Settings } from 'lucide-react';
+import { ArrowLeft, Radio, Maximize2, Minimize2, Eye, Play, Pause, RotateCcw, Share2, Settings2, Sliders } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story } from '@shared/types';
 import { toast } from 'sonner';
+import { wordCount, estimateReadTime } from '@/lib/utils';
 import {
   Tooltip,
   TooltipContent,
@@ -18,6 +19,10 @@ export function TeleprompterPage() {
   const [isRecording, setIsRecording] = useState(false);
   const [stealthMode, setStealthMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  // Auto-scroll state
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [scrollSpeed, setScrollSpeed] = useState(5); // 1 to 20
+  const requestRef = useRef<number>();
   const contentRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (id) {
@@ -26,16 +31,54 @@ export function TeleprompterPage() {
         .catch(() => toast.error('Story lost in the void'));
     }
   }, [id]);
+  const animate = useCallback(() => {
+    if (isScrolling) {
+      window.scrollBy(0, scrollSpeed / 5);
+    }
+    const element = document.documentElement;
+    const totalHeight = element.scrollHeight - element.clientHeight;
+    const currentScroll = element.scrollTop;
+    setScrollProgress(totalHeight > 0 ? (currentScroll / totalHeight) * 100 : 0);
+    requestRef.current = requestAnimationFrame(animate);
+  }, [isScrolling, scrollSpeed]);
   useEffect(() => {
-    const handleScroll = () => {
-      const element = document.documentElement;
-      const totalHeight = element.scrollHeight - element.clientHeight;
-      const currentScroll = element.scrollTop;
-      setScrollProgress((currentScroll / totalHeight) * 100);
+    requestRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+  }, [animate]);
+  // Keyboard controls
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setIsScrolling(prev => !prev);
+      }
+      if (e.code === 'Escape') {
+        setStealthMode(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+  const generateReport = useCallback(() => {
+    if (!story) return '';
+    const now = new Date().toLocaleString();
+    const words = wordCount(story.content);
+    return `--- INVITE ME IN: BROADCAST REPORT ---
+Title: ${story.title}
+Source: ${story.source}
+Date: ${now}
+Word Count: ${words}
+Est. Duration: ${estimateReadTime(story.content)}
+Status: ${isRecording ? 'RECORDED' : 'READ ONLY'}
+---------------------------------------`;
+  }, [story, isRecording]);
+  const handleShare = () => {
+    const report = generateReport();
+    navigator.clipboard.writeText(report);
+    toast.success('Broadcast report copied to clipboard.');
+  };
   const markRecorded = async () => {
     if (!id) return;
     try {
@@ -43,10 +86,11 @@ export function TeleprompterPage() {
         method: 'PATCH',
         body: JSON.stringify({ isRecorded: true })
       });
-      toast.success('Broadcast archived in the crypt!');
+      handleShare();
+      toast.success('Tale archived in the permanent crypt!');
       navigate('/');
     } catch (err) {
-      toast.error('Failed to mark as recorded');
+      toast.error('Failed to seal the archive');
     }
   };
   if (!story) return (
@@ -59,55 +103,63 @@ export function TeleprompterPage() {
     <div className={`bg-[#020005] min-h-screen transition-opacity duration-1000 ${stealthMode ? 'cursor-none' : ''}`}>
       {/* HUD Header */}
       {!stealthMode && (
-        <div className="border-b border-white/10 p-6 flex justify-between items-center bg-black/90 sticky top-0 z-50 backdrop-blur-xl">
-          <div className="flex items-center gap-8">
+        <div className="border-b border-white/10 p-4 md:p-6 flex flex-col md:flex-row justify-between items-center bg-black/90 sticky top-0 z-50 backdrop-blur-xl gap-4">
+          <div className="flex items-center gap-4 md:gap-8 w-full md:w-auto">
             <Link to="/" className="text-white hover:text-slime-green transition-all hover:scale-105">
               <ArrowLeft className="w-8 h-8" />
             </Link>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-3">
-                <h1 className="font-gothic text-2xl text-white tracking-wider truncate max-w-md">
+                <h1 className="font-gothic text-xl md:text-2xl text-white tracking-wider truncate max-w-[200px] md:max-w-md">
                   {story.title}
                 </h1>
-                <span className="text-phantom-pink font-pixel text-[10px] border border-phantom-pink/40 px-2 py-0.5 rounded-sm">HUD_STATION_v2.0</span>
+                <span className="hidden sm:inline-block text-phantom-pink font-pixel text-[10px] border border-phantom-pink/40 px-2 py-0.5 rounded-sm">HUD_STATION_v3.1</span>
               </div>
-              <p className="font-pixel text-xs text-phantom-pink/60 uppercase tracking-widest mt-1">MORALLY GRIM PRODUCTION // {story.source}</p>
+              <p className="font-pixel text-[10px] md:text-xs text-phantom-pink/60 uppercase tracking-widest mt-1 truncate">
+                {story.source} // {wordCount(story.content)} WORDS
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="flex bg-black border border-white/20 font-pixel text-lg">
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 w-full md:w-auto">
+            {/* Scroll Controls */}
+            <div className="flex items-center bg-black border border-white/20 p-1 gap-2 rounded-sm shadow-inner">
               <button
-                onClick={() => setFontSize(s => Math.max(16, s - 4))}
-                className="px-4 py-1 hover:bg-white hover:text-black transition-colors"
+                onClick={() => setIsScrolling(!isScrolling)}
+                className={`p-2 transition-colors rounded-sm ${isScrolling ? 'bg-phantom-pink text-white' : 'text-white/60 hover:text-white'}`}
               >
-                -
+                {isScrolling ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current" />}
               </button>
-              <div className="px-6 py-1 min-w-[70px] text-center border-x border-white/10 text-white">{fontSize}</div>
+              <div className="flex items-center gap-3 px-3 border-l border-white/10">
+                <Sliders className="w-4 h-4 text-slime-green" />
+                <input 
+                  type="range" min="1" max="20" step="1"
+                  value={scrollSpeed}
+                  onChange={(e) => setScrollSpeed(Number(e.target.value))}
+                  className="w-24 accent-slime-green cursor-pointer"
+                />
+                <span className="font-pixel text-xs text-slime-green w-4 text-center">{scrollSpeed}</span>
+              </div>
               <button
-                onClick={() => setFontSize(s => Math.min(96, s + 4))}
-                className="px-4 py-1 hover:bg-white hover:text-black transition-colors"
+                onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setIsScrolling(false); }}
+                className="p-2 text-white/40 hover:text-white transition-colors"
+                title="Reset Scroll"
               >
-                +
+                <RotateCcw className="w-4 h-4" />
               </button>
             </div>
-            <button
-              onClick={() => setIsRecording(!isRecording)}
-              className={`flex items-center gap-3 px-6 py-2 font-pixel text-lg border-2 transition-all ${
-                isRecording
-                  ? 'bg-blood-red border-phantom-pink text-white shadow-[0_0_15px_rgba(212,20,90,0.4)]'
-                  : 'bg-black border-white/20 text-white/60 hover:border-white hover:text-white'
-              }`}
-            >
-              <div className={`w-3 h-3 rounded-full ${isRecording ? 'bg-white animate-pulse' : 'bg-white/20'}`} />
-              {isRecording ? 'ON AIR' : 'START REC'}
-            </button>
+            {/* Font Size */}
+            <div className="flex bg-black border border-white/20 font-pixel text-lg">
+              <button onClick={() => setFontSize(s => Math.max(16, s - 4))} className="px-3 py-1 hover:bg-white hover:text-black">-</button>
+              <div className="px-4 py-1 min-w-[50px] text-center border-x border-white/10 text-white text-sm flex items-center">{fontSize}</div>
+              <button onClick={() => setFontSize(s => Math.min(96, s + 4))} className="px-3 py-1 hover:bg-white hover:text-black">+</button>
+            </div>
             <div className="flex gap-2">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => setStealthMode(true)}
-                      className="p-3 border border-white/20 bg-black text-white/60 hover:text-white hover:border-white transition-colors"
+                      className="p-2.5 border border-white/20 bg-black text-white/60 hover:text-white hover:border-white transition-colors"
                     >
                       <Eye className="w-5 h-5" />
                     </button>
@@ -118,8 +170,15 @@ export function TeleprompterPage() {
                 </Tooltip>
               </TooltipProvider>
               <button
+                onClick={handleShare}
+                className="p-2.5 border border-white/20 bg-black text-white/60 hover:text-white hover:border-white transition-colors"
+                title="Copy Session Report"
+              >
+                <Share2 className="w-5 h-5" />
+              </button>
+              <button
                 onClick={markRecorded}
-                className="bg-white text-black px-8 py-2 font-gothic text-lg hover:bg-slime-green transition-colors font-bold"
+                className="bg-white text-black px-6 py-1.5 font-gothic text-sm hover:bg-slime-green transition-colors font-bold uppercase tracking-widest"
               >
                 FINISH
               </button>
@@ -134,7 +193,7 @@ export function TeleprompterPage() {
           className="fixed top-8 right-8 z-[100] p-4 bg-black/40 hover:bg-white border border-white/10 hover:border-black text-transparent hover:text-black transition-all group"
         >
           <Minimize2 className="w-8 h-8" />
-          <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 font-pixel text-black bg-white px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">EXIT STEALTH</span>
+          <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 font-pixel text-black bg-white px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">EXIT STEALTH (ESC)</span>
         </button>
       )}
       {/* Bleeding Progress Bar */}
@@ -166,12 +225,24 @@ export function TeleprompterPage() {
         </div>
       </div>
       {/* Recording Overlay Indicator */}
-      {isRecording && (
-        <div className="fixed bottom-12 right-12 flex items-center gap-4 bg-blood-red text-white px-8 py-4 font-gothic text-2xl border border-phantom-pink z-50 shadow-[0_0_20px_rgba(74,4,4,0.6)]">
-          <Radio className="w-6 h-6 animate-pulse" />
-          ON AIR
-        </div>
-      )}
+      <div className="fixed bottom-12 right-12 flex flex-col gap-3 z-50">
+        <button
+          onClick={() => setIsRecording(!isRecording)}
+          className={`flex items-center gap-4 px-6 py-3 font-gothic text-xl border transition-all ${
+            isRecording
+              ? 'bg-blood-red border-phantom-pink text-white shadow-[0_0_20px_rgba(212,20,90,0.5)]'
+              : 'bg-black/60 border-white/20 text-white/40 hover:text-white'
+          }`}
+        >
+          <div className={`w-3 h-3 rounded-full ${isRecording ? 'bg-white animate-pulse' : 'bg-white/20'}`} />
+          {isRecording ? 'ON AIR' : 'START SESSION'}
+        </button>
+        {isScrolling && (
+          <div className="bg-slime-green/10 border border-slime-green/30 text-slime-green font-pixel text-[10px] px-3 py-1 text-center animate-pulse">
+            AUTO-SCROLL ACTIVE
+          </div>
+        )}
+      </div>
     </div>
   );
 }
