@@ -48,11 +48,14 @@ export function HomePage() {
     }
   };
   const filteredStories = stories.filter(s => {
-    const matchesKind = kindFilter === 'all' || s.kind === kindFilter || (kindFilter === 'email' && s.kind === 'submission');
+    const isInbox = s.kind === 'email' || s.kind === 'submission';
+    const matchesKind = 
+      kindFilter === 'all' || 
+      (kindFilter === 'email' ? isInbox : s.kind === kindFilter);
     const matchesStatus = statusFilter === 'all' || (statusFilter === 'unread' ? !s.isRecorded : s.isRecorded);
     return matchesKind && matchesStatus;
   });
-  const featuredStory = stories.find(s => s.id === zine?.featuredStoryId);
+  const featuredStory = zine?.featuredStoryId ? stories.find(s => s.id === zine.featuredStoryId) : null;
   return (
     <div className="min-h-screen flex flex-col relative bg-nocturnal-purple/5">
       <VampiricAtmosphere />
@@ -83,14 +86,12 @@ export function HomePage() {
           </div>
           {/* MIDNIGHT ZINE HERO */}
           {!loading && zine && (
-            <section className="mb-24">
-              <div className="text-center mb-16">
+            <section className="mb-24 space-y-16">
+              <div className="text-center">
                 <h1 className="gothic-header text-6xl md:text-9xl mb-4 tracking-[0.3em] animate-pulse-glow">THE MIDNIGHT ZINE</h1>
                 <p className="font-pixel text-xl text-slime-green/60 uppercase tracking-[0.5em]">Issue: {new Date(zine.lastUpdated).toLocaleDateString()} // VOL. 4</p>
               </div>
-              
               <SubmissionHero />
-
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Left Side: Introit */}
                 <div className="lg:col-span-4 flex flex-col gap-10">
@@ -117,10 +118,10 @@ export function HomePage() {
                 {/* Right Side: Featured Card */}
                 <div className="lg:col-span-8">
                   <div className="relative aspect-[16/9] lg:aspect-auto lg:h-full border-4 border-white/10 group overflow-hidden shadow-2xl">
-                    <img 
-                      src={zine.coverImageUrl} 
-                      className="absolute inset-0 w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100" 
-                      alt="Zine Cover" 
+                    <img
+                      src={zine.coverImageUrl}
+                      className="absolute inset-0 w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
+                      alt="Zine Cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-12 flex flex-col items-start gap-6">
@@ -157,12 +158,12 @@ export function HomePage() {
           <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
             <h2 className="font-gothic text-4xl text-white/20 tracking-widest">ARCHIVES</h2>
             <div className="flex flex-wrap justify-center gap-2 p-1.5 bg-black/60 border border-white/5 rounded-sm font-pixel max-w-full">
-              {(['all', 'story', 'email', 'submission'] as const).map(k => (
+              {(['all', 'story', 'email'] as const).map(k => (
                 <button
                   key={k}
                   onClick={() => setKindFilter(k)}
                   className={cn(
-                    "px-8 py-2.5 transition-all text-sm tracking-widest whitespace-nowrap uppercase",
+                    "px-10 py-2.5 transition-all text-sm tracking-widest whitespace-nowrap uppercase",
                     kindFilter === k ? "bg-slime-green text-black" : "text-white/40 hover:text-white"
                   )}
                 >
@@ -182,10 +183,10 @@ export function HomePage() {
             </div>
           </div>
           {loading ? (
-            <div className="py-32 text-center font-gothic text-3xl animate-pulse tracking-widest opacity-40">INVOKING DATABASE...</div>
+            <div className="py-32 text-center font-gothic text-3xl animate-pulse tracking-widest opacity-40 uppercase">Invoking Database...</div>
           ) : filteredStories.length === 0 ? (
             <div className="retro-panel py-48 text-center border-dashed border-white/10 bg-black/20">
-              <p className="font-gothic text-6xl mb-6 text-white/10">VOID_DETECTED</p>
+              <p className="font-gothic text-6xl mb-6 text-white/10 uppercase">Void_Detected</p>
               <p className="font-pixel text-2xl text-white/5 tracking-[0.3em] uppercase">The archive is empty of souls.</p>
             </div>
           ) : (
@@ -218,7 +219,7 @@ export function HomePage() {
                     <h3 className="font-gothic text-2xl text-white/90 mb-4 line-clamp-2 min-h-[4rem] group-hover:text-slime-green transition-colors leading-relaxed">
                       {story.title}
                     </h3>
-                    <p className="font-pixel text-xs text-white/40 mb-8 truncate tracking-wider">
+                    <p className="font-pixel text-xs text-white/40 mb-8 truncate tracking-wider uppercase">
                       {story.kind === 'story' ? `SOURCE: ${story.source}` : `SENDER: ${story.source}`}
                     </p>
                     <div className="mb-10 font-mono text-sm text-white/20 line-clamp-3 leading-relaxed h-[4.5rem]">

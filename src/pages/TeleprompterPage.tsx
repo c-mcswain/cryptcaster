@@ -37,15 +37,15 @@ export function TeleprompterPage() {
     const totalHeight = element.scrollHeight - element.clientHeight;
     const currentScroll = element.scrollTop;
     if (isScrollingRef.current) {
-      if (currentScroll < totalHeight - 2) {
+      if (currentScroll < totalHeight - 1) {
         window.scrollBy(0, scrollSpeedRef.current / 4);
       } else {
         setIsScrolling(false);
       }
     }
-    if (progressBarRef.current && totalHeight > 0) {
-      const progress = (currentScroll / totalHeight) * 100;
-      progressBarRef.current.style.width = `${progress}%`;
+    if (progressBarRef.current) {
+      const progress = totalHeight > 0 ? (currentScroll / totalHeight) * 100 : 0;
+      progressBarRef.current.style.width = `${Math.min(100, progress)}%`;
     }
     requestRef.current = requestAnimationFrame(animate);
   }, []);
@@ -64,7 +64,6 @@ export function TeleprompterPage() {
   }, []);
   const getYoutubeId = (url?: string) => {
     if (!url) return null;
-    // Fixed regex: removed unnecessary escapes for & and ? to resolve lint errors
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
@@ -72,7 +71,7 @@ export function TeleprompterPage() {
   const generateReport = useCallback(() => {
     if (!story) return '';
     const now = new Date().toLocaleString();
-    return `--- INVITE ME IN: ${story.kind?.toUpperCase()} ---
+    return `--- INVITE ME IN: ${story.kind?.toUpperCase() || 'STORY'} ---
 Title: ${story.title.toUpperCase()}
 Source: ${story.source}
 TicketID: ${story.metadata?.ticketId || 'N/A'}
@@ -96,7 +95,7 @@ Status: TOMB SEALED
       toast.error('Failed to seal the tomb');
     }
   };
-  if (!story) return <div className="bg-black min-h-screen flex items-center justify-center font-gothic text-3xl text-white/20 tracking-widest">UNSEALING...</div>;
+  if (!story) return <div className="bg-black min-h-screen flex items-center justify-center font-gothic text-3xl text-white/20 tracking-widest uppercase">Unsealing Record...</div>;
   const ytId = getYoutubeId(story.mediaUrl);
   return (
     <div className={cn("bg-[#010003] min-h-screen transition-all duration-1000", stealthMode && "cursor-none")}>
