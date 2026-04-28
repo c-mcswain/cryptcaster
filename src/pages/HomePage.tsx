@@ -17,7 +17,6 @@ export function HomePage() {
   const [kindFilter, setKindFilter] = useState<'all' | 'story' | 'email' | 'submission'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'unread' | 'recorded'>('all');
   const { isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
   const fetchData = async () => {
     try {
       const [storiesRes, zineRes] = await Promise.all([
@@ -49,8 +48,8 @@ export function HomePage() {
   };
   const filteredStories = stories.filter(s => {
     const isInbox = s.kind === 'email' || s.kind === 'submission';
-    const matchesKind = 
-      kindFilter === 'all' || 
+    const matchesKind =
+      kindFilter === 'all' ||
       (kindFilter === 'email' ? isInbox : s.kind === kindFilter);
     const matchesStatus = statusFilter === 'all' || (statusFilter === 'unread' ? !s.isRecorded : s.isRecorded);
     return matchesKind && matchesStatus;
@@ -63,8 +62,8 @@ export function HomePage() {
         <div className="py-8 md:py-10 lg:py-12">
           {/* HEADER / NAVIGATION */}
           <div className="flex justify-between items-center mb-12">
-            <div className="flex items-center gap-4">
-              <Skull className="w-8 h-8 text-slime-green" />
+            <div className="flex items-center gap-4 group cursor-default">
+              <Skull className="w-8 h-8 text-slime-green group-hover:rotate-12 transition-transform" />
               <div className="font-pixel text-lg tracking-widest text-white/40 uppercase">MORALLY GRIM ARCHIVES</div>
             </div>
             <div className="flex gap-4">
@@ -98,7 +97,7 @@ export function HomePage() {
                    <div className="retro-window border-white/10 flex-1">
                       <div className="retro-window-header bg-white/10 text-white italic">The Editor's Introit</div>
                       <div className="p-8 bg-black/40 font-mono text-sm leading-relaxed text-white/50 italic space-y-6">
-                        <p>"{zine.intro}"</p>
+                        <p className="indent-8">"{zine.intro}"</p>
                         <div className="pt-6 border-t border-white/5 font-pixel text-xs text-slime-green tracking-widest not-italic">
                           — {zine.editorName.toUpperCase()}
                         </div>
@@ -117,14 +116,14 @@ export function HomePage() {
                 </div>
                 {/* Right Side: Featured Card */}
                 <div className="lg:col-span-8">
-                  <div className="relative aspect-[16/9] lg:aspect-auto lg:h-full border-4 border-white/10 group overflow-hidden shadow-2xl">
-                    <img 
-                      src={zine.coverImageUrl} 
+                  <div className="relative aspect-video lg:aspect-auto lg:h-full border-4 border-white/10 group overflow-hidden shadow-2xl">
+                    <img
+                      src={zine.coverImageUrl}
                       className="absolute inset-0 w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
                       alt="Zine Cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-12 flex flex-col items-start gap-6">
+                    <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 flex flex-col items-start gap-6">
                       <div className="flex items-center gap-4 bg-phantom-pink px-4 py-1 text-black font-pixel text-xs uppercase tracking-widest animate-mist">
                         <Zap className="w-3 h-3 fill-current" /> Featured This Week
                       </div>
@@ -135,7 +134,7 @@ export function HomePage() {
                         {featuredStory?.content || "The void is quiet tonight. Check back soon for the next featured narrative."}
                       </p>
                       {featuredStory && (
-                        <Link to={`/read/${featuredStory.id}`} className="retro-button-pink text-2xl font-gothic px-12 py-5 mt-4 group">
+                        <Link to={`/read/${featuredStory.id}`} className="retro-button-pink text-xl md:text-2xl font-gothic px-8 md:px-12 py-4 md:py-5 mt-4 group">
                           READ THE TALE <ChevronRight className="inline-block w-6 h-6 group-hover:translate-x-2 transition-transform" />
                         </Link>
                       )}
@@ -146,36 +145,36 @@ export function HomePage() {
             </section>
           )}
           {/* ACTION BAR */}
-          <div className="mt-20 mb-16 flex flex-wrap justify-center gap-8 border-y border-white/5 py-12">
-              <Link to="/add" className="retro-button-pink px-12 py-4 font-gothic text-xl flex items-center gap-4 transition-transform hover:scale-105 active:scale-100">
+          <div className="mt-20 mb-16 flex flex-wrap justify-center gap-6 md:gap-8 border-y border-white/5 py-12">
+              <Link to="/add" className="retro-button-pink px-10 md:px-12 py-4 font-gothic text-lg md:text-xl flex items-center gap-4 transition-transform hover:scale-105 active:scale-100">
                 <Plus className="w-5 h-5" /> NEW INGESTION
               </Link>
-              <Link to="/submit" className="retro-button px-12 py-4 font-gothic text-xl flex items-center gap-4 border-slime-green transition-transform hover:scale-105 active:scale-100">
+              <Link to="/submit" className="retro-button px-10 md:px-12 py-4 font-gothic text-lg md:text-xl flex items-center gap-4 border-slime-green transition-transform hover:scale-105 active:scale-100">
                 <Send className="w-5 h-5" /> SUBMIT TALE
               </Link>
           </div>
           {/* ARCHIVE SECTION */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
-            <h2 className="font-gothic text-4xl text-white/20 tracking-widest">ARCHIVES</h2>
+            <h2 className="font-gothic text-4xl text-white/20 tracking-widest uppercase">Archives</h2>
             <div className="flex flex-wrap justify-center gap-2 p-1.5 bg-black/60 border border-white/5 rounded-sm font-pixel max-w-full">
               {(['all', 'story', 'email'] as const).map(k => (
-                <button 
-                  key={k} 
+                <button
+                  key={k}
                   onClick={() => setKindFilter(k)}
                   className={cn(
-                    "px-10 py-2.5 transition-all text-sm tracking-widest whitespace-nowrap uppercase",
-                    kindFilter === k ? "bg-slime-green text-black" : "text-white/40 hover:text-white"
+                    "px-6 md:px-10 py-2.5 transition-all text-sm tracking-widest whitespace-nowrap uppercase",
+                    kindFilter === k ? "bg-slime-green text-black shadow-[0_0_15px_rgba(40,167,69,0.3)]" : "text-white/40 hover:text-white"
                   )}
                 >
                   {k === 'email' ? 'INBOX' : k}
                 </button>
               ))}
             </div>
-            <div className="flex gap-6 font-pixel text-base">
+            <div className="flex gap-4 md:gap-6 font-pixel text-base">
                {(['all', 'unread', 'recorded'] as const).map(s => (
-                <button 
+                <button
                   key={s} onClick={() => setStatusFilter(s)}
-                  className={cn("border-b-2 px-6 py-2 transition-colors uppercase tracking-widest", statusFilter === s ? "border-phantom-pink text-phantom-pink" : "border-transparent text-white/30 hover:text-white/60")}
+                  className={cn("border-b-2 px-4 md:px-6 py-2 transition-colors uppercase tracking-widest", statusFilter === s ? "border-phantom-pink text-phantom-pink" : "border-transparent text-white/30 hover:text-white/60")}
                 >
                   {s}
                 </button>
@@ -229,16 +228,16 @@ export function HomePage() {
                       <Link to={`/read/${story.id}`} className="retro-button flex-1 py-4 text-base flex items-center justify-center gap-3 font-gothic tracking-widest hover:scale-[1.02] transition-transform">
                         <Skull className="w-5 h-5 fill-current" /> OPEN TOMB
                       </Link>
-                      {(story.kind === 'email' || story.kind === 'submission') && (
+                      {(story.kind === 'email' || story.kind === 'submission') && isAuthenticated && (
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <button 
-                                type="button" 
+                              <button
+                                type="button"
                                 onClick={() => handleConvertToStory(story.id)}
-                                className="border border-white/5 hover:border-white/20 bg-noir-gray/50 px-5 transition-all text-white/30 hover:text-white"
+                                className="border border-white/5 hover:border-slime-green/40 bg-noir-gray/50 px-5 transition-all text-white/30 hover:text-slime-green group/zap"
                               >
-                                <Zap className="w-5 h-5" />
+                                <Zap className="w-5 h-5 group-hover/zap:fill-slime-green" />
                               </button>
                             </TooltipTrigger>
                             <TooltipContent className="bg-black border border-white/20 font-pixel text-xs">PROMOTE TO NARRATIVE</TooltipContent>

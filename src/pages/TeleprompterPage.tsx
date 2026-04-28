@@ -17,8 +17,16 @@ export function TeleprompterPage() {
   const [scrollSpeed, setScrollSpeed] = useState(5);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
+  const isMounted = useRef(true);
   const isScrollingRef = useRef(isScrolling);
   const scrollSpeedRef = useRef(scrollSpeed);
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
+  }, []);
   useEffect(() => {
     isScrollingRef.current = isScrolling;
   }, [isScrolling]);
@@ -33,19 +41,21 @@ export function TeleprompterPage() {
     }
   }, [id]);
   const animate = useCallback(() => {
+    if (!isMounted.current) return;
     const element = document.documentElement;
     const totalHeight = element.scrollHeight - element.clientHeight;
     const currentScroll = element.scrollTop;
     if (isScrollingRef.current) {
-      if (currentScroll < totalHeight - 1) {
+      // Recalculate totalHeight every frame to handle dynamic font/content changes
+      if (currentScroll < totalHeight - 0.5) {
         window.scrollBy(0, scrollSpeedRef.current / 4);
       } else {
         setIsScrolling(false);
       }
     }
     if (progressBarRef.current) {
-      const progress = totalHeight > 0 ? (currentScroll / totalHeight) * 100 : 0;
-      progressBarRef.current.style.width = `${Math.min(100, progress)}%`;
+      const progress = totalHeight > 0 ? (currentScroll / totalHeight) * 100 : (currentScroll > 0 ? 100 : 0);
+      progressBarRef.current.style.width = `${Math.min(100, Math.max(0, progress))}%`;
     }
     requestRef.current = requestAnimationFrame(animate);
   }, []);
@@ -98,16 +108,16 @@ Status: TOMB SEALED
   if (!story) return <div className="bg-black min-h-screen flex items-center justify-center font-gothic text-3xl text-white/20 tracking-widest uppercase">Unsealing Record...</div>;
   const ytId = getYoutubeId(story.mediaUrl);
   return (
-    <div className={cn("bg-[#010003] min-h-screen transition-all duration-1000", stealthMode && "cursor-none")}>
+    <div className={cn("bg-[#010003] min-h-screen transition-all duration-1000 selection:bg-phantom-pink selection:text-white", stealthMode && "cursor-none")}>
       {!stealthMode && (
         <div className="border-b border-white/5 p-6 md:px-12 flex flex-col md:flex-row justify-between items-center bg-black/95 sticky top-0 z-[100] backdrop-blur-3xl gap-6">
           <div className="flex items-center gap-6 md:gap-10 w-full md:w-auto">
             <Link to="/" className="text-white/40 hover:text-slime-green transition-all"><ArrowLeft className="w-10 h-10" /></Link>
             <div className="min-w-0">
               <div className="flex items-center gap-4">
-                {story.kind === 'email' ? <Mail className="w-6 h-6 text-phantom-pink" /> : <ScrollText className="w-6 h-6 text-slime-green" />}
+                {story.kind === 'email' || story.kind === 'submission' ? <Mail className="w-6 h-6 text-phantom-pink" /> : <ScrollText className="w-6 h-6 text-slime-green" />}
                 <h1 className="font-gothic text-2xl text-white/90 truncate max-w-sm uppercase tracking-wider">{story.title}</h1>
-                <span className={cn("font-pixel text-xs px-3 py-0.5 border", story.kind === 'email' ? "border-phantom-pink text-phantom-pink" : "border-slime-green text-slime-green")}>
+                <span className={cn("font-pixel text-xs px-3 py-0.5 border", (story.kind === 'email' || story.kind === 'submission') ? "border-phantom-pink text-phantom-pink" : "border-slime-green text-slime-green")}>
                   {story.kind?.toUpperCase() || 'STORY'}
                 </span>
               </div>
@@ -153,7 +163,7 @@ Status: TOMB SEALED
       <div className="fixed bottom-0 left-0 w-full h-1 bg-black z-[110]">
         <div
           ref={progressBarRef}
-          className="h-full bg-blood-red/80 transition-all duration-300 shadow-[0_0_10px_rgba(61,3,3,0.5)] w-0"
+          className="h-full bg-blood-red/80 transition-all duration-300 shadow-[0_0_10px_rgba(61,3,3,0.8)] w-0"
         />
       </div>
       <main className="max-w-4xl mx-auto px-10 pt-40 pb-96 relative z-10">
@@ -196,9 +206,14 @@ Status: TOMB SEALED
       <div className="fixed bottom-12 right-12 flex flex-col items-end gap-6 z-[120]">
         <button
           onClick={() => setIsRecording(prev => !prev)}
-          className={cn("flex items-center gap-5 px-10 py-5 font-gothic text-xl border transition-all duration-700", isRecording ? "bg-blood-red/90 border-phantom-pink text-white shadow-[0_0_30px_rgba(179,27,77,0.4)]" : "bg-black/60 text-white/20 border-white/5 hover:border-white/20")}
+          className={cn(
+            "flex items-center gap-5 px-10 py-5 font-gothic text-xl border transition-all duration-700", 
+            isRecording 
+              ? "bg-blood-red/90 border-phantom-pink text-white shadow-[0_0_40px_rgba(179,27,77,0.6)] scale-110" 
+              : "bg-black/60 text-white/20 border-white/5 hover:border-white/20"
+          )}
         >
-          <div className={cn("w-3 h-3 rounded-full", isRecording ? "bg-white animate-blink" : "bg-white/10")} />
+          <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", isRecording ? "bg-white animate-blink" : "bg-white/10")} />
           <span className="tracking-[0.2em]">{isRecording ? 'ON AIR' : 'START SESSION'}</span>
         </button>
       </div>
