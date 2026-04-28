@@ -30,7 +30,7 @@ export class ZineEntity extends IndexedEntity<ZineContent> {
       "Vampire Facial Giveaway: Win a pint of O-Negative"
     ],
     featuredStoryId: null,
-    coverImageUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop",
+    coverImageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
     lastUpdated: Date.now(),
     editorName: "CreepQueen",
     advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
@@ -46,7 +46,7 @@ export class ZineEntity extends IndexedEntity<ZineContent> {
         "Vampire Facial Giveaway: Win a pint of O-Negative"
       ],
       featuredStoryId: "s7",
-      coverImageUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop",
+      coverImageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
       lastUpdated: Date.now(),
       editorName: "CreepQueen",
       advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."

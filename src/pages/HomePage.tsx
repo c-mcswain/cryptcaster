@@ -39,13 +39,12 @@ export function HomePage() {
       "Vampire Facial Giveaway: Win a pint of O-Negative"
     ],
     featuredStoryId: null,
-    coverImageUrl: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop',
+    coverImageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     lastUpdated: Date.now(),
     editorName: 'CreepQueen',
     advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
   };
   const featuredStory = displayZine.featuredStoryId ? stories.find(s => s.id === displayZine.featuredStoryId) : null;
-  // Refined noir/military formatting for the issue date
   const issueDate = new Date(displayZine.lastUpdated);
   const month = String(issueDate.getMonth() + 1).padStart(2, '0');
   const day = String(issueDate.getDate()).padStart(2, '0');
@@ -128,10 +127,10 @@ export function HomePage() {
                   <div className="relative aspect-video lg:aspect-[4/3] border-4 md:border-8 border-white/5 group overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)]">
                     <img
                       src={displayZine.coverImageUrl}
-                      className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-80 transition-all duration-[2000ms] scale-110 group-hover:scale-100"
+                      className="absolute inset-0 w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-70 transition-all duration-[2000ms] scale-110 group-hover:scale-100"
                       alt="Zine Cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:p-16 flex flex-col items-start gap-6 md:gap-10">
                       <div className="flex items-center gap-4 bg-phantom-pink px-6 py-2 text-black font-pixel text-sm uppercase tracking-[0.3em] shadow-lg">
                         <Zap className="w-4 h-4 fill-current" /> Featured Chronicle
@@ -145,9 +144,11 @@ export function HomePage() {
                           {featuredStory?.content && " ... [UNSEALED]"}
                         </p>
                       </div>
-                      <Link to={featuredStory ? `/read/${featuredStory.id}` : "#"} className="font-pixel text-lg text-slime-green border border-slime-green/40 px-8 py-3 bg-slime-green/5 hover:bg-slime-green hover:text-black transition-all uppercase tracking-[0.3em]">
-                        ACCESS FULL RECORD
-                      </Link>
+                      {featuredStory && (
+                        <Link to={`/read/${featuredStory.id}`} className="font-pixel text-lg text-slime-green border border-slime-green/40 px-8 py-3 bg-slime-green/5 hover:bg-slime-green hover:text-black transition-all uppercase tracking-[0.3em]">
+                          ACCESS FULL RECORD
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>
