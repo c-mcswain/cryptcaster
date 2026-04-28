@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Skull, Send, CheckCircle2, ArrowLeft, Mail } from 'lucide-react';
 import { api } from '@/lib/api-client';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import { VampiricAtmosphere } from '@/components/VampiricAtmosphere';
 import { motion, AnimatePresence } from 'framer-motion';
 export function SubmissionPage() {
@@ -24,8 +24,12 @@ export function SubmissionPage() {
         body: JSON.stringify(form)
       });
       setSubmitted(true);
+      toast.success('Pact sealed. We have your offering.');
     } catch (err) {
-      toast.error('The void rejected your offering. Try again later.');
+      toast.error('The void rejected your offering. Check your transmission.', {
+        description: 'Ensure all fields are valid and try again.',
+        className: 'font-pixel uppercase'
+      });
     } finally {
       setLoading(false);
     }
@@ -33,14 +37,16 @@ export function SubmissionPage() {
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
       <VampiricAtmosphere />
+      <Toaster theme="dark" position="bottom-right" richColors />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24 flex-1 z-10 w-full">
         <AnimatePresence mode="wait">
           {!submitted ? (
-            <motion.div 
+            <motion.div
               key="form"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+              exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+              transition={{ duration: 0.6 }}
             >
               <Link to="/" className="inline-flex items-center gap-3 text-white/40 font-pixel text-xl hover:text-phantom-pink transition-colors mb-12 group">
                 <ArrowLeft className="w-5 h-5 group-hover:-translate-x-2 transition-transform" />
@@ -61,7 +67,7 @@ export function SubmissionPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                       <label className="block font-pixel text-xs mb-3 text-white/40 tracking-widest uppercase">Your Name / Alias</label>
-                      <input 
+                      <input
                         required value={form.name}
                         onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                         className="w-full bg-noir-gray border border-white/5 p-4 text-white font-mono focus:border-phantom-pink transition-all outline-none"
@@ -70,7 +76,7 @@ export function SubmissionPage() {
                     </div>
                     <div>
                       <label className="block font-pixel text-xs mb-3 text-white/40 tracking-widest uppercase">Contact Email</label>
-                      <input 
+                      <input
                         required type="email" value={form.email}
                         onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                         className="w-full bg-noir-gray border border-white/5 p-4 text-white font-mono focus:border-phantom-pink transition-all outline-none"
@@ -80,7 +86,7 @@ export function SubmissionPage() {
                   </div>
                   <div>
                     <label className="block font-pixel text-xs mb-3 text-white/40 tracking-widest uppercase">Story Subject</label>
-                    <input 
+                    <input
                       required value={form.subject}
                       onChange={e => setForm(f => ({ ...f, subject: e.target.value }))}
                       className="w-full bg-noir-gray border border-white/5 p-4 text-white font-mono focus:border-phantom-pink transition-all outline-none"
@@ -89,7 +95,7 @@ export function SubmissionPage() {
                   </div>
                   <div>
                     <label className="block font-pixel text-xs mb-3 text-white/40 tracking-widest uppercase">The Tale (Full Content)</label>
-                    <textarea 
+                    <textarea
                       required rows={10} value={form.content}
                       onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
                       className="w-full bg-noir-gray border border-white/5 p-4 text-white font-mono leading-relaxed focus:border-phantom-pink transition-all outline-none resize-none"
@@ -98,14 +104,14 @@ export function SubmissionPage() {
                   </div>
                   <div>
                     <label className="block font-pixel text-xs mb-3 text-white/40 tracking-widest uppercase">Supporting Media URL (Optional)</label>
-                    <input 
+                    <input
                       value={form.mediaUrl}
                       onChange={e => setForm(f => ({ ...f, mediaUrl: e.target.value }))}
                       className="w-full bg-noir-gray border border-white/5 p-4 text-white font-mono focus:border-phantom-pink transition-all outline-none"
                       placeholder="YouTube link, Image gallery, etc."
                     />
                   </div>
-                  <button 
+                  <button
                     disabled={loading}
                     className="retro-button-pink w-full py-6 text-2xl font-gothic tracking-widest flex items-center justify-center gap-4 group"
                   >
@@ -120,26 +126,34 @@ export function SubmissionPage() {
               </div>
             </motion.div>
           ) : (
-            <motion.div 
+            <motion.div
               key="confirmation"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 100 }}
               className="text-center py-20"
             >
               <div className="flex justify-center mb-10">
                 <div className="relative">
-                  <CheckCircle2 className="w-24 h-24 text-slime-green animate-pulse" />
-                  <Skull className="w-8 h-8 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                  <motion.div 
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 bg-slime-green/20 blur-2xl rounded-full"
+                  />
+                  <CheckCircle2 className="w-24 h-24 text-slime-green animate-pulse relative z-10" />
+                  <Skull className="w-8 h-8 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20" />
                 </div>
               </div>
               <h2 className="gothic-header text-5xl mb-6 tracking-widest text-white">THE PACT IS SEALED</h2>
               <p className="font-pixel text-2xl text-slime-green/60 uppercase tracking-[0.3em] mb-12">Your tale has been filed into the crypt.</p>
-              <div className="max-w-md mx-auto p-8 border border-white/10 bg-noir-gray/50 mb-16 text-left">
+              <div className="max-w-md mx-auto p-8 border border-white/10 bg-noir-gray/50 mb-16 text-left relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-1 h-full bg-slime-green group-hover:h-0 transition-all duration-700" />
                 <p className="font-mono text-sm text-white/40 leading-relaxed uppercase">
                   Our creep queen will review your submission. If deemed worthy, it shall be broadcast to the world via the Morally Grim network.
                 </p>
               </div>
-              <Link to="/" className="retro-button px-16 py-4 text-xl font-gothic tracking-widest">
+              <Link to="/" className="retro-button px-16 py-4 text-xl font-gothic tracking-widest hover:scale-105 transition-transform inline-block">
                 RETURN TO HOME
               </Link>
             </motion.div>

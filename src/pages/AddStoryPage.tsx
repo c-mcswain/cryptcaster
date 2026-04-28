@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Info, Skull, Mail, ScrollText, Trash2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Info, ScrollText, Trash2, ShieldCheck, Mail } from 'lucide-react';
 import { api } from '@/lib/api-client';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import { RetroFooter } from '@/components/RetroFooter';
 import { VampiricAtmosphere } from '@/components/VampiricAtmosphere';
 import { useLocalStorage } from '@/hooks/use-local-storage';
@@ -26,7 +26,6 @@ export function AddStoryPage() {
       isInitialized.current = true;
     }
   }, [storyDraft, emailDraft]);
-  // Robust debounce for auto-save and visual feedback
   useEffect(() => {
     if (!isInitialized.current) return;
     const saveTimeout = setTimeout(() => {
@@ -44,7 +43,9 @@ export function AddStoryPage() {
   }), [storyForm.content, emailForm.content]);
   const handleStorySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!storyForm.title.trim() || !storyForm.content.trim()) return toast.error('Essential data fields are void.');
+    if (!storyForm.title.trim() || !storyForm.content.trim()) {
+      return toast.error('Essential data fields are void.', { className: 'font-pixel uppercase' });
+    }
     setLoading(true);
     try {
       await api('/api/stories', {
@@ -53,7 +54,7 @@ export function AddStoryPage() {
       });
       toast.success('Narrative sealed into archives.');
       clearStoryDraft();
-      navigate('/crypt');
+      setTimeout(() => navigate('/crypt'), 1000);
     } catch (err) {
       toast.error('Ingestion failed.');
     } finally {
@@ -62,7 +63,9 @@ export function AddStoryPage() {
   };
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!emailForm.subject.trim() || !emailForm.content.trim()) return toast.error('Subject and Body required.');
+    if (!emailForm.subject.trim() || !emailForm.content.trim()) {
+      return toast.error('Subject and Body required.', { className: 'font-pixel uppercase' });
+    }
     setLoading(true);
     try {
       const ticketId = `TKT-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
@@ -79,7 +82,7 @@ export function AddStoryPage() {
       });
       toast.success('Midnight post filed.');
       clearEmailDraft();
-      navigate('/crypt');
+      setTimeout(() => navigate('/crypt'), 1000);
     } catch (err) {
       toast.error('Ticket processing failed.');
     } finally {
@@ -89,6 +92,7 @@ export function AddStoryPage() {
   return (
     <div className={`min-h-screen flex flex-col relative transition-all duration-1000 ${isFocusMode ? 'bg-black' : 'bg-nocturnal-purple/5'}`}>
       <VampiricAtmosphere />
+      <Toaster theme="dark" position="bottom-right" richColors />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
         <div className="py-8 md:py-12">
           <AnimatePresence>

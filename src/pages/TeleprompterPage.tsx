@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Play, Pause, Eye, Skull, Mail, ScrollText, Video, ExternalLink } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story } from '@shared/types';
-import { toast } from 'sonner';
+import { Toaster, toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 export function TeleprompterPage() {
@@ -34,9 +34,11 @@ export function TeleprompterPage() {
     const currentY = window.scrollY;
     const totalHeight = element.scrollHeight - element.clientHeight;
     if (isScrolling && totalHeight > 0) {
-      // Check for manual interruption
+      // Robust manual override detection: 
+      // If the actual scroll position differs significantly from our expected internal reference,
+      // it means the user has manually scrolled.
       const drift = Math.abs(currentY - scrollPosRef.current);
-      if (drift > 15) { // More sensitive but stable threshold
+      if (drift > 20) { 
         setIsScrolling(false);
         scrollPosRef.current = currentY;
       } else {
@@ -56,7 +58,6 @@ export function TeleprompterPage() {
       // Keep internal ref synchronized with manual scrolling when auto-engine is off
       scrollPosRef.current = currentY;
     }
-    // Progress HUD Update
     if (progressBarRef.current) {
       const progress = totalHeight > 0 ? (currentY / totalHeight) * 100 : 0;
       progressBarRef.current.style.width = `${Math.min(100, Math.max(0, progress))}%`;
@@ -67,6 +68,7 @@ export function TeleprompterPage() {
     requestRef.current = requestAnimationFrame(animate);
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      lastTimeRef.current = 0; // Reset for potential re-mounts
     };
   }, [animate]);
   useEffect(() => {
@@ -86,7 +88,7 @@ export function TeleprompterPage() {
     try {
       await api(`/api/stories/${id}`, { method: 'PATCH', body: JSON.stringify({ isRecorded: true }) });
       toast.success('Session report filed. Tomb sealed.');
-      navigate('/crypt');
+      setTimeout(() => navigate('/crypt'), 1500);
     } catch (err) {
       toast.error('Failed to seal the tomb');
     }
@@ -95,6 +97,7 @@ export function TeleprompterPage() {
   const ytId = story.mediaUrl ? (story.mediaUrl.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/)?.[2] ?? null) : null;
   return (
     <div className={cn("bg-[#010003] min-h-screen transition-all duration-1000 selection:bg-phantom-pink selection:text-white", stealthMode && "cursor-none")}>
+      <Toaster theme="dark" position="bottom-right" richColors />
       {!stealthMode && (
         <div className="border-b border-white/5 p-6 md:px-12 flex flex-col md:flex-row justify-between items-center bg-black/95 sticky top-0 z-[100] backdrop-blur-3xl gap-6">
           <div className="flex items-center gap-6 md:gap-10 w-full md:w-auto">
@@ -184,20 +187,22 @@ export function TeleprompterPage() {
           </div>
         )}
       </main>
-      <div className="fixed bottom-12 right-12 flex flex-col items-end gap-6 z-[120]">
-        <button
-          onClick={() => setIsRecording(prev => !prev)}
-          className={cn(
-            "flex items-center gap-5 px-10 py-5 font-gothic text-xl border transition-all duration-700",
-            isRecording
-              ? "bg-blood-red border-phantom-pink text-white shadow-[0_0_40px_rgba(179,27,77,0.6)] scale-110"
-              : "bg-black/80 text-white/20 border-white/5 hover:border-white/20"
-          )}
-        >
-          <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", isRecording ? "bg-white animate-blink" : "bg-white/10")} />
-          <span className="tracking-[0.2em]">{isRecording ? 'ON AIR' : 'START SESSION'}</span>
-        </button>
-      </div>
+      {!stealthMode && (
+        <div className="fixed bottom-12 right-12 flex flex-col items-end gap-6 z-[120]">
+          <button
+            onClick={() => setIsRecording(prev => !prev)}
+            className={cn(
+              "flex items-center gap-5 px-10 py-5 font-gothic text-xl border transition-all duration-700",
+              isRecording
+                ? "bg-blood-red border-phantom-pink text-white shadow-[0_0_40px_rgba(179,27,77,0.6)] scale-110"
+                : "bg-black/80 text-white/20 border-white/5 hover:border-white/20"
+            )}
+          >
+            <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", isRecording ? "bg-white animate-blink" : "bg-white/10")} />
+            <span className="tracking-[0.2em]">{isRecording ? 'ON AIR' : 'START SESSION'}</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
