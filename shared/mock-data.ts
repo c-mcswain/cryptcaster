@@ -23,8 +23,32 @@ export const MOCK_STORIES: Story[] = [
     content: 'My daughter found an old Victorian doll in the attic. The weird part is, every morning we find it sitting at the breakfast table. We don’t have an attic.',
     isRecorded: false,
     createdAt: Date.now() - 345600000
+  },
+  {
+    id: 's4',
+    title: 'The Whispering Terminal',
+    source: 'Anonymous Dev Leak',
+    content: 'I left my IDE open overnight. When I came back, the git diff showed 4,000 lines of code I didn’t write. It wasn’t logic—it was a series of coordinates followed by the phrase "HE IS BREATHING" repeated in hex code.',
+    isRecorded: false,
+    createdAt: Date.now() - 50000000
+  },
+  {
+    id: 's5',
+    title: 'The 404 Signal',
+    source: 'Field Report: Agent X',
+    content: 'There is a 3-mile radius in the Pacific Northwest where no digital signal escapes. If you bring an analog radio, it plays the sound of crashing waves, even when you’re miles from the coast. Some listeners claim to hear a lighthouse bell ringing in the background.',
+    isRecorded: false,
+    createdAt: Date.now() - 120000000
+  },
+  {
+    id: 's6',
+    title: 'Echoes in the Server Rack',
+    source: 'Facility Log #66',
+    content: 'The temperature in Rack 7 always drops to exactly -4 degrees Celsius at midnight, regardless of the cooling system settings. Yesterday, we found frosted handprints on the inside of the glass casing. The server has no internal fans.',
+    isRecorded: true,
+    createdAt: Date.now() - 250000000
   }
 ];
-export const MOCK_USERS: User[] = [{ id: 'u1', name: 'CryptMaster' }];
+export const MOCK_USERS: User[] = [{ id: 'u1', name: 'CreepQueen' }];
 export const MOCK_CHATS: Chat[] = [{ id: 'c1', title: 'Crypt Talk' }];
 export const MOCK_CHAT_MESSAGES: ChatMessage[] = [];

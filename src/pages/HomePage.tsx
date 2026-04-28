@@ -37,7 +37,7 @@ export function HomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
         <div className="py-8 md:py-12">
           {/* PUBLIC HEADER */}
-          <div className="flex justify-between items-center mb-16">
+          <div className="flex justify-between items-center mb-12 md:mb-16">
             <div className="flex items-center gap-4 group cursor-default">
               <Skull className="w-8 h-8 text-slime-green group-hover:rotate-12 transition-transform" />
               <div className="font-pixel text-lg tracking-widest text-white/40 uppercase">MORALLY GRIM BROADCASTS</div>
@@ -59,18 +59,18 @@ export function HomePage() {
           </div>
           {/* MAIN ZINE CONTENT */}
           {!loading && zine && (
-            <section className="space-y-24 mb-32">
+            <section className="space-y-16 md:space-y-20 mb-20 md:mb-24">
               <div className="text-center">
-                <h1 className="gothic-header text-7xl md:text-[10rem] mb-6 tracking-[0.3em] animate-pulse-glow leading-none">THE MIDNIGHT ZINE</h1>
-                <p className="font-pixel text-2xl text-slime-green/60 uppercase tracking-[0.5em]">Issue: {new Date(zine.lastUpdated).toLocaleDateString()} // VOL. 04</p>
+                <h1 className="gothic-header text-6xl md:text-8xl lg:text-[10rem] mb-4 tracking-[0.3em] animate-pulse-glow leading-none">THE MIDNIGHT ZINE</h1>
+                <p className="font-pixel text-xl md:text-2xl text-slime-green/60 uppercase tracking-[0.5em]">Issue: {new Date(zine.lastUpdated).toLocaleDateString()} // VOL. 04</p>
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10">
                 {/* Left Side: Introit */}
-                <div className="lg:col-span-4 flex flex-col gap-10">
+                <div className="lg:col-span-4 flex flex-col gap-8 md:gap-10">
                    <div className="retro-window border-white/10 flex-1">
                       <div className="retro-window-header bg-white/10 text-white italic">Editorial Introit</div>
-                      <div className="p-8 bg-black/60 font-mono text-base leading-relaxed text-white/50 italic space-y-6">
-                        <p className="indent-8">"{zine.intro}"</p>
+                      <div className="p-6 md:p-8 bg-black/60 font-mono text-base leading-relaxed text-white/50 italic space-y-6">
+                        <p className="indent-8 leading-loose">"{zine.intro}"</p>
                         <div className="pt-6 border-t border-white/5 font-pixel text-xs text-slime-green tracking-widest not-italic">
                           — {zine.editorName.toUpperCase()}
                         </div>
@@ -81,7 +81,7 @@ export function HomePage() {
                       <ul className="space-y-4 font-pixel text-base text-white/40 tracking-widest uppercase">
                         {zine.announcements.map((a, i) => (
                           <li key={i} className="flex gap-4">
-                            <span className="text-phantom-pink animate-pulse">»</span> {a}
+                            <span className="text-phantom-pink animate-blink">»</span> {a}
                           </li>
                         ))}
                       </ul>
@@ -96,14 +96,14 @@ export function HomePage() {
                       alt="Zine Cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 flex flex-col items-start gap-6">
+                    <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 flex flex-col items-start gap-4 md:gap-6">
                       <div className="flex items-center gap-4 bg-phantom-pink px-5 py-2 text-black font-pixel text-sm uppercase tracking-widest">
                         <Zap className="w-4 h-4 fill-current" /> Featured Reading
                       </div>
-                      <h2 className="font-gothic text-5xl md:text-7xl text-white tracking-widest leading-tight">
+                      <h2 className="font-gothic text-4xl md:text-7xl text-white tracking-widest leading-tight">
                         {featuredStory?.title || "VOID SELECTION"}
                       </h2>
-                      <p className="font-mono text-xl text-white/70 line-clamp-2 max-w-2xl">
+                      <p className="font-mono text-lg md:text-xl text-white/70 line-clamp-2 max-w-2xl">
                         {featuredStory?.content || "The shadows remain silent this week. Check back for new unearthed chronicles."}
                       </p>
                     </div>
@@ -115,17 +115,17 @@ export function HomePage() {
           {/* MASSIVE CALL TO ACTION */}
           <SubmissionHero />
           {/* MISSION SECTION */}
-          <section className="py-32 border-t border-white/5 mt-32 max-w-4xl mx-auto text-center space-y-12">
+          <section className="py-20 md:py-32 border-t border-white/5 mt-16 md:mt-24 max-w-4xl mx-auto text-center space-y-12">
             <div className="flex justify-center gap-8 opacity-20">
-              <Ghost className="w-12 h-12" />
-              <Skull className="w-12 h-12" />
-              <MessageSquare className="w-12 h-12" />
+              <Ghost className="w-10 h-10 md:w-12 md:h-12" />
+              <Skull className="w-10 h-10 md:w-12 md:h-12" />
+              <MessageSquare className="w-10 h-10 md:w-12 md:h-12" />
             </div>
-            <h2 className="gothic-header text-5xl tracking-widest text-white/40 uppercase">A Morally Grim Production</h2>
-            <div className="font-mono text-xl text-white/30 leading-relaxed space-y-8 uppercase tracking-wider">
+            <h2 className="gothic-header text-4xl md:text-5xl tracking-widest text-white/40 uppercase">A Morally Grim Production</h2>
+            <div className="font-mono text-lg md:text-xl text-white/30 leading-relaxed space-y-8 uppercase tracking-wider">
               <p>
-                WE CURATE THE UNEXPLAINED, THE MALICIOUS, AND THE MORALLY GRIM. 
-                FROM LEAKED EMAILS TO FORGOTTEN ARCHIVES, THE CRYPTCASTER 
+                WE CURATE THE UNEXPLAINED, THE MALICIOUS, AND THE MORALLY GRIM.
+                FROM LEAKED EMAILS TO FORGOTTEN ARCHIVES, THE CRYPTCASTER
                 IS THE FINAL RESTING PLACE FOR THE TRUTH NO ONE WANTS TO HEAR.
               </p>
               <p className="text-slime-green/40">

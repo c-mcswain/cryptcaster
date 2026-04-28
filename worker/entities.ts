@@ -27,21 +27,21 @@ export class ZineEntity extends IndexedEntity<ZineContent> {
     featuredStoryId: null,
     coverImageUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop",
     lastUpdated: Date.now(),
-    editorName: "CryptMaster"
+    editorName: "CreepQueen"
   };
   static seedData = [
     {
       id: "singleton",
-      intro: "Welcome to the Midnight Zine. We've unearthed something special in the archives this week. Stay grim.",
+      intro: "Shadows whisper across the terminal, carrying the weight of a thousand unread screams. The Midnight Zine has returned to chronicle the morally grim. Stay vigilant.",
       announcements: [
-        "Live Reading Event: Oct 31st",
-        "Submission portal is LIVE",
-        "Merch restock in the shadow realm"
+        "The Shadow Market: Merch drop at midnight",
+        "Live Reading: The Mojave Static - Friday",
+        "Submit your chronicles or be forgotten"
       ],
-      featuredStoryId: "s1",
+      featuredStoryId: "s4",
       coverImageUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop",
       lastUpdated: Date.now(),
-      editorName: "CryptMaster"
+      editorName: "CreepQueen"
     }
   ];
 }
