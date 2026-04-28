@@ -25,7 +25,7 @@ export function AddStoryPage() {
       setEmailForm(emailDraft);
       isInitialized.current = true;
     }
-  }, []); // Only once on mount
+  }, [storyDraft, emailDraft]); // Only once on mount - stable useLocalStorage values
   // Sync back to storage with debounce
   useEffect(() => {
     if (!isInitialized.current) return;
@@ -34,7 +34,7 @@ export function AddStoryPage() {
       setEmailDraft(emailForm);
     }, 800);
     return () => clearTimeout(timeoutId);
-  }, [storyForm, emailForm, setStoryDraft, setEmailDraft]);
+  }, [storyForm, emailForm]);
   const stats = useMemo(() => ({
     story: { words: wordCount(storyForm.content), time: estimateReadTime(storyForm.content) },
     email: { words: wordCount(emailForm.content), time: estimateReadTime(emailForm.content) }
