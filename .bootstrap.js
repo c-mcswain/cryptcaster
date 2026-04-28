@@ -80,7 +80,7 @@ function runSetupCommands() {
     const commands = [
     "bun add react-intersection-observer@^9.5.3",
     "bun add react-intersection-observer",
-    "bun add lucide-react"
+    "bun add lucide-react react-router-dom framer-motion"
 ];
     
     if (commands.length === 0) {
