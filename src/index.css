@@ -1,39 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Almendra:ital,wght@0,400;0,700;1,400;1,700&family=Cinzel:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=VT323&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 @layer base {
   :root {
-    --background: 275 100% 5%;
-    --foreground: 84 100% 54%;
-    --primary: 84 100% 54%;
-    --primary-foreground: 275 100% 5%;
-    --muted: 275 50% 15%;
-    --muted-foreground: 326 100% 50%;
-    --border: 84 100% 54%;
-    --ring: 326 100% 50%;
-    --card: 275 100% 8%;
-    --card-foreground: 84 100% 54%;
-    --popover: 275 100% 5%;
-    --popover-foreground: 84 100% 54%;
-    --secondary: 326 100% 50%;
+    --background: 275 100% 3%;
+    --foreground: 120 100% 50%;
+    --primary: 120 100% 50%;
+    --primary-foreground: 275 100% 3%;
+    --muted: 275 50% 10%;
+    --muted-foreground: 345 100% 45%;
+    --border: 120 100% 50%;
+    --ring: 345 100% 45%;
+    --card: 275 100% 5%;
+    --card-foreground: 120 100% 50%;
+    --popover: 275 100% 3%;
+    --popover-foreground: 120 100% 50%;
+    --secondary: 345 100% 45%;
     --secondary-foreground: 0 0% 100%;
-    --accent: 84 100% 54%;
-    --accent-foreground: 275 100% 5%;
-    --destructive: 0 100% 50%;
+    --accent: 120 100% 50%;
+    --accent-foreground: 275 100% 3%;
+    --destructive: 0 100% 30%;
     --destructive-foreground: 0 0% 100%;
-    --input: 275 50% 15%;
+    --input: 275 50% 10%;
     --radius: 0px;
   }
   body {
-    @apply bg-[#0f001a] text-slime-green font-mono min-h-screen relative overflow-x-hidden;
-    background-image: 
-      radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.4) 100%),
-      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
-      linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-    background-size: 100% 100%, 100% 4px, 3px 100%;
+    @apply bg-black text-slime-green font-mono min-h-screen relative overflow-x-hidden;
+    background-color: #05000a;
   }
-  /* CRT Scanline Effect */
+  /* Refined CRT Scanline Effect */
   body::before {
     content: " ";
     display: block;
@@ -42,93 +38,42 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.04));
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.08) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
     z-index: 100;
-    background-size: 100% 3px, 3px 100%;
+    background-size: 100% 2px, 2px 100%;
     pointer-events: none;
-    opacity: 0.6;
-  }
-  body::after {
-    content: " ";
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: rgba(18, 16, 16, 0.05);
-    opacity: 0;
-    z-index: 101;
-    pointer-events: none;
-    animation: flicker 0.15s infinite;
+    opacity: 0.4;
   }
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
-    width: 16px;
+    width: 12px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-black border-l-4 border-slime-green;
+    @apply bg-black;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-slime-green border-4 border-black hover:bg-hot-pink transition-colors;
+    @apply bg-blood-red border border-nocturnal-purple hover:bg-phantom-pink transition-colors;
   }
-}
-@keyframes flicker {
-  0% { opacity: 0.27861; }
-  5% { opacity: 0.34769; }
-  10% { opacity: 0.23604; }
-  15% { opacity: 0.90626; }
-  20% { opacity: 0.18128; }
-  25% { opacity: 0.83891; }
-  30% { opacity: 0.65583; }
-  35% { opacity: 0.67807; }
-  40% { opacity: 0.26559; }
-  45% { opacity: 0.84693; }
-  50% { opacity: 0.96019; }
-  55% { opacity: 0.08594; }
-  60% { opacity: 0.20313; }
-  65% { opacity: 0.71988; }
-  70% { opacity: 0.53455; }
-  75% { opacity: 0.37288; }
-  80% { opacity: 0.71428; }
-  85% { opacity: 0.70419; }
-  90% { opacity: 0.7003; }
-  95% { opacity: 0.36108; }
-  100% { opacity: 0.24387; }
-}
-@keyframes neon-flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-    text-shadow: 
-      -0.1rem -0.1rem 0.5rem #fff,
-      0.1rem 0.1rem 0.5rem #fff,
-      0 0 1rem #39FF14,
-      0 0 2rem #39FF14,
-      0 0 3rem #39FF14,
-      0 0 4rem #39FF14;
-  }
-  20%, 22%, 24%, 55% {
-    text-shadow: none;
-    opacity: 0.5;
-  }
-}
-.animate-neon-flicker {
-  animation: neon-flicker 2s infinite alternate;
 }
 .retro-panel {
-  @apply bg-crypt-purple border-4 border-slime-green shadow-retro p-6;
+  @apply bg-nocturnal-purple/80 border-2 border-slime-green/50 shadow-retro p-6 backdrop-blur-sm;
 }
 .retro-window {
-  @apply bg-crypt-purple border-4 border-slime-green shadow-retro flex flex-col;
+  @apply bg-nocturnal-purple/90 border-2 border-slime-green/60 shadow-retro flex flex-col backdrop-blur-md;
 }
 .retro-window-header {
-  @apply bg-slime-green text-black px-2 py-1 flex justify-between items-center font-pixel text-sm font-bold border-b-4 border-slime-green;
+  @apply bg-slime-green text-black px-3 py-1.5 flex justify-between items-center font-pixel text-base font-bold border-b-2 border-slime-green;
 }
 .retro-button {
-  @apply border-4 border-slime-green bg-black text-slime-green px-6 py-2 uppercase font-bold transition-all active:translate-x-1 active:translate-y-1 active:shadow-none hover:bg-slime-green hover:text-black shadow-retro;
+  @apply border-2 border-slime-green bg-black text-slime-green px-6 py-2 uppercase font-bold transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:bg-slime-green hover:text-black shadow-retro;
 }
 .retro-button-pink {
-  @apply border-4 border-hot-pink bg-black text-hot-pink px-6 py-2 uppercase font-bold transition-all active:translate-x-1 active:translate-y-1 active:shadow-none hover:bg-hot-pink hover:text-black shadow-retro-pink;
+  @apply border-2 border-phantom-pink bg-black text-phantom-pink px-6 py-2 uppercase font-bold transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-none hover:bg-phantom-pink hover:text-black shadow-retro-pink;
 }
 .glow-text {
-  text-shadow: 0 0 10px rgba(57, 255, 20, 0.8);
+  text-shadow: 0 0 8px rgba(50, 205, 50, 0.6);
+}
+.gothic-header {
+  @apply font-gothic tracking-wider uppercase text-white;
+  text-shadow: 0 0 15px rgba(212, 20, 90, 0.4);
 }

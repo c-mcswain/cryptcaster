@@ -6,15 +6,19 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: ['Inter', 'sans-serif'],
-			display: ['Inter', 'system-ui', 'sans-serif'],
+			display: ['Cinzel', 'serif'],
   			mono: ['Space Mono', 'JetBrains Mono', 'monospace'],
-        creepy: ['Creepster', 'system-ui'],
-        pixel: ['VT323', 'monospace']
+        creepy: ['Almendra', 'serif'],
+        pixel: ['VT323', 'monospace'],
+        gothic: ['Cinzel', 'serif']
   		},
   		colors: {
-        'crypt-purple': '#2D004D',
-        'slime-green': '#39FF14',
-        'hot-pink': '#FF007F',
+        'blood-red': '#4A0404',
+        'nocturnal-purple': '#12001F',
+        'crypt-purple': '#1A002E',
+        'slime-green': '#32CD32',
+        'phantom-pink': '#D4145A',
+        'hot-pink': '#D4145A',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			muted: {
@@ -50,18 +54,28 @@ export default {
   			input: 'hsl(var(--input))',
   		},
   		boxShadow: {
-  			retro: '4px 4px 0px 0px rgba(57, 255, 20, 1)',
-        'retro-pink': '4px 4px 0px 0px rgba(255, 0, 127, 1)',
-        'retro-lg': '8px 8px 0px 0px rgba(57, 255, 20, 1)',
+  			retro: '3px 3px 0px 0px rgba(50, 205, 50, 0.8)',
+        'retro-pink': '3px 3px 0px 0px rgba(212, 20, 90, 0.8)',
+        'retro-lg': '6px 6px 0px 0px rgba(50, 205, 50, 0.6)',
   		},
   		keyframes: {
   			'blink': {
   				'0%, 100%': { opacity: '1' },
   				'50%': { opacity: '0' }
-  			}
+  			},
+        'pulse-glow': {
+          '0%, 100%': { opacity: '1', filter: 'drop-shadow(0 0 5px rgba(50, 205, 50, 0.5))' },
+          '50%': { opacity: '0.8', filter: 'drop-shadow(0 0 15px rgba(50, 205, 50, 0.2))' }
+        },
+        'mist-flow': {
+          '0%': { transform: 'translateX(-10%)' },
+          '100%': { transform: 'translateX(10%)' }
+        }
   		},
   		animation: {
-  			'blink': 'blink 1s step-end infinite',
+  			'blink': 'blink 1.5s step-end infinite',
+        'pulse-glow': 'pulse-glow 4s ease-in-out infinite',
+        'mist': 'mist-flow 20s ease-in-out infinite alternate',
   		},
   	}
   },

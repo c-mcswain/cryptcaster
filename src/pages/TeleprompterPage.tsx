@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Radio, Maximize2, Minimize2, Settings2, Info } from 'lucide-react';
+import { ArrowLeft, Radio, Maximize2, Minimize2, Info, Eye, Settings } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story } from '@shared/types';
 import { toast } from 'sonner';
-import { Progress } from "@/components/ui/progress";
 import {
   Tooltip,
   TooltipContent,
@@ -15,7 +14,7 @@ export function TeleprompterPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [story, setStory] = useState<Story | null>(null);
-  const [fontSize, setFontSize] = useState(36);
+  const [fontSize, setFontSize] = useState(42);
   const [isRecording, setIsRecording] = useState(false);
   const [stealthMode, setStealthMode] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -51,128 +50,125 @@ export function TeleprompterPage() {
     }
   };
   if (!story) return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-6 bg-black">
-      <div className="w-20 h-20 border-8 border-slime-green border-t-transparent animate-spin rounded-full" />
-      <div className="font-creepy text-5xl text-slime-green animate-pulse">INVITING SCRIPT...</div>
+    <div className="flex flex-col items-center justify-center min-h-screen gap-8 bg-black">
+      <div className="w-16 h-16 border-4 border-blood-red border-t-white animate-spin rounded-full" />
+      <div className="font-gothic text-4xl text-white tracking-[0.2em] animate-pulse">INVITING SCRIPT...</div>
     </div>
   );
   return (
-    <div className={`bg-black min-h-screen transition-all duration-500 ${stealthMode ? 'cursor-none' : ''}`}>
+    <div className={`bg-[#020005] min-h-screen transition-opacity duration-1000 ${stealthMode ? 'cursor-none' : ''}`}>
       {/* HUD Header */}
       {!stealthMode && (
-        <div className="border-b-4 border-slime-green p-4 flex justify-between items-center bg-crypt-purple sticky top-0 z-50 shadow-retro-lg">
-          <div className="flex items-center gap-6">
-            <Link to="/" className="text-slime-green hover:text-hot-pink transition-all hover:scale-110">
-              <ArrowLeft className="w-10 h-10" />
+        <div className="border-b border-white/10 p-6 flex justify-between items-center bg-black/90 sticky top-0 z-50 backdrop-blur-xl">
+          <div className="flex items-center gap-8">
+            <Link to="/" className="text-white hover:text-slime-green transition-all hover:scale-105">
+              <ArrowLeft className="w-8 h-8" />
             </Link>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="font-pixel text-2xl text-slime-green uppercase glow-text truncate max-w-sm">
+              <div className="flex items-center gap-3">
+                <h1 className="font-gothic text-2xl text-white tracking-wider truncate max-w-md">
                   {story.title}
                 </h1>
-                <span className="text-hot-pink font-pixel text-xs border border-hot-pink px-1">HUD v1.99</span>
+                <span className="text-phantom-pink font-pixel text-[10px] border border-phantom-pink/40 px-2 py-0.5 rounded-sm">HUD_STATION_v2.0</span>
               </div>
-              <p className="font-pixel text-sm text-hot-pink uppercase opacity-80">INVITE ME IN // {story.source}</p>
+              <p className="font-pixel text-xs text-phantom-pink/60 uppercase tracking-widest mt-1">MORALLY GRIM PRODUCTION // {story.source}</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button className="text-slime-green/50 hover:text-slime-green transition-colors">
-                    <Info className="w-5 h-5" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent className="bg-crypt-purple border-2 border-slime-green text-slime-green font-pixel p-4">
-                  <p className="font-bold mb-2">RECORDING TIPS:</p>
-                  <ul className="space-y-1 text-xs">
-                    <li>• CHECK AUDIO LEVELS</li>
-                    <li>• STAY IN FRAME</li>
-                    <li>• PACE YOUR BREATHING</li>
-                    <li>• BE MORALLY GRIM</li>
-                  </ul>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <div className="flex bg-black border-4 border-slime-green font-pixel text-xl">
-              <button 
-                onClick={() => setFontSize(s => Math.max(16, s - 4))} 
-                className="px-4 py-1 hover:bg-slime-green hover:text-black border-r-4 border-slime-green"
+          <div className="flex items-center gap-6">
+            <div className="flex bg-black border border-white/20 font-pixel text-lg">
+              <button
+                onClick={() => setFontSize(s => Math.max(16, s - 4))}
+                className="px-4 py-1 hover:bg-white hover:text-black transition-colors"
               >
                 -
               </button>
-              <div className="px-6 py-1 min-w-[80px] text-center">{fontSize}</div>
-              <button 
-                onClick={() => setFontSize(s => Math.min(96, s + 4))} 
-                className="px-4 py-1 hover:bg-slime-green hover:text-black border-l-4 border-slime-green"
+              <div className="px-6 py-1 min-w-[70px] text-center border-x border-white/10 text-white">{fontSize}</div>
+              <button
+                onClick={() => setFontSize(s => Math.min(96, s + 4))}
+                className="px-4 py-1 hover:bg-white hover:text-black transition-colors"
               >
                 +
               </button>
             </div>
             <button
               onClick={() => setIsRecording(!isRecording)}
-              className={`flex items-center gap-3 px-6 py-2 font-pixel text-xl border-4 transition-all shadow-retro ${
-                isRecording 
-                  ? 'bg-red-600 border-red-400 text-white animate-pulse' 
-                  : 'bg-black border-slime-green text-slime-green hover:bg-slime-green/10'
+              className={`flex items-center gap-3 px-6 py-2 font-pixel text-lg border-2 transition-all ${
+                isRecording
+                  ? 'bg-blood-red border-phantom-pink text-white shadow-[0_0_15px_rgba(212,20,90,0.4)]'
+                  : 'bg-black border-white/20 text-white/60 hover:border-white hover:text-white'
               }`}
             >
-              <Radio className={`w-5 h-5 ${isRecording ? 'animate-ping' : ''}`} /> 
+              <div className={`w-3 h-3 rounded-full ${isRecording ? 'bg-white animate-pulse' : 'bg-white/20'}`} />
               {isRecording ? 'ON AIR' : 'START REC'}
             </button>
-            <button
-              onClick={() => setStealthMode(true)}
-              className="p-3 border-4 border-slime-green bg-black text-slime-green hover:bg-slime-green hover:text-black transition-colors"
-              title="Enter Stealth Mode"
-            >
-              <Maximize2 className="w-6 h-6" />
-            </button>
-            <button
-              onClick={markRecorded}
-              className="retro-button-pink py-2 px-8 text-xl"
-            >
-              FINISH
-            </button>
+            <div className="flex gap-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setStealthMode(true)}
+                      className="p-3 border border-white/20 bg-black text-white/60 hover:text-white hover:border-white transition-colors"
+                    >
+                      <Eye className="w-5 h-5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-nocturnal-purple border border-white/20 text-white font-pixel">
+                    STEALTH MODE (HUD OFF)
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <button
+                onClick={markRecorded}
+                className="bg-white text-black px-8 py-2 font-gothic text-lg hover:bg-slime-green transition-colors font-bold"
+              >
+                FINISH
+              </button>
+            </div>
           </div>
         </div>
       )}
-      {/* Stealth Mode Exit Button (Only visible on hover in corner) */}
+      {/* Stealth Mode Exit Button */}
       {stealthMode && (
-        <button 
+        <button
           onClick={() => setStealthMode(false)}
-          className="fixed top-4 right-4 z-[100] p-4 bg-black/20 hover:bg-slime-green border-2 border-transparent hover:border-black text-transparent hover:text-black transition-all"
+          className="fixed top-8 right-8 z-[100] p-4 bg-black/40 hover:bg-white border border-white/10 hover:border-black text-transparent hover:text-black transition-all group"
         >
           <Minimize2 className="w-8 h-8" />
+          <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 font-pixel text-black bg-white px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">EXIT STEALTH</span>
         </button>
       )}
-      {/* Progress Bar */}
-      <div className="fixed bottom-0 left-0 w-full h-2 bg-black z-50">
-        <div 
-          className="h-full bg-slime-green transition-all duration-150 shadow-[0_0_10px_#39FF14]" 
+      {/* Bleeding Progress Bar */}
+      <div className="fixed bottom-0 left-0 w-full h-1.5 bg-black z-50">
+        <div
+          className="h-full bg-blood-red transition-all duration-300 shadow-[0_0_10px_#4A0404]"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
       {/* Reading Area */}
-      <div className="max-w-4xl mx-auto px-8 py-24 md:py-40">
+      <div className="max-w-4xl mx-auto px-8 py-32 md:py-48">
         <div
           ref={contentRef}
-          className="font-mono text-slime-green leading-[1.6] whitespace-pre-wrap transition-all duration-300 select-none"
-          style={{ 
+          className="font-mono text-white/90 leading-[1.8] whitespace-pre-wrap transition-all duration-500 select-none tracking-wide"
+          style={{
             fontSize: `${fontSize}px`,
-            textShadow: '0 0 1px rgba(57, 255, 20, 0.5)'
+            textShadow: '0 0 2px rgba(255, 255, 255, 0.1)'
           }}
         >
           {story.content}
         </div>
-        <div className="mt-40 text-center border-t-8 border-slime-green border-double pt-12 opacity-50">
-          <p className="font-creepy text-4xl mb-4">END OF BROADCAST</p>
-          <p className="font-pixel text-xl">INVITE ME IN - MORALLY GRIM PRODUCTION</p>
+        <div className="mt-64 text-center border-t border-white/10 pt-20 pb-40 opacity-40">
+          <p className="font-gothic text-5xl mb-6 tracking-[0.3em] text-white">END OF BROADCAST</p>
+          <div className="flex items-center justify-center gap-4 font-pixel text-xl text-phantom-pink">
+            <div className="w-12 h-px bg-phantom-pink/30" />
+            MORALLY GRIM PRODUCTION
+            <div className="w-12 h-px bg-phantom-pink/30" />
+          </div>
         </div>
       </div>
       {/* Recording Overlay Indicator */}
       {isRecording && (
-        <div className="fixed bottom-12 right-12 flex items-center gap-4 bg-red-600 text-white px-8 py-4 font-pixel text-2xl border-4 border-red-400 z-50 shadow-[0_0_20px_rgba(255,0,0,0.5)]">
-          <div className="w-5 h-5 rounded-full bg-white animate-pulse" />
+        <div className="fixed bottom-12 right-12 flex items-center gap-4 bg-blood-red text-white px-8 py-4 font-gothic text-2xl border border-phantom-pink z-50 shadow-[0_0_20px_rgba(74,4,4,0.6)]">
+          <Radio className="w-6 h-6 animate-pulse" />
           ON AIR
         </div>
       )}
