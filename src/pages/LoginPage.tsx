@@ -60,7 +60,7 @@ export function LoginPage() {
                   value={username}
                   onChange={e => setUsername(e.target.value)}
                   className="w-full bg-noir-gray border border-white/10 p-5 pl-14 text-white font-mono focus:border-phantom-pink transition-all outline-none placeholder:text-white/5"
-                  placeholder="creepqueenadmin"
+                  placeholder="admin"
                 />
                 <Key className="w-6 h-6 absolute left-5 top-1/2 -translate-y-1/2 text-white/20" />
               </div>

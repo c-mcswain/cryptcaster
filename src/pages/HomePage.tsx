@@ -46,6 +46,7 @@ export function HomePage() {
     advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
   };
   const featuredStory = displayZine.featuredStoryId ? stories.find(s => s.id === displayZine.featuredStoryId) : null;
+  const voidCoverUrl = 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
   const isBreaking = featuredStory?.title?.includes('ILLEGAL') || featuredStory?.id === 's8';
   const issueDate = new Date(displayZine.lastUpdated);
   const month = String(issueDate.getMonth() + 1).padStart(2, '0');
@@ -131,7 +132,7 @@ export function HomePage() {
                     isBreaking ? "border-phantom-pink/40 animate-pulse-glow" : "border-white/5"
                   )}>
                     <img
-                      src={displayZine.coverImageUrl}
+                      src={featuredStory ? displayZine.coverImageUrl : voidCoverUrl}
                       className="absolute inset-0 w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-70 transition-all duration-[2000ms] scale-110 group-hover:scale-100"
                       alt="Zine Cover"
                     />
