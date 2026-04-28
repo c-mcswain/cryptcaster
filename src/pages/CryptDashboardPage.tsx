@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Skull, Trash2, Zap, Mail, ChevronRight, Newspaper, LogOut, Search } from 'lucide-react';
+import { Plus, Skull, X, Zap, Mail, ChevronRight, Newspaper, LogOut, Settings } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story } from '@shared/types';
 import { Toaster, toast } from 'sonner';
@@ -12,11 +12,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 export function CryptDashboardPage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
   const [kindFilter, setKindFilter] = useState<'all' | 'story' | 'email' | 'submission'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'unread' | 'recorded'>('all');
   const { logout } = useAuth();
-  const fetchData = useCallback(async () => {
+  const fetchData = async () => {
     try {
       const storiesRes = await api<{ items: Story[] }>('/api/stories');
       setStories([...storiesRes.items].sort((a, b) => b.createdAt - a.createdAt));
@@ -25,20 +24,10 @@ export function CryptDashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
-  const handleDeleteStory = async (id: string) => {
-    if (!window.confirm('Are you certain you wish to purge this record from the crypt?')) return;
-    try {
-      await api(`/api/stories/${id}`, { method: 'DELETE' });
-      toast.success('Record incinerated.');
-      setStories(prev => prev.filter(s => s.id !== id));
-    } catch (err) {
-      toast.error('Failed to purge record.');
-    }
-  };
+  }, []);
   const handleConvertToStory = async (id: string) => {
     try {
       await api(`/api/stories/${id}`, {
@@ -57,12 +46,10 @@ export function CryptDashboardPage() {
       kindFilter === 'all' ||
       (kindFilter === 'email' ? isInbox : s.kind === kindFilter);
     const matchesStatus = statusFilter === 'all' || (statusFilter === 'unread' ? !s.isRecorded : s.isRecorded);
-    const matchesSearch = s.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          s.content.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesKind && matchesStatus && matchesSearch;
+    return matchesKind && matchesStatus;
   });
   return (
-    <div className="min-h-screen flex flex-col relative bg-black">
+    <div className="min-h-screen flex flex-col relative bg-nocturnal-purple/5">
       <VampiricAtmosphere />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
         <div className="py-8 md:py-12">
@@ -87,43 +74,31 @@ export function CryptDashboardPage() {
               </button>
             </div>
           </div>
-          {/* SEARCH & FILTERS BAR */}
-          <div className="space-y-6 mb-16 border-y border-white/5 py-8">
-            <div className="relative max-w-2xl mx-auto">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
-              <input 
-                type="text" 
-                placeholder="SEARCH THE ARCHIVES..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-noir-gray/50 border border-white/10 p-4 pl-12 text-white font-mono placeholder:text-white/10 focus:border-slime-green outline-none transition-all"
-              />
+          {/* FILTERS BAR */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8 border-y border-white/5 py-8">
+            <div className="flex flex-wrap justify-center gap-2 p-1.5 bg-black/60 border border-white/5 rounded-sm font-pixel max-w-full">
+              {(['all', 'story', 'email'] as const).map(k => (
+                <button
+                  key={k}
+                  onClick={() => setKindFilter(k)}
+                  className={cn(
+                    "px-6 md:px-10 py-2.5 transition-all text-sm tracking-widest whitespace-nowrap uppercase",
+                    kindFilter === k ? "bg-slime-green text-black shadow-[0_0_15px_rgba(40,167,69,0.3)]" : "text-white/40 hover:text-white"
+                  )}
+                >
+                  {k === 'email' ? 'INBOX' : k}
+                </button>
+              ))}
             </div>
-            <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-              <div className="flex flex-wrap justify-center gap-2 p-1.5 bg-black/60 border border-white/5 rounded-sm font-pixel">
-                {(['all', 'story', 'email'] as const).map(k => (
-                  <button
-                    key={k}
-                    onClick={() => setKindFilter(k)}
-                    className={cn(
-                      "px-6 md:px-10 py-2.5 transition-all text-sm tracking-widest whitespace-nowrap uppercase",
-                      kindFilter === k ? "bg-slime-green text-black" : "text-white/40 hover:text-white"
-                    )}
-                  >
-                    {k === 'email' ? 'INBOX' : k}
-                  </button>
-                ))}
-              </div>
-              <div className="flex gap-4 md:gap-6 font-pixel text-base">
-                {(['all', 'unread', 'recorded'] as const).map(s => (
-                  <button
-                    key={s} onClick={() => setStatusFilter(s)}
-                    className={cn("border-b-2 px-4 md:px-6 py-2 transition-colors uppercase tracking-widest", statusFilter === s ? "border-phantom-pink text-phantom-pink" : "border-transparent text-white/30 hover:text-white/60")}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
+            <div className="flex gap-4 md:gap-6 font-pixel text-base">
+               {(['all', 'unread', 'recorded'] as const).map(s => (
+                <button
+                  key={s} onClick={() => setStatusFilter(s)}
+                  className={cn("border-b-2 px-4 md:px-6 py-2 transition-colors uppercase tracking-widest", statusFilter === s ? "border-phantom-pink text-phantom-pink" : "border-transparent text-white/30 hover:text-white/60")}
+                >
+                  {s}
+                </button>
+              ))}
             </div>
           </div>
           {/* ARCHIVE GRID */}
@@ -135,7 +110,7 @@ export function CryptDashboardPage() {
               <p className="font-pixel text-2xl text-white/5 tracking-[0.3em] uppercase">No narratives found in this sector.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 lg:gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {filteredStories.map((story) => (
                 <div key={story.id} className={cn("retro-window group transition-all duration-500 hover:border-white/20", (story.kind === 'email' || story.kind === 'submission') ? "border-phantom-pink/20" : "border-slime-green/20")}>
                   <div className={cn("retro-window-header opacity-80", (story.kind === 'email' || story.kind === 'submission') ? "bg-phantom-pink" : "bg-slime-green")}>
@@ -145,9 +120,7 @@ export function CryptDashboardPage() {
                         {story.kind?.toUpperCase() || 'NARR'}_REC_{story.id.slice(0, 6)}
                       </span>
                     </div>
-                    <button onClick={() => handleDeleteStory(story.id)} className="hover:text-black hover:bg-white/20 p-1 transition-colors">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <X className="w-4 h-4 opacity-30" />
                   </div>
                   <div className="p-8 flex flex-col h-full bg-black/60">
                     <div className="flex justify-between items-center mb-6">

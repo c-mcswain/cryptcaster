@@ -17,6 +17,7 @@ import { TeleprompterPage } from '@/pages/TeleprompterPage'
 import { SubmissionPage } from '@/pages/SubmissionPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { ZineAdminPage } from '@/pages/ZineAdminPage'
+import { CryptDashboardPage } from '@/pages/CryptDashboardPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -31,13 +32,18 @@ const router = createBrowserRouter([
     errorElement: <RouteErrorBoundary />,
   },
   {
-    path: "/add",
-    element: <ProtectedRoute><AddStoryPage /></ProtectedRoute>,
+    path: "/crypt",
+    element: <ProtectedRoute><CryptDashboardPage /></ProtectedRoute>,
     errorElement: <RouteErrorBoundary />,
   },
   {
     path: "/zine-admin",
     element: <ProtectedRoute><ZineAdminPage /></ProtectedRoute>,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/add",
+    element: <ProtectedRoute><AddStoryPage /></ProtectedRoute>,
     errorElement: <RouteErrorBoundary />,
   },
   {

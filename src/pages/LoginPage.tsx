@@ -13,7 +13,8 @@ export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as any)?.from?.pathname || "/";
+  // Default to /crypt for successful administrative login
+  const from = (location.state as any)?.from?.pathname || "/crypt";
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -36,7 +37,7 @@ export function LoginPage() {
       <VampiricAtmosphere />
       <div className="max-w-md w-full px-4 z-10">
         <div className="text-center mb-12">
-          <h1 className="gothic-header text-5xl mb-4 animate-pulse-glow">GATEKEEPER</h1>
+          <h1 className="gothic-header text-6xl mb-4 animate-pulse-glow">GATEKEEPER</h1>
           <p className="font-pixel text-phantom-pink/60 uppercase tracking-[0.3em]">ADMINISTRATIVE HANDSHAKE REQUIRED</p>
         </div>
         <div className="retro-window border-phantom-pink/30 shadow-[0_0_50px_rgba(179,27,77,0.15)]">
@@ -76,11 +77,11 @@ export function LoginPage() {
             </div>
             <button
               disabled={loading}
-              className="retro-button-pink w-full py-5 text-xl font-gothic tracking-[0.2em] flex items-center justify-center gap-4 group"
+              className="retro-button-pink w-full py-6 text-2xl font-gothic tracking-[0.2em] flex items-center justify-center gap-4 group"
             >
               {loading ? 'VERIFYING...' : (
                 <>
-                  <Skull className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                  <Skull className="w-7 h-7 group-hover:rotate-12 transition-transform" />
                   INVITE ME IN
                 </>
               )}

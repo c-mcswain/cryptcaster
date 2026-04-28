@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Skull, X, Zap, Mail, ChevronRight, Send, LogOut, BookOpen, Newspaper } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Skull, Zap, ChevronRight, BookOpen, Ghost, MessageSquare } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story, ZineContent } from '@shared/types';
 import { Toaster, toast } from 'sonner';
@@ -8,95 +8,68 @@ import { RetroFooter } from '@/components/RetroFooter';
 import { VampiricAtmosphere } from '@/components/VampiricAtmosphere';
 import { useAuth } from '@/hooks/use-auth';
 import { SubmissionHero } from '@/components/SubmissionHero';
-import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 export function HomePage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [zine, setZine] = useState<ZineContent | null>(null);
   const [loading, setLoading] = useState(true);
-  const [kindFilter, setKindFilter] = useState<'all' | 'story' | 'email' | 'submission'>('all');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'unread' | 'recorded'>('all');
-  const { isAuthenticated, logout } = useAuth();
-  const fetchData = async () => {
-    try {
-      const [storiesRes, zineRes] = await Promise.all([
-        api<{ items: Story[] }>('/api/stories'),
-        api<ZineContent>('/api/zine')
-      ]);
-      setStories([...storiesRes.items].sort((a, b) => b.createdAt - a.createdAt));
-      setZine(zineRes);
-    } catch (err) {
-      toast.error('Failed to summon from the void.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { isAuthenticated } = useAuth();
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [storiesRes, zineRes] = await Promise.all([
+          api<{ items: Story[] }>('/api/stories'),
+          api<ZineContent>('/api/zine')
+        ]);
+        setStories(storiesRes.items);
+        setZine(zineRes);
+      } catch (err) {
+        toast.error('The zine failed to materialize.');
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
   }, []);
-  const handleConvertToStory = async (id: string) => {
-    try {
-      await api(`/api/stories/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ kind: 'story' })
-      });
-      toast.success('Ticket promoted to Grim Narrative.');
-      fetchData();
-    } catch (err) {
-      toast.error('Promotion failed.');
-    }
-  };
-  const filteredStories = stories.filter(s => {
-    const isInbox = s.kind === 'email' || s.kind === 'submission';
-    const matchesKind =
-      kindFilter === 'all' ||
-      (kindFilter === 'email' ? isInbox : s.kind === kindFilter);
-    const matchesStatus = statusFilter === 'all' || (statusFilter === 'unread' ? !s.isRecorded : s.isRecorded);
-    return matchesKind && matchesStatus;
-  });
   const featuredStory = zine?.featuredStoryId ? stories.find(s => s.id === zine.featuredStoryId) : null;
   return (
-    <div className="min-h-screen flex flex-col relative bg-nocturnal-purple/5">
+    <div className="min-h-screen flex flex-col relative bg-black overflow-x-hidden">
       <VampiricAtmosphere />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
-        <div className="py-8 md:py-10 lg:py-12">
-          {/* HEADER / NAVIGATION */}
-          <div className="flex justify-between items-center mb-12">
+        <div className="py-8 md:py-12">
+          {/* PUBLIC HEADER */}
+          <div className="flex justify-between items-center mb-16">
             <div className="flex items-center gap-4 group cursor-default">
               <Skull className="w-8 h-8 text-slime-green group-hover:rotate-12 transition-transform" />
-              <div className="font-pixel text-lg tracking-widest text-white/40 uppercase">MORALLY GRIM ARCHIVES</div>
+              <div className="font-pixel text-lg tracking-widest text-white/40 uppercase">MORALLY GRIM BROADCASTS</div>
             </div>
             <div className="flex gap-4">
+              <Link to="/submit" className="font-pixel text-sm text-phantom-pink hover:text-white uppercase tracking-widest px-6 py-2 border border-phantom-pink/20 bg-phantom-pink/5 transition-all">
+                SUBMIT TALE
+              </Link>
               {isAuthenticated ? (
-                <>
-                  <Link to="/zine-admin" className="font-pixel text-sm text-slime-green hover:text-white flex items-center gap-2 px-4 py-2 border border-slime-green/20 bg-slime-green/5 hover:bg-slime-green/20 transition-all">
-                    <Newspaper className="w-4 h-4" /> EDITOR
-                  </Link>
-                  <button onClick={logout} className="font-pixel text-sm text-phantom-pink hover:text-white flex items-center gap-2 px-4 py-2 border border-phantom-pink/20 bg-phantom-pink/5 hover:bg-phantom-pink/20 transition-all">
-                    <LogOut className="w-4 h-4" /> LOGOUT
-                  </button>
-                </>
+                <Link to="/crypt" className="font-pixel text-sm text-slime-green hover:text-white uppercase tracking-widest px-6 py-2 border border-slime-green/20 bg-slime-green/5 transition-all">
+                  DASHBOARD
+                </Link>
               ) : (
-                <Link to="/login" className="font-pixel text-sm text-white/40 hover:text-white uppercase tracking-widest px-4 py-2 border border-white/5 transition-all">
-                  STAFF LOGIN
+                <Link to="/login" className="font-pixel text-sm text-white/20 hover:text-white uppercase tracking-widest px-6 py-2 border border-white/5 transition-all">
+                  STAFF
                 </Link>
               )}
             </div>
           </div>
-          {/* MIDNIGHT ZINE HERO */}
+          {/* MAIN ZINE CONTENT */}
           {!loading && zine && (
-            <section className="mb-24 space-y-16">
+            <section className="space-y-24 mb-32">
               <div className="text-center">
-                <h1 className="gothic-header text-6xl md:text-9xl mb-4 tracking-[0.3em] animate-pulse-glow">THE MIDNIGHT ZINE</h1>
-                <p className="font-pixel text-xl text-slime-green/60 uppercase tracking-[0.5em]">Issue: {new Date(zine.lastUpdated).toLocaleDateString()} // VOL. 4</p>
+                <h1 className="gothic-header text-7xl md:text-[10rem] mb-6 tracking-[0.3em] animate-pulse-glow leading-none">THE MIDNIGHT ZINE</h1>
+                <p className="font-pixel text-2xl text-slime-green/60 uppercase tracking-[0.5em]">Issue: {new Date(zine.lastUpdated).toLocaleDateString()} // VOL. 04</p>
               </div>
-              <SubmissionHero />
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Left Side: Introit */}
                 <div className="lg:col-span-4 flex flex-col gap-10">
                    <div className="retro-window border-white/10 flex-1">
-                      <div className="retro-window-header bg-white/10 text-white italic">The Editor's Introit</div>
-                      <div className="p-8 bg-black/40 font-mono text-sm leading-relaxed text-white/50 italic space-y-6">
+                      <div className="retro-window-header bg-white/10 text-white italic">Editorial Introit</div>
+                      <div className="p-8 bg-black/60 font-mono text-base leading-relaxed text-white/50 italic space-y-6">
                         <p className="indent-8">"{zine.intro}"</p>
                         <div className="pt-6 border-t border-white/5 font-pixel text-xs text-slime-green tracking-widest not-italic">
                           — {zine.editorName.toUpperCase()}
@@ -104,152 +77,62 @@ export function HomePage() {
                       </div>
                    </div>
                    <div className="retro-panel bg-phantom-pink/5 border-phantom-pink/20">
-                      <h3 className="font-gothic text-lg text-phantom-pink tracking-widest uppercase mb-4">Grim Announcements</h3>
-                      <ul className="space-y-3 font-pixel text-sm text-white/40 tracking-widest uppercase">
+                      <h3 className="font-gothic text-xl text-phantom-pink tracking-widest uppercase mb-6">Grim Announcements</h3>
+                      <ul className="space-y-4 font-pixel text-base text-white/40 tracking-widest uppercase">
                         {zine.announcements.map((a, i) => (
-                          <li key={i} className="flex gap-3">
+                          <li key={i} className="flex gap-4">
                             <span className="text-phantom-pink animate-pulse">»</span> {a}
                           </li>
                         ))}
                       </ul>
                    </div>
                 </div>
-                {/* Right Side: Featured Card */}
+                {/* Right Side: Featured Story Card */}
                 <div className="lg:col-span-8">
                   <div className="relative aspect-video lg:aspect-auto lg:h-full border-4 border-white/10 group overflow-hidden shadow-2xl">
                     <img
                       src={zine.coverImageUrl}
-                      className="absolute inset-0 w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
+                      className="absolute inset-0 w-full h-full object-cover grayscale-[0.8] group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
                       alt="Zine Cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 flex flex-col items-start gap-6">
-                      <div className="flex items-center gap-4 bg-phantom-pink px-4 py-1 text-black font-pixel text-xs uppercase tracking-widest animate-mist">
-                        <Zap className="w-3 h-3 fill-current" /> Featured This Week
+                      <div className="flex items-center gap-4 bg-phantom-pink px-5 py-2 text-black font-pixel text-sm uppercase tracking-widest">
+                        <Zap className="w-4 h-4 fill-current" /> Featured Reading
                       </div>
-                      <h2 className="font-gothic text-4xl md:text-6xl text-white tracking-widest leading-tight">
-                        {featuredStory?.title || "ARCHIVE SELECTION PENDING"}
+                      <h2 className="font-gothic text-5xl md:text-7xl text-white tracking-widest leading-tight">
+                        {featuredStory?.title || "VOID SELECTION"}
                       </h2>
-                      <p className="font-mono text-lg text-white/60 line-clamp-2 max-w-2xl">
-                        {featuredStory?.content || "The void is quiet tonight. Check back soon for the next featured narrative."}
+                      <p className="font-mono text-xl text-white/70 line-clamp-2 max-w-2xl">
+                        {featuredStory?.content || "The shadows remain silent this week. Check back for new unearthed chronicles."}
                       </p>
-                      {featuredStory && (
-                        <Link to={`/read/${featuredStory.id}`} className="retro-button-pink text-xl md:text-2xl font-gothic px-8 md:px-12 py-4 md:py-5 mt-4 group">
-                          READ THE TALE <ChevronRight className="inline-block w-6 h-6 group-hover:translate-x-2 transition-transform" />
-                        </Link>
-                      )}
                     </div>
                   </div>
                 </div>
               </div>
             </section>
           )}
-          {/* ACTION BAR */}
-          <div className="mt-20 mb-16 flex flex-wrap justify-center gap-6 md:gap-8 border-y border-white/5 py-12">
-              <Link to="/add" className="retro-button-pink px-10 md:px-12 py-4 font-gothic text-lg md:text-xl flex items-center gap-4 transition-transform hover:scale-105 active:scale-100">
-                <Plus className="w-5 h-5" /> NEW INGESTION
-              </Link>
-              <Link to="/submit" className="retro-button px-10 md:px-12 py-4 font-gothic text-lg md:text-xl flex items-center gap-4 border-slime-green transition-transform hover:scale-105 active:scale-100">
-                <Send className="w-5 h-5" /> SUBMIT TALE
-              </Link>
-          </div>
-          {/* ARCHIVE SECTION */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
-            <h2 className="font-gothic text-4xl text-white/20 tracking-widest uppercase">Archives</h2>
-            <div className="flex flex-wrap justify-center gap-2 p-1.5 bg-black/60 border border-white/5 rounded-sm font-pixel max-w-full">
-              {(['all', 'story', 'email'] as const).map(k => (
-                <button
-                  key={k}
-                  onClick={() => setKindFilter(k)}
-                  className={cn(
-                    "px-6 md:px-10 py-2.5 transition-all text-sm tracking-widest whitespace-nowrap uppercase",
-                    kindFilter === k ? "bg-slime-green text-black shadow-[0_0_15px_rgba(40,167,69,0.3)]" : "text-white/40 hover:text-white"
-                  )}
-                >
-                  {k === 'email' ? 'INBOX' : k}
-                </button>
-              ))}
+          {/* MASSIVE CALL TO ACTION */}
+          <SubmissionHero />
+          {/* MISSION SECTION */}
+          <section className="py-32 border-t border-white/5 mt-32 max-w-4xl mx-auto text-center space-y-12">
+            <div className="flex justify-center gap-8 opacity-20">
+              <Ghost className="w-12 h-12" />
+              <Skull className="w-12 h-12" />
+              <MessageSquare className="w-12 h-12" />
             </div>
-            <div className="flex gap-4 md:gap-6 font-pixel text-base">
-               {(['all', 'unread', 'recorded'] as const).map(s => (
-                <button
-                  key={s} onClick={() => setStatusFilter(s)}
-                  className={cn("border-b-2 px-4 md:px-6 py-2 transition-colors uppercase tracking-widest", statusFilter === s ? "border-phantom-pink text-phantom-pink" : "border-transparent text-white/30 hover:text-white/60")}
-                >
-                  {s}
-                </button>
-              ))}
+            <h2 className="gothic-header text-5xl tracking-widest text-white/40 uppercase">A Morally Grim Production</h2>
+            <div className="font-mono text-xl text-white/30 leading-relaxed space-y-8 uppercase tracking-wider">
+              <p>
+                WE CURATE THE UNEXPLAINED, THE MALICIOUS, AND THE MORALLY GRIM. 
+                FROM LEAKED EMAILS TO FORGOTTEN ARCHIVES, THE CRYPTCASTER 
+                IS THE FINAL RESTING PLACE FOR THE TRUTH NO ONE WANTS TO HEAR.
+              </p>
+              <p className="text-slime-green/40">
+                ESTABLISHED 1996 // BROADCASTING FROM THE VOID
+              </p>
             </div>
-          </div>
-          {loading ? (
-            <div className="py-32 text-center font-gothic text-3xl animate-pulse tracking-widest opacity-40 uppercase">Invoking Database...</div>
-          ) : filteredStories.length === 0 ? (
-            <div className="retro-panel py-48 text-center border-dashed border-white/10 bg-black/20">
-              <p className="font-gothic text-6xl mb-6 text-white/10 uppercase">Void_Detected</p>
-              <p className="font-pixel text-2xl text-white/5 tracking-[0.3em] uppercase">The archive is empty of souls.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-              {filteredStories.map((story) => (
-                <div key={story.id} className={cn("retro-window group transition-all duration-500 hover:border-white/20", (story.kind === 'email' || story.kind === 'submission') ? "border-phantom-pink/20" : "border-slime-green/20")}>
-                  <div className={cn("retro-window-header opacity-80", (story.kind === 'email' || story.kind === 'submission') ? "bg-phantom-pink" : "bg-slime-green")}>
-                    <div className="flex items-center gap-3">
-                      {(story.kind === 'email' || story.kind === 'submission') ? <Mail className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                      <span className="font-pixel text-xs truncate uppercase tracking-tighter">
-                        {story.kind?.toUpperCase() || 'NARR'}_REC_{story.id.slice(0, 6)}
-                      </span>
-                    </div>
-                    <X className="w-4 h-4 opacity-30" />
-                  </div>
-                  <div className="p-8 flex flex-col h-full bg-black/60">
-                    <div className="flex justify-between items-center mb-6">
-                      <span className="font-pixel text-xs text-white/30 uppercase tracking-widest tabular-nums">
-                        {new Date(story.createdAt).toLocaleDateString()}
-                      </span>
-                      {story.metadata?.ticketId && (
-                        <span className="bg-noir-gray text-phantom-pink/80 font-pixel text-[10px] px-3 py-1 border border-phantom-pink/20">
-                          {story.metadata.ticketId}
-                        </span>
-                      )}
-                      {story.isRecorded && (
-                        <span className="bg-slime-green/10 text-slime-green font-pixel text-[10px] px-2 py-0.5 border border-slime-green/20 tracking-tighter uppercase">Recorded</span>
-                      )}
-                    </div>
-                    <h3 className="font-gothic text-2xl text-white/90 mb-4 line-clamp-2 min-h-[4rem] group-hover:text-slime-green transition-colors leading-relaxed">
-                      {story.title}
-                    </h3>
-                    <p className="font-pixel text-xs text-white/40 mb-8 truncate tracking-wider uppercase">
-                      {story.kind === 'story' ? `SOURCE: ${story.source}` : `SENDER: ${story.source}`}
-                    </p>
-                    <div className="mb-10 font-mono text-sm text-white/20 line-clamp-3 leading-relaxed h-[4.5rem]">
-                      {story.content}
-                    </div>
-                    <div className="mt-auto pt-6 flex gap-4">
-                      <Link to={`/read/${story.id}`} className="retro-button flex-1 py-4 text-base flex items-center justify-center gap-3 font-gothic tracking-widest hover:scale-[1.02] transition-transform">
-                        <Skull className="w-5 h-5 fill-current" /> OPEN TOMB
-                      </Link>
-                      {(story.kind === 'email' || story.kind === 'submission') && isAuthenticated && (
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <button
-                                type="button"
-                                onClick={() => handleConvertToStory(story.id)}
-                                className="border border-white/5 hover:border-slime-green/40 bg-noir-gray/50 px-5 transition-all text-white/30 hover:text-slime-green group/zap"
-                              >
-                                <Zap className="w-5 h-5 group-hover/zap:fill-slime-green" />
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent className="bg-black border border-white/20 font-pixel text-xs">PROMOTE TO NARRATIVE</TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          </section>
         </div>
       </div>
       <RetroFooter />
