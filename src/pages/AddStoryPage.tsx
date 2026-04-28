@@ -29,16 +29,14 @@ export function AddStoryPage() {
   // Robust debounce for auto-save and visual feedback
   useEffect(() => {
     if (!isInitialized.current) return;
-    const timeoutId = setTimeout(() => {
-      // Sync form to persistent draft
+    const saveTimeout = setTimeout(() => {
       setStoryDraft(storyForm);
       setEmailDraft(emailForm);
-      // Brief visual confirmation
       setShowSavedToast(true);
       const hideTimeout = setTimeout(() => setShowSavedToast(false), 2000);
       return () => clearTimeout(hideTimeout);
-    }, 1000);
-    return () => clearTimeout(timeoutId);
+    }, 1500);
+    return () => clearTimeout(saveTimeout);
   }, [storyForm, emailForm, setStoryDraft, setEmailDraft]);
   const stats = useMemo(() => ({
     story: { words: wordCount(storyForm.content), time: estimateReadTime(storyForm.content) },

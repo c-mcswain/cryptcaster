@@ -19,7 +19,6 @@ export function TeleprompterPage() {
   const requestRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
   const scrollPosRef = useRef<number>(0);
-  const isManualScrolling = useRef(false);
   useEffect(() => {
     if (id) {
       api<Story>(`/api/stories/${id}`)
@@ -34,32 +33,30 @@ export function TeleprompterPage() {
     const element = document.documentElement;
     const currentY = window.scrollY;
     const totalHeight = element.scrollHeight - element.clientHeight;
-    // Intelligent detection of manual scroll interruption
-    // If the window scroll position differs significantly from our expected auto-scroll position,
-    // we assume the user has taken manual control.
-    const drift = Math.abs(currentY - scrollPosRef.current);
-    if (isScrolling && drift > 30) {
-      // User has manually scrolled, pause the auto-engine
-      setIsScrolling(false);
-      scrollPosRef.current = currentY;
-    }
     if (isScrolling && totalHeight > 0) {
-      const pixelsPerSecond = scrollSpeed * 20; // Adjusted speed multiplier for smoother range
-      const moveBy = (pixelsPerSecond * deltaTime) / 1000;
-      const newPos = Math.min(totalHeight, scrollPosRef.current + moveBy);
-      scrollPosRef.current = newPos;
-      window.scrollTo({
-        top: newPos,
-        behavior: 'auto' // 'auto' is essential for high-frequency frame updates
-      });
-      if (newPos >= totalHeight) {
+      // Check for manual interruption
+      const drift = Math.abs(currentY - scrollPosRef.current);
+      if (drift > 15) { // More sensitive but stable threshold
         setIsScrolling(false);
+        scrollPosRef.current = currentY;
+      } else {
+        const pixelsPerSecond = scrollSpeed * 25;
+        const moveBy = (pixelsPerSecond * deltaTime) / 1000;
+        const newPos = Math.min(totalHeight, scrollPosRef.current + moveBy);
+        scrollPosRef.current = newPos;
+        window.scrollTo({
+          top: newPos,
+          behavior: 'auto'
+        });
+        if (newPos >= totalHeight) {
+          setIsScrolling(false);
+        }
       }
-    } else if (!isScrolling) {
-      // Keep internal ref in sync with viewport so resuming is seamless
+    } else {
+      // Keep internal ref synchronized with manual scrolling when auto-engine is off
       scrollPosRef.current = currentY;
     }
-    // Defensive check for progress calculation
+    // Progress HUD Update
     if (progressBarRef.current) {
       const progress = totalHeight > 0 ? (currentY / totalHeight) * 100 : 0;
       progressBarRef.current.style.width = `${Math.min(100, Math.max(0, progress))}%`;
