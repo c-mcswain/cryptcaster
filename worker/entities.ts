@@ -22,14 +22,14 @@ export class ZineEntity extends IndexedEntity<ZineContent> {
   static readonly indexName = "zines";
   static readonly initialState: ZineContent = {
     id: "singleton",
-    intro: "Welcome to the first edition of the Midnight Zine. The shadows are long tonight...",
+    intro: "The sweet scent of forbidden orchards drifts through the terminal tonight. Shadows have grown long and the hum of the crypt is louder than usual. Welcome to the Midnight Zine.",
     announcements: [
       "The Shadow Market: Now accepting crypt currency",
       "(Un)Alive Reading: Time, Date, and Realm TBD",
       "Submit your chronicles or be forgotten",
       "Vampire Facial Giveaway: Win a pint of O-Negative"
     ],
-    featuredStoryId: null,
+    featuredStoryId: 's8',
     coverImageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
     lastUpdated: Date.now(),
     editorName: "CreepQueen",
@@ -38,14 +38,14 @@ export class ZineEntity extends IndexedEntity<ZineContent> {
   static seedData = [
     {
       id: "singleton",
-      intro: "Shadows whisper across the terminal, carrying the weight of a thousand unread screams. The Midnight Zine has returned to chronicle the morally grim. Stay vigilant.",
+      intro: "The sweet scent of forbidden orchards drifts through the terminal tonight, carrying the weight of a thousand unread screams. The Midnight Zine has returned to chronicle the morally grim. Stay vigilant.",
       announcements: [
         "The Shadow Market: Now accepting crypt currency",
         "(Un)Alive Reading: Time, Date, and Realm TBD",
         "Submit your chronicles or be forgotten",
         "Vampire Facial Giveaway: Win a pint of O-Negative"
       ],
-      featuredStoryId: "s7",
+      featuredStoryId: "s8",
       coverImageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
       lastUpdated: Date.now(),
       editorName: "CreepQueen",

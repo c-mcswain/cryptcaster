@@ -54,6 +54,14 @@ export const MOCK_STORIES: Story[] = [
     source: 'Grim Investigative Dept.',
     content: 'Our recent investigation into "Smart Cemeteries" has uncovered a disturbing trend. The QR codes etched onto modern tombstones, intended to show digital memorials of the deceased, have begun to malfunction. Visitors report that scanning the codes no longer redirects to a biography, but instead opens a live, high-definition feed of their own front door. Even more unsettling, many report seeing a figure standing in the reflection of their screen—a figure that isn’t there when they turn around.',
     isRecorded: false,
+    createdAt: Date.now() - 100000
+  },
+  {
+    id: 's8',
+    title: 'ILLEGAL “NECKTARINE” STAND SHUT DOWN BY GRIM ENFORCEMENT',
+    source: 'Sunnyvale Gazette (Midnight Edition)',
+    content: 'Midnight Enforcement agents raided a roadside produce stand late Tuesday following reports of “audible fruit distress.” The vendor, a local woman known only as “Nanna,” was selling what she termed “Necktarines”—a stone fruit that appears to have a pulsating jugular vein. Witnesses claim that when sliced, the fruit emits a low-frequency hum and tastes of “sweet iron and forgotten promises.” One consumer reported hearing a murder of crows every time they closed their eyes for forty-eight hours after ingestion. Nanna remains at large; the fruit has been confiscated for deep-crypt analysis. DO NOT CONSUME. IF YOU HEAR THE HUM, FLEE.',
+    isRecorded: false,
     createdAt: Date.now()
   }
 ];

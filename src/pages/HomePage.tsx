@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Skull, Zap, BookOpen, Ghost, MessageSquare, Megaphone } from 'lucide-react';
+import { Skull, Zap, Ghost, MessageSquare, Megaphone, AlertCircle } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story, ZineContent } from '@shared/types';
 import { Toaster, toast } from 'sonner';
@@ -8,6 +8,7 @@ import { RetroFooter } from '@/components/RetroFooter';
 import { VampiricAtmosphere } from '@/components/VampiricAtmosphere';
 import { useAuth } from '@/hooks/use-auth';
 import { SubmissionHero } from '@/components/SubmissionHero';
+import { cn } from '@/lib/utils';
 export function HomePage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [zine, setZine] = useState<ZineContent | null>(null);
@@ -45,6 +46,7 @@ export function HomePage() {
     advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
   };
   const featuredStory = displayZine.featuredStoryId ? stories.find(s => s.id === displayZine.featuredStoryId) : null;
+  const isBreaking = featuredStory?.title?.includes('ILLEGAL') || featuredStory?.id === 's8';
   const issueDate = new Date(displayZine.lastUpdated);
   const month = String(issueDate.getMonth() + 1).padStart(2, '0');
   const day = String(issueDate.getDate()).padStart(2, '0');
@@ -124,7 +126,10 @@ export function HomePage() {
                 </div>
                 {/* Right Side: Featured Story Card */}
                 <div className="lg:col-span-8 h-full">
-                  <div className="relative aspect-video lg:aspect-[4/3] border-4 md:border-8 border-white/5 group overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)]">
+                  <div className={cn(
+                    "relative aspect-video lg:aspect-[4/3] border-4 md:border-8 group overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] transition-all duration-700",
+                    isBreaking ? "border-phantom-pink/40 animate-pulse-glow" : "border-white/5"
+                  )}>
                     <img
                       src={displayZine.coverImageUrl}
                       className="absolute inset-0 w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-70 transition-all duration-[2000ms] scale-110 group-hover:scale-100"
@@ -132,11 +137,21 @@ export function HomePage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:p-16 flex flex-col items-start gap-6 md:gap-10">
-                      <div className="flex items-center gap-4 bg-phantom-pink px-6 py-2 text-black font-pixel text-sm uppercase tracking-[0.3em] shadow-lg">
-                        <Zap className="w-4 h-4 fill-current" /> Featured Chronicle
+                      <div className="flex flex-col gap-4">
+                        {isBreaking && (
+                          <div className="flex items-center gap-3 bg-blood-red border border-phantom-pink px-4 py-2 text-white font-pixel text-xs uppercase tracking-[0.4em] animate-blink w-fit">
+                            <AlertCircle className="w-4 h-4" /> MORALLY GRIM BULLETIN
+                          </div>
+                        )}
+                        <div className="flex items-center gap-4 bg-phantom-pink px-6 py-2 text-black font-pixel text-sm uppercase tracking-[0.3em] shadow-lg w-fit">
+                          <Zap className="w-4 h-4 fill-current" /> Featured Chronicle
+                        </div>
                       </div>
                       <div className="space-y-4">
-                        <h2 className="font-gothic text-4xl md:text-8xl text-white tracking-[0.1em] leading-none uppercase">
+                        <h2 className={cn(
+                          "font-gothic text-4xl md:text-7xl lg:text-8xl text-white tracking-[0.1em] leading-tight uppercase transition-all duration-700",
+                          isBreaking && "text-white drop-shadow-[0_0_15px_rgba(179,27,77,0.8)]"
+                        )}>
                           {featuredStory?.title || "VOID SELECTION"}
                         </h2>
                         <p className="font-mono text-lg md:text-2xl text-white/50 line-clamp-3 max-w-3xl leading-relaxed">
@@ -145,7 +160,15 @@ export function HomePage() {
                         </p>
                       </div>
                       {featuredStory && (
-                        <Link to={`/read/${featuredStory.id}`} className="font-pixel text-lg text-slime-green border border-slime-green/40 px-8 py-3 bg-slime-green/5 hover:bg-slime-green hover:text-black transition-all uppercase tracking-[0.3em]">
+                        <Link 
+                          to={isAuthenticated ? `/read/${featuredStory.id}` : `/read/${featuredStory.id}`} 
+                          className={cn(
+                            "font-pixel text-lg px-8 py-4 transition-all uppercase tracking-[0.3em] flex items-center gap-4",
+                            isBreaking 
+                              ? "bg-phantom-pink text-white hover:bg-white hover:text-black animate-pulse" 
+                              : "bg-slime-green/5 text-slime-green border border-slime-green/40 hover:bg-slime-green hover:text-black"
+                          )}
+                        >
                           ACCESS FULL RECORD
                         </Link>
                       )}
