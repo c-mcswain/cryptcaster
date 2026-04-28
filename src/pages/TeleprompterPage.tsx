@@ -17,22 +17,8 @@ export function TeleprompterPage() {
   const [scrollSpeed, setScrollSpeed] = useState(5);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
-  const isMounted = useRef(true);
-  const isScrollingRef = useRef(isScrolling);
-  const scrollSpeedRef = useRef(scrollSpeed);
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
-    };
-  }, []);
-  useEffect(() => {
-    isScrollingRef.current = isScrolling;
-  }, [isScrolling]);
-  useEffect(() => {
-    scrollSpeedRef.current = scrollSpeed;
-  }, [scrollSpeed]);
+  const lastTimeRef = useRef<number>(0);
+  const scrollPosRef = useRef<number>(0);
   useEffect(() => {
     if (id) {
       api<Story>(`/api/stories/${id}`)
@@ -40,25 +26,31 @@ export function TeleprompterPage() {
         .catch(() => toast.error('Tale lost in the void'));
     }
   }, [id]);
-  const animate = useCallback(() => {
-    if (!isMounted.current) return;
+  const animate = useCallback((time: number) => {
+    if (!lastTimeRef.current) lastTimeRef.current = time;
+    const deltaTime = time - lastTimeRef.current;
+    lastTimeRef.current = time;
     const element = document.documentElement;
     const totalHeight = element.scrollHeight - element.clientHeight;
-    const currentScroll = element.scrollTop;
-    if (isScrollingRef.current) {
-      // Recalculate totalHeight every frame to handle dynamic font/content changes
-      if (currentScroll < totalHeight - 0.5) {
-        window.scrollBy(0, scrollSpeedRef.current / 4);
-      } else {
+    if (isScrolling && totalHeight > 0) {
+      // Calculate smooth movement based on time rather than frames
+      const pixelsPerSecond = scrollSpeed * 10;
+      const moveBy = (pixelsPerSecond * deltaTime) / 1000;
+      scrollPosRef.current = Math.min(totalHeight, scrollPosRef.current + moveBy);
+      window.scrollTo(0, scrollPosRef.current);
+      if (scrollPosRef.current >= totalHeight) {
         setIsScrolling(false);
       }
+    } else {
+      // Sync ref with manual scrolling if not auto-scrolling
+      scrollPosRef.current = window.scrollY;
     }
     if (progressBarRef.current) {
-      const progress = totalHeight > 0 ? (currentScroll / totalHeight) * 100 : (currentScroll > 0 ? 100 : 0);
+      const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
       progressBarRef.current.style.width = `${Math.min(100, Math.max(0, progress))}%`;
     }
     requestRef.current = requestAnimationFrame(animate);
-  }, []);
+  }, [isScrolling, scrollSpeed]);
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
     return () => {
@@ -68,39 +60,26 @@ export function TeleprompterPage() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setStealthMode(false);
+      if (e.code === 'Space' && !stealthMode) {
+        e.preventDefault();
+        setIsScrolling(prev => !prev);
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [stealthMode]);
   const getYoutubeId = (url?: string) => {
     if (!url) return null;
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
   };
-  const generateReport = useCallback(() => {
-    if (!story) return '';
-    const now = new Date().toLocaleString();
-    return `--- INVITE ME IN: ${story.kind?.toUpperCase() || 'STORY'} ---
-Title: ${story.title.toUpperCase()}
-Source: ${story.source}
-TicketID: ${story.metadata?.ticketId || 'N/A'}
-Words: ${wordCount(story.content)}
-Broadcast Time: ${now}
-Status: TOMB SEALED
----------------------------------------`;
-  }, [story]);
   const markRecorded = async () => {
-    if (!id) return;
+    if (!id || !story) return;
     try {
       await api(`/api/stories/${id}`, { method: 'PATCH', body: JSON.stringify({ isRecorded: true }) });
-      try {
-        await navigator.clipboard.writeText(generateReport());
-        toast.success('Session report copied and tomb sealed.');
-      } catch (err) {
-        toast.success('Tomb sealed.');
-      }
-      navigate('/');
+      toast.success('Session report filed. Tomb sealed.');
+      navigate('/crypt');
     } catch (err) {
       toast.error('Failed to seal the tomb');
     }
@@ -112,7 +91,7 @@ Status: TOMB SEALED
       {!stealthMode && (
         <div className="border-b border-white/5 p-6 md:px-12 flex flex-col md:flex-row justify-between items-center bg-black/95 sticky top-0 z-[100] backdrop-blur-3xl gap-6">
           <div className="flex items-center gap-6 md:gap-10 w-full md:w-auto">
-            <Link to="/" className="text-white/40 hover:text-slime-green transition-all"><ArrowLeft className="w-10 h-10" /></Link>
+            <Link to="/crypt" className="text-white/40 hover:text-slime-green transition-all"><ArrowLeft className="w-10 h-10" /></Link>
             <div className="min-w-0">
               <div className="flex items-center gap-4">
                 {story.kind === 'email' || story.kind === 'submission' ? <Mail className="w-6 h-6 text-phantom-pink" /> : <ScrollText className="w-6 h-6 text-slime-green" />}
@@ -163,11 +142,11 @@ Status: TOMB SEALED
       <div className="fixed bottom-0 left-0 w-full h-1 bg-black z-[110]">
         <div
           ref={progressBarRef}
-          className="h-full bg-blood-red/80 transition-all duration-300 shadow-[0_0_10px_rgba(61,3,3,0.8)] w-0"
+          className="h-full bg-blood-red transition-all duration-300 shadow-[0_0_10px_rgba(61,3,3,0.8)] w-0"
         />
       </div>
       <main className="max-w-4xl mx-auto px-10 pt-40 pb-96 relative z-10">
-        <div className="font-mono text-white/80 leading-[1.7] whitespace-pre-wrap select-none tracking-normal" style={{ fontSize: `${fontSize}px` }}>
+        <div className="font-mono text-white leading-[1.7] whitespace-pre-wrap select-none tracking-normal" style={{ fontSize: `${fontSize}px` }}>
           {story.content}
         </div>
         {story.mediaUrl && !stealthMode && (
@@ -207,10 +186,10 @@ Status: TOMB SEALED
         <button
           onClick={() => setIsRecording(prev => !prev)}
           className={cn(
-            "flex items-center gap-5 px-10 py-5 font-gothic text-xl border transition-all duration-700", 
-            isRecording 
-              ? "bg-blood-red/90 border-phantom-pink text-white shadow-[0_0_40px_rgba(179,27,77,0.6)] scale-110" 
-              : "bg-black/60 text-white/20 border-white/5 hover:border-white/20"
+            "flex items-center gap-5 px-10 py-5 font-gothic text-xl border transition-all duration-700",
+            isRecording
+              ? "bg-blood-red border-phantom-pink text-white shadow-[0_0_40px_rgba(179,27,77,0.6)] scale-110"
+              : "bg-black/80 text-white/20 border-white/5 hover:border-white/20"
           )}
         >
           <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]", isRecording ? "bg-white animate-blink" : "bg-white/10")} />
