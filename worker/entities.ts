@@ -10,9 +10,11 @@ export class StoryEntity extends IndexedEntity<Story> {
     source: "",
     content: "",
     isRecorded: false,
-    createdAt: 0
+    createdAt: 0,
+    kind: "story",
+    metadata: {}
   };
-  static seedData = MOCK_STORIES;
+  static seedData = MOCK_STORIES.map(s => ({ ...s, kind: 'story' as const, metadata: {} }));
 }
 export class UserEntity extends IndexedEntity<User> {
   static readonly entityName = "user";

@@ -1,35 +1,23 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Play, CheckCircle, Skull, X, Minus, Square, Moon, Zap, Archive, BookOpen, Clock, FileText } from 'lucide-react';
+import { Plus, Play, Skull, X, Minus, Square, Moon, Zap, Archive, BookOpen, Clock, FileText, Mail, ChevronRight } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story } from '@shared/types';
 import { Toaster, toast } from 'sonner';
 import { RetroFooter } from '@/components/RetroFooter';
 import { VampiricAtmosphere } from '@/components/VampiricAtmosphere';
-import { wordCount, estimateReadTime } from '@/lib/utils';
+import { wordCount, estimateReadTime, cn } from '@/lib/utils';
 export function HomePage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'unread' | 'recorded'>('all');
-  const hasDraft = useMemo(() => {
-    try {
-      const draft = localStorage.getItem('cryptcaster_draft');
-      if (!draft) return false;
-      const parsed = JSON.parse(draft);
-      // Ensure the draft actually has substance before flagging it
-      return !!((parsed.title && parsed.title.trim().length > 0) || (parsed.content && parsed.content.trim().length > 0));
-    } catch (e) {
-      console.error("Failed to parse draft from localStorage", e);
-      return false;
-    }
-  }, []);
+  const [kindFilter, setKindFilter] = useState<'all' | 'story' | 'email'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'unread' | 'recorded'>('all');
   const fetchStories = async () => {
     try {
       const response = await api<{ items: Story[] }>('/api/stories');
       setStories([...response.items].sort((a, b) => b.createdAt - a.createdAt));
     } catch (err) {
-      console.error(err);
-      toast.error('Failed to summon stories from the void.');
+      toast.error('Failed to summon from the void.');
     } finally {
       setLoading(false);
     }
@@ -37,124 +25,111 @@ export function HomePage() {
   useEffect(() => {
     fetchStories();
   }, []);
+  const handleConvertToStory = async (id: string) => {
+    try {
+      await api(`/api/stories/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ kind: 'story' })
+      });
+      toast.success('Ticket promoted to Grim Narrative.');
+      fetchStories();
+    } catch (err) {
+      toast.error('Promotion failed.');
+    }
+  };
   const filteredStories = stories.filter(s => {
-    if (filter === 'unread') return !s.isRecorded;
-    if (filter === 'recorded') return s.isRecorded;
-    return true;
+    const matchesKind = kindFilter === 'all' || s.kind === kindFilter;
+    const matchesStatus = statusFilter === 'all' || (statusFilter === 'unread' ? !s.isRecorded : s.isRecorded);
+    return matchesKind && matchesStatus;
   });
   return (
     <div className="min-h-screen flex flex-col relative bg-nocturnal-purple/20">
       <VampiricAtmosphere />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
-        <div className="py-12 md:py-16 lg:py-20">
-          <header className="mb-20 text-center">
-            <div className="inline-block relative">
-              <h1 className="gothic-header text-6xl md:text-8xl lg:text-9xl mb-4 animate-pulse-glow">
-                INVITE ME IN
-              </h1>
-              <div className="font-pixel text-xl md:text-2xl text-phantom-pink tracking-[0.3em] uppercase opacity-90">
-                A MORALLY GRIM BROADCAST
-              </div>
-              <div className="absolute -top-16 -left-16 opacity-30">
-                <Moon className="w-24 h-24 text-white rotate-[-15deg]" />
-              </div>
-            </div>
-            <div className="mt-16 flex flex-wrap justify-center gap-8">
-              <Link 
-                to="/add" 
-                className="retro-button-pink flex flex-col items-center gap-1 px-10 py-4 group transition-all relative hover:scale-105 active:scale-95"
-              >
-                <div className="flex items-center gap-3">
-                  <Plus className="w-7 h-7 group-hover:rotate-90 transition-transform" />
-                  <span className="font-gothic text-2xl">Ingest Tale</span>
-                </div>
-                {hasDraft && (
-                  <span className="font-pixel text-[10px] text-white animate-pulse absolute -bottom-6 tracking-widest bg-phantom-pink/20 px-2">
-                    DRAFT RECOVERABLE
-                  </span>
-                )}
+        <div className="py-12 md:py-16">
+          <header className="mb-16 text-center">
+            <h1 className="gothic-header text-6xl md:text-8xl mb-4 animate-pulse-glow">THE CRYPT</h1>
+            <div className="font-pixel text-xl text-phantom-pink tracking-[0.3em] uppercase">MORALLY GRIM ARCHIVES</div>
+            <div className="mt-12 flex justify-center gap-6">
+              <Link to="/add" className="retro-button-pink px-12 py-4 font-gothic text-2xl flex items-center gap-3">
+                <Plus /> NEW INGESTION
               </Link>
             </div>
           </header>
-          <div className="flex flex-wrap gap-4 mb-12 font-pixel text-lg justify-center md:justify-start">
-            {(['all', 'unread', 'recorded'] as const).map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-8 py-2 border-2 transition-all active:scale-95 ${
-                  filter === f
-                    ? 'bg-slime-green text-black border-slime-green shadow-retro'
-                    : 'border-slime-green/40 text-slime-green/60 hover:border-slime-green hover:text-slime-green'
-                }`}
-              >
-                {f.toUpperCase()}
-              </button>
-            ))}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-8">
+            <div className="flex gap-2 p-1 bg-black/40 border-2 border-white/10 rounded-sm font-pixel">
+              {(['all', 'story', 'email'] as const).map(k => (
+                <button
+                  key={k} onClick={() => setKindFilter(k)}
+                  className={cn("px-6 py-2 transition-all", kindFilter === k ? "bg-slime-green text-black" : "text-white/60 hover:text-white")}
+                >
+                  {k === 'email' ? 'INBOX' : k.toUpperCase()}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-4 font-pixel text-sm">
+               {(['all', 'unread', 'recorded'] as const).map(s => (
+                <button
+                  key={s} onClick={() => setStatusFilter(s)}
+                  className={cn("border-b-2 px-4 py-1", statusFilter === s ? "border-phantom-pink text-phantom-pink" : "border-transparent text-white/40 hover:text-white/80")}
+                >
+                  {s.toUpperCase()}
+                </button>
+              ))}
+            </div>
           </div>
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-32 gap-6">
-              <div className="w-16 h-16 border-4 border-blood-red border-t-slime-green animate-spin rounded-full" />
-              <div className="text-center font-gothic text-2xl text-white tracking-widest animate-pulse">SUMMONING FROM THE VOID</div>
-            </div>
+            <div className="py-32 text-center font-gothic text-2xl animate-pulse">INVOKING DATABASE...</div>
           ) : filteredStories.length === 0 ? (
-            <div className="retro-panel text-center py-32 border-dashed border-slime-green/20 bg-nocturnal-purple/40">
-              <Zap className="w-20 h-20 mx-auto mb-6 text-phantom-pink/40" />
-              <p className="text-5xl font-gothic text-white/20">EMPTY CRYPT</p>
-              <p className="font-pixel text-xl mt-6 text-slime-green/40">NO SOULS HAVE BEEN INVITED IN YET.</p>
+            <div className="retro-panel py-32 text-center opacity-30 border-dashed">
+              <p className="font-gothic text-4xl mb-4">NOTHING LURKS HERE</p>
+              <p className="font-pixel text-xl">THE ARCHIVE IS VOID OF LIFE.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
               {filteredStories.map((story) => (
-                <div key={story.id} className="retro-window group hover:border-white hover:-translate-y-2 transition-all duration-500">
-                  <div className="retro-window-header group-hover:bg-white group-hover:text-black transition-colors">
-                    <span className="font-pixel text-sm uppercase">ARCHIVE_{story.id.slice(0, 6)}</span>
-                    <div className="flex gap-1">
-                      <div className="w-4 h-4 border border-black/20 flex items-center justify-center opacity-50"><Minus className="w-3 h-3" /></div>
-                      <div className="w-4 h-4 border border-black/20 flex items-center justify-center opacity-50"><Square className="w-3 h-3" /></div>
-                      <div className="w-4 h-4 border border-black/20 flex items-center justify-center bg-black/10"><X className="w-3 h-3" /></div>
+                <div key={story.id} className={cn("retro-window group transition-all duration-300", story.kind === 'email' ? "border-phantom-pink/40" : "border-slime-green/40")}>
+                  <div className={cn("retro-window-header", story.kind === 'email' ? "bg-phantom-pink" : "bg-slime-green")}>
+                    <div className="flex items-center gap-2">
+                      {story.kind === 'email' ? <Mail className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                      <span className="font-pixel text-[10px] truncate uppercase">{story.kind === 'email' ? 'TICKET_REC' : 'NARRATIVE_REC'}_{story.id.slice(0, 4)}</span>
                     </div>
+                    <X className="w-3 h-3 opacity-40" />
                   </div>
-                  <div className="p-8 flex flex-col h-full bg-gradient-to-b from-black/60 to-nocturnal-purple/80">
-                    <div className="flex justify-between items-center mb-6">
-                      <span className="font-pixel text-xs text-phantom-pink tracking-widest border border-phantom-pink/30 px-3 py-1">
+                  <div className="p-6 flex flex-col h-full bg-black/40">
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="font-pixel text-[10px] text-white/40 uppercase tabular-nums">
                         {new Date(story.createdAt).toLocaleDateString()}
                       </span>
-                      {story.isRecorded ? (
-                        <div className="flex items-center gap-1.5 text-slime-green font-pixel text-xs">
-                          <Archive className="w-4 h-4" /> ARCHIVED
-                        </div>
-                      ) : (
-                        <div className="text-white font-pixel text-xs animate-pulse flex items-center gap-2">
-                          <BookOpen className="w-4 h-4" /> PENDING
-                        </div>
+                      {story.kind === 'email' && (
+                        <span className="bg-phantom-pink/20 text-phantom-pink font-pixel text-[10px] px-2 py-0.5 border border-phantom-pink/30">
+                          ID: {story.metadata?.ticketId || 'NA'}
+                        </span>
                       )}
                     </div>
-                    <h3 className="font-gothic text-3xl mb-4 text-white group-hover:text-slime-green transition-colors leading-tight line-clamp-2 min-h-[4rem]">
+                    <h3 className="font-gothic text-2xl text-white mb-3 line-clamp-2 min-h-[3.5rem] group-hover:text-slime-green transition-colors">
                       {story.title}
                     </h3>
-                    <p className="font-pixel text-sm text-phantom-pink/80 mb-6 italic border-l-2 border-phantom-pink/20 pl-3 truncate">
-                      SENDER: {story.source}
+                    <p className="font-pixel text-xs text-white/50 mb-6 truncate italic">
+                      {story.kind === 'email' ? `SENDER: ${story.source}` : `SOURCE: ${story.source}`}
                     </p>
-                    <div className="flex gap-6 font-pixel text-[10px] text-white/40 mb-6 uppercase tracking-wider">
-                      <div className="flex items-center gap-2">
-                        <FileText className="w-3 h-3" /> {wordCount(story.content)} WORDS
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-3 h-3" /> {estimateReadTime(story.content)}
-                      </div>
+                    <div className="mb-8 font-mono text-xs text-white/40 line-clamp-3 leading-relaxed">
+                      {story.content}
                     </div>
-                    <div className="flex-1">
-                      <p className="font-mono text-sm text-foreground/60 line-clamp-3 mb-10 leading-relaxed group-hover:text-foreground/90 transition-colors">
-                        {story.content}
-                      </p>
+                    <div className="mt-auto pt-4 flex gap-3">
+                      <Link to={`/read/${story.id}`} className="retro-button flex-1 py-3 text-sm flex items-center justify-center gap-2">
+                        <Play className="w-4 h-4 fill-current" /> READ
+                      </Link>
+                      {story.kind === 'email' && (
+                        <button 
+                          onClick={() => handleConvertToStory(story.id)}
+                          className="border-2 border-white/10 hover:border-white px-4 transition-all text-white/60 hover:text-white"
+                          title="Promote to Narrative"
+                        >
+                          <Zap className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
-                    <Link
-                      to={`/read/${story.id}`}
-                      className="retro-button w-full flex items-center justify-center gap-3 mt-auto text-xl py-3 group/btn"
-                    >
-                      <Play className="w-5 h-5 fill-current group-hover/btn:scale-110 transition-transform" />
-                      <span className="font-gothic uppercase tracking-widest">Open Tome</span>
-                    </Link>
                   </div>
                 </div>
               ))}

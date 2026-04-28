@@ -10,6 +10,12 @@ export interface Story {
   content: string;
   isRecorded: boolean;
   createdAt: number;
+  kind?: 'story' | 'email';
+  metadata?: {
+    senderEmail?: string;
+    subject?: string;
+    ticketId?: string;
+  };
 }
 export interface User {
   id: string;
