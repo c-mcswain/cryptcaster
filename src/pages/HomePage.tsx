@@ -118,8 +118,8 @@ export function HomePage() {
                 {/* Right Side: Featured Card */}
                 <div className="lg:col-span-8">
                   <div className="relative aspect-[16/9] lg:aspect-auto lg:h-full border-4 border-white/10 group overflow-hidden shadow-2xl">
-                    <img
-                      src={zine.coverImageUrl}
+                    <img 
+                      src={zine.coverImageUrl} 
                       className="absolute inset-0 w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
                       alt="Zine Cover"
                     />
@@ -159,8 +159,8 @@ export function HomePage() {
             <h2 className="font-gothic text-4xl text-white/20 tracking-widest">ARCHIVES</h2>
             <div className="flex flex-wrap justify-center gap-2 p-1.5 bg-black/60 border border-white/5 rounded-sm font-pixel max-w-full">
               {(['all', 'story', 'email'] as const).map(k => (
-                <button
-                  key={k}
+                <button 
+                  key={k} 
                   onClick={() => setKindFilter(k)}
                   className={cn(
                     "px-10 py-2.5 transition-all text-sm tracking-widest whitespace-nowrap uppercase",
@@ -173,7 +173,7 @@ export function HomePage() {
             </div>
             <div className="flex gap-6 font-pixel text-base">
                {(['all', 'unread', 'recorded'] as const).map(s => (
-                <button
+                <button 
                   key={s} onClick={() => setStatusFilter(s)}
                   className={cn("border-b-2 px-6 py-2 transition-colors uppercase tracking-widest", statusFilter === s ? "border-phantom-pink text-phantom-pink" : "border-transparent text-white/30 hover:text-white/60")}
                 >
@@ -233,8 +233,8 @@ export function HomePage() {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <button
-                                type="button"
+                              <button 
+                                type="button" 
                                 onClick={() => handleConvertToStory(story.id)}
                                 className="border border-white/5 hover:border-white/20 bg-noir-gray/50 px-5 transition-all text-white/30 hover:text-white"
                               >

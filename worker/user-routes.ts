@@ -6,10 +6,11 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
   // AUTH
   app.post('/api/auth/login', async (c) => {
     const { username, password } = await c.req.json();
-    if (username === 'admin' && password === 'morallygrim') {
+    // Updated to reflect the "Creep Queen" administrative credentials
+    if (username === 'creepqueenadmin' && password === '6642') {
       return ok(c, {
         token: 'grim-token-' + Math.random().toString(36).substring(7),
-        user: { id: 'u1', name: 'CryptMaster' }
+        user: { id: 'u1', name: 'CreepQueen' }
       });
     }
     return bad(c, 'Invalid credentials');

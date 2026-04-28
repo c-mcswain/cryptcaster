@@ -51,10 +51,11 @@ export function LoginPage() {
               <label className="block font-pixel text-xs mb-3 text-white/40 tracking-widest uppercase">Identity</label>
               <div className="relative">
                 <input
-                  required value={username}
+                  required
+                  value={username}
                   onChange={e => setUsername(e.target.value)}
                   className="w-full bg-noir-gray border border-white/10 p-4 pl-12 text-white font-mono focus:border-phantom-pink transition-all outline-none"
-                  placeholder="admin"
+                  placeholder="creepqueenadmin"
                 />
                 <Key className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-white/20" />
               </div>
@@ -63,7 +64,9 @@ export function LoginPage() {
               <label className="block font-pixel text-xs mb-3 text-white/40 tracking-widest uppercase">Secret Cipher</label>
               <div className="relative">
                 <input
-                  required type="password" value={password}
+                  required
+                  type="password"
+                  value={password}
                   onChange={e => setPassword(e.target.value)}
                   className="w-full bg-noir-gray border border-white/10 p-4 pl-12 text-white font-mono focus:border-phantom-pink transition-all outline-none"
                   placeholder="••••••••"
@@ -83,8 +86,8 @@ export function LoginPage() {
               )}
             </button>
             <div className="mt-8 p-4 bg-white/[0.03] border border-white/5 rounded-sm">
-              <p className="font-pixel text-[10px] text-white/20 text-center uppercase leading-relaxed">
-                Hint for reviewers: admin / morallygrim
+              <p className="font-pixel text-[10px] text-white/20 text-center uppercase leading-relaxed tracking-widest">
+                Hint for reviewers: creepqueenadmin / 6642
               </p>
             </div>
           </form>
