@@ -12,15 +12,21 @@ export function HomePage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread' | 'recorded'>('all');
   const hasDraft = useMemo(() => {
-    const draft = localStorage.getItem('cryptcaster_draft');
-    if (!draft) return false;
-    const parsed = JSON.parse(draft);
-    return !!(parsed.title || parsed.content);
+    try {
+      const draft = localStorage.getItem('cryptcaster_draft');
+      if (!draft) return false;
+      const parsed = JSON.parse(draft);
+      // Ensure the draft actually has substance before flagging it
+      return !!((parsed.title && parsed.title.trim().length > 0) || (parsed.content && parsed.content.trim().length > 0));
+    } catch (e) {
+      console.error("Failed to parse draft from localStorage", e);
+      return false;
+    }
   }, []);
   const fetchStories = async () => {
     try {
       const response = await api<{ items: Story[] }>('/api/stories');
-      setStories(response.items.sort((a, b) => b.createdAt - a.createdAt));
+      setStories([...response.items].sort((a, b) => b.createdAt - a.createdAt));
     } catch (err) {
       console.error(err);
       toast.error('Failed to summon stories from the void.');
@@ -54,13 +60,18 @@ export function HomePage() {
               </div>
             </div>
             <div className="mt-16 flex flex-wrap justify-center gap-8">
-              <Link to="/add" className="retro-button-pink flex flex-col items-center gap-1 px-10 py-4 group transition-all relative">
+              <Link 
+                to="/add" 
+                className="retro-button-pink flex flex-col items-center gap-1 px-10 py-4 group transition-all relative hover:scale-105 active:scale-95"
+              >
                 <div className="flex items-center gap-3">
                   <Plus className="w-7 h-7 group-hover:rotate-90 transition-transform" />
                   <span className="font-gothic text-2xl">Ingest Tale</span>
                 </div>
                 {hasDraft && (
-                  <span className="font-pixel text-[10px] text-white animate-pulse absolute -bottom-6">DRAFT RECOVERABLE</span>
+                  <span className="font-pixel text-[10px] text-white animate-pulse absolute -bottom-6 tracking-widest bg-phantom-pink/20 px-2">
+                    DRAFT RECOVERABLE
+                  </span>
                 )}
               </Link>
             </div>
@@ -94,9 +105,9 @@ export function HomePage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
               {filteredStories.map((story) => (
-                <div key={story.id} className="retro-window group hover:border-white transition-all duration-500">
+                <div key={story.id} className="retro-window group hover:border-white hover:-translate-y-2 transition-all duration-500">
                   <div className="retro-window-header group-hover:bg-white group-hover:text-black transition-colors">
-                    <span className="font-pixel text-sm">ARCHIVE_{story.id.slice(0, 6)}</span>
+                    <span className="font-pixel text-sm uppercase">ARCHIVE_{story.id.slice(0, 6)}</span>
                     <div className="flex gap-1">
                       <div className="w-4 h-4 border border-black/20 flex items-center justify-center opacity-50"><Minus className="w-3 h-3" /></div>
                       <div className="w-4 h-4 border border-black/20 flex items-center justify-center opacity-50"><Square className="w-3 h-3" /></div>
@@ -142,7 +153,7 @@ export function HomePage() {
                       className="retro-button w-full flex items-center justify-center gap-3 mt-auto text-xl py-3 group/btn"
                     >
                       <Play className="w-5 h-5 fill-current group-hover/btn:scale-110 transition-transform" />
-                      <span className="font-gothic">Open Tome</span>
+                      <span className="font-gothic uppercase tracking-widest">Open Tome</span>
                     </Link>
                   </div>
                 </div>
