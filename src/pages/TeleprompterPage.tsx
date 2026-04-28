@@ -34,22 +34,32 @@ export function TeleprompterPage() {
     const element = document.documentElement;
     const currentY = window.scrollY;
     const totalHeight = element.scrollHeight - element.clientHeight;
-    // Detection of manual scroll interruption
+    // Intelligent detection of manual scroll interruption
+    // If the window scroll position differs significantly from our expected auto-scroll position,
+    // we assume the user has taken manual control.
     const drift = Math.abs(currentY - scrollPosRef.current);
-    if (drift > 20) {
+    if (isScrolling && drift > 30) {
+      // User has manually scrolled, pause the auto-engine
+      setIsScrolling(false);
       scrollPosRef.current = currentY;
     }
-    if (isScrolling && totalHeight > 0 && !isManualScrolling.current) {
-      const pixelsPerSecond = scrollSpeed * 15;
+    if (isScrolling && totalHeight > 0) {
+      const pixelsPerSecond = scrollSpeed * 20; // Adjusted speed multiplier for smoother range
       const moveBy = (pixelsPerSecond * deltaTime) / 1000;
-      scrollPosRef.current = Math.min(totalHeight, scrollPosRef.current + moveBy);
-      window.scrollTo(0, scrollPosRef.current);
-      if (scrollPosRef.current >= totalHeight) {
+      const newPos = Math.min(totalHeight, scrollPosRef.current + moveBy);
+      scrollPosRef.current = newPos;
+      window.scrollTo({
+        top: newPos,
+        behavior: 'auto' // 'auto' is essential for high-frequency frame updates
+      });
+      if (newPos >= totalHeight) {
         setIsScrolling(false);
       }
     } else if (!isScrolling) {
+      // Keep internal ref in sync with viewport so resuming is seamless
       scrollPosRef.current = currentY;
     }
+    // Defensive check for progress calculation
     if (progressBarRef.current) {
       const progress = totalHeight > 0 ? (currentY / totalHeight) * 100 : 0;
       progressBarRef.current.style.width = `${Math.min(100, Math.max(0, progress))}%`;

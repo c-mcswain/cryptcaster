@@ -26,15 +26,18 @@ export function AddStoryPage() {
       isInitialized.current = true;
     }
   }, [storyDraft, emailDraft]);
+  // Robust debounce for auto-save and visual feedback
   useEffect(() => {
     if (!isInitialized.current) return;
     const timeoutId = setTimeout(() => {
+      // Sync form to persistent draft
       setStoryDraft(storyForm);
       setEmailDraft(emailForm);
+      // Brief visual confirmation
       setShowSavedToast(true);
       const hideTimeout = setTimeout(() => setShowSavedToast(false), 2000);
       return () => clearTimeout(hideTimeout);
-    }, 1500);
+    }, 1000);
     return () => clearTimeout(timeoutId);
   }, [storyForm, emailForm, setStoryDraft, setEmailDraft]);
   const stats = useMemo(() => ({
@@ -113,7 +116,7 @@ export function AddStoryPage() {
                     </TabsTrigger>
                   </TabsList>
                 )}
-                <TabsContent value="story">
+                <TabsContent value="story" className="min-h-[600px]">
                   <div className="retro-window border-slime-green/20">
                     <div className="retro-window-header bg-slime-green/80 text-black">
                       <div className="flex items-center gap-4">
@@ -173,10 +176,10 @@ export function AddStoryPage() {
                           className="w-full bg-noir-gray/50 border border-white/10 p-6 text-white font-mono text-lg leading-relaxed focus:border-slime-green transition-all outline-none resize-none min-h-[400px]"
                         />
                       </div>
-                      <div className="relative group">
+                      <div className="relative group pt-4">
                         <AnimatePresence>
                           {showSavedToast && (
-                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute -top-10 left-1/2 -translate-x-1/2 flex items-center gap-2 text-slime-green font-pixel text-xs uppercase tracking-widest">
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 text-slime-green font-pixel text-xs uppercase tracking-widest">
                               <ShieldCheck className="w-3 h-3" /> Pact Auto-Saved
                             </motion.div>
                           )}
@@ -188,8 +191,7 @@ export function AddStoryPage() {
                     </form>
                   </div>
                 </TabsContent>
-                <TabsContent value="email">
-                   {/* Email form follows same pattern with refined focus mode & toast */}
+                <TabsContent value="email" className="min-h-[600px]">
                    <div className="retro-window border-phantom-pink/20">
                     <div className="retro-window-header bg-phantom-pink/80 text-black">
                       <div className="flex items-center gap-4">
@@ -238,9 +240,18 @@ export function AddStoryPage() {
                           className="w-full bg-noir-gray/50 border border-white/10 p-6 text-white font-mono text-lg leading-relaxed focus:border-phantom-pink transition-all outline-none resize-none min-h-[400px]"
                         />
                       </div>
-                      <button type="submit" disabled={loading} className="retro-button-pink w-full text-2xl font-gothic py-8 tracking-[0.3em] uppercase">
-                        {loading ? 'FILING...' : 'GENERATE BROADCAST TICKET'}
-                      </button>
+                      <div className="relative pt-4">
+                        <AnimatePresence>
+                          {showSavedToast && (
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute -top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 text-phantom-pink font-pixel text-xs uppercase tracking-widest">
+                              <ShieldCheck className="w-3 h-3" /> Post Cached
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                        <button type="submit" disabled={loading} className="retro-button-pink w-full text-2xl font-gothic py-8 tracking-[0.3em] uppercase">
+                          {loading ? 'FILING...' : 'GENERATE BROADCAST TICKET'}
+                        </button>
+                      </div>
                     </form>
                   </div>
                 </TabsContent>

@@ -45,9 +45,11 @@ export function HomePage() {
     advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
   };
   const featuredStory = displayZine.featuredStoryId ? stories.find(s => s.id === displayZine.featuredStoryId) : null;
-  // Stylized gothic issue display
+  // Refined noir/military formatting for the issue date
   const issueDate = new Date(displayZine.lastUpdated);
-  const issueStr = `X${issueDate.getFullYear()}.I${issueDate.getMonth()+1}.${issueDate.getDate()}`;
+  const month = String(issueDate.getMonth() + 1).padStart(2, '0');
+  const day = String(issueDate.getDate()).padStart(2, '0');
+  const issueStr = `X${issueDate.getFullYear()}.${month}.${day}`;
   return (
     <div className="min-h-screen flex flex-col relative bg-black overflow-x-hidden selection:bg-slime-green selection:text-black">
       <VampiricAtmosphere />
@@ -79,8 +81,10 @@ export function HomePage() {
             <section className="space-y-16 md:space-y-24 mb-20 md:mb-32">
               <div className="text-center relative">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-px bg-gradient-to-r from-transparent via-slime-green/10 to-transparent -z-10" />
-                <h1 className="gothic-header text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] mb-4 tracking-[0.2em] md:tracking-[0.4em] animate-pulse-glow leading-none">THE MIDNIGHT ZINE</h1>
-                <p className="font-pixel text-lg md:text-2xl text-slime-green/60 uppercase tracking-[0.4em] md:tracking-[0.6em]">
+                <h1 className="gothic-header text-4xl sm:text-6xl md:text-8xl lg:text-[11rem] mb-4 tracking-[0.1em] md:tracking-[0.4em] animate-pulse-glow leading-none break-normal">
+                  THE MIDNIGHT ZINE
+                </h1>
+                <p className="font-pixel text-lg md:text-2xl text-slime-green/60 uppercase tracking-[0.3em] md:tracking-[0.6em]">
                   ISSUE: {issueStr} // VOL. 04.2
                 </p>
               </div>
@@ -90,7 +94,7 @@ export function HomePage() {
                    <div className="retro-window border-white/5 flex-1 shadow-2xl">
                       <div className="retro-window-header bg-white/5 text-white/60 italic tracking-widest">Editorial_Introit.log</div>
                       <div className="p-6 md:p-10 bg-black/80 font-mono text-base md:text-lg leading-[1.8] text-white/60 italic space-y-6">
-                        <p className="indent-8">"{displayZine.intro}"</p>
+                        <p className="indent-8 break-words">"{displayZine.intro}"</p>
                         <div className="pt-8 border-t border-white/5 font-pixel text-xs text-slime-green tracking-[0.3em] not-italic">
                           — {displayZine.editorName.toUpperCase()} // CHIEF ARCHIVIST
                         </div>
@@ -102,7 +106,7 @@ export function HomePage() {
                         <Megaphone className="w-5 h-5 animate-bounce" />
                         <span className="font-pixel text-sm uppercase tracking-[0.2em] font-black">OFFICIAL SPONSOR</span>
                       </div>
-                      <p className="font-mono text-sm text-white/70 leading-relaxed uppercase italic">
+                      <p className="font-mono text-sm text-white/70 leading-relaxed uppercase italic break-words">
                         "{displayZine.advertisement}"
                       </p>
                     </div>
@@ -112,7 +116,7 @@ export function HomePage() {
                       <ul className="space-y-6 font-pixel text-base text-white/40 tracking-widest uppercase">
                         {displayZine.announcements.map((a, i) => (
                           <li key={i} className="flex gap-4 group cursor-default">
-                            <span className="text-phantom-pink group-hover:animate-blink">»</span> 
+                            <span className="text-phantom-pink group-hover:animate-blink">»</span>
                             <span className="group-hover:text-white transition-colors">{a}</span>
                           </li>
                         ))}

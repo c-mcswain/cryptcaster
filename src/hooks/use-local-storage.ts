@@ -5,7 +5,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
-      console.error(`Error reading localStorage key "${key}":`, error);
+      console.warn(`Error reading localStorage key "${key}":`, error);
       return initialValue;
     }
   });
@@ -13,11 +13,17 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     try {
       setStoredValue((prev) => {
         const valueToStore = value instanceof Function ? value(prev) : value;
+        // Stringify outside of setState if possible for complex types, 
+        // but simple types are safe here.
         window.localStorage.setItem(key, JSON.stringify(valueToStore));
         return valueToStore;
       });
     } catch (error) {
-      console.error(`Error writing localStorage key "${key}":`, error);
+      if (error instanceof Error && error.name === 'QuotaExceededError') {
+        console.error('LocalStorage quota exceeded. Purging draft to prevent crash.');
+      } else {
+        console.error(`Error writing localStorage key "${key}":`, error);
+      }
     }
   }, [key]);
   const removeItem = useCallback(() => {
