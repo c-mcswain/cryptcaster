@@ -47,7 +47,7 @@ export function HomePage() {
     <div className="min-h-screen flex flex-col relative bg-nocturnal-purple/5">
       <VampiricAtmosphere />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
-        <div className="py-12 md:py-16">
+        <div className="py-8 md:py-10 lg:py-12">
           <header className="mb-20 text-center">
             <h1 className="gothic-header text-5xl md:text-8xl mb-6 animate-pulse-glow tracking-[0.2em]">INVITE ME IN</h1>
             <div className="font-pixel text-2xl text-phantom-pink tracking-[0.4em] uppercase opacity-60">MORALLY GRIM ARCHIVES</div>
@@ -62,12 +62,16 @@ export function HomePage() {
           </header>
           <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
             <div className="flex gap-2 p-1.5 bg-black/60 border border-white/5 rounded-sm font-pixel overflow-x-auto max-w-full">
-              {(['all', 'story', 'email'] as const).map(k => (
+              {(['all', 'story', 'email', 'submission'] as const).map(k => (
                 <button
-                  key={k} onClick={() => setKindFilter(k)}
-                  className={cn("px-8 py-2.5 transition-all text-sm tracking-widest whitespace-nowrap", kindFilter === k ? "bg-slime-green text-black" : "text-white/40 hover:text-white")}
+                  key={k} 
+                  onClick={() => setKindFilter(k)}
+                  className={cn(
+                    "px-8 py-2.5 transition-all text-sm tracking-widest whitespace-nowrap uppercase", 
+                    kindFilter === k ? "bg-slime-green text-black" : "text-white/40 hover:text-white"
+                  )}
                 >
-                  {k === 'email' ? 'INBOX' : k.toUpperCase()}
+                  {k === 'email' ? 'INBOX' : k}
                 </button>
               ))}
             </div>
@@ -134,6 +138,7 @@ export function HomePage() {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <button
+                                type="button"
                                 onClick={() => handleConvertToStory(story.id)}
                                 className="border border-white/5 hover:border-white/20 bg-noir-gray/50 px-5 transition-all text-white/30 hover:text-white"
                               >

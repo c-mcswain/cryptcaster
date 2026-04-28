@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Info, Skull, Mail, ScrollText, Link as LinkIcon } from 'lucide-react';
+import { ArrowLeft, Info, Skull, Mail, ScrollText } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import { toast } from 'sonner';
 import { RetroFooter } from '@/components/RetroFooter';
@@ -89,7 +89,7 @@ export function AddStoryPage() {
     <div className={`min-h-screen flex flex-col relative transition-colors duration-1000 ${isFocusMode ? 'bg-black' : 'bg-nocturnal-purple/10'}`}>
       <VampiricAtmosphere />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
-        <div className="py-12 md:py-16">
+        <div className="py-8 md:py-10 lg:py-12">
           <AnimatePresence>
             {!isFocusMode && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
@@ -120,7 +120,7 @@ export function AddStoryPage() {
                         <ScrollText className="w-5 h-5" />
                         <span className="tracking-widest uppercase">Ingestion_Protocol_04.1</span>
                       </div>
-                      <button onClick={() => setIsFocusMode(!isFocusMode)} className="text-sm font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-slime-green transition-colors">
+                      <button type="button" onClick={() => setIsFocusMode(!isFocusMode)} className="text-sm font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-slime-green transition-colors">
                         {isFocusMode ? 'Minimize Interface' : 'Expand Terminal'}
                       </button>
                     </div>
@@ -179,7 +179,7 @@ export function AddStoryPage() {
                         <Mail className="w-5 h-5" />
                         <span className="tracking-widest uppercase">Midnight_Post_Ticket_v1.3</span>
                       </div>
-                      <button onClick={() => setIsFocusMode(!isFocusMode)} className="text-sm font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-phantom-pink transition-colors">
+                      <button type="button" onClick={() => setIsFocusMode(!isFocusMode)} className="text-sm font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-phantom-pink transition-colors">
                         {isFocusMode ? 'Minimize Interface' : 'Expand Terminal'}
                       </button>
                     </div>

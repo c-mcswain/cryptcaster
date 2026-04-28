@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, Pause, Eye, Skull, Mail, ScrollText, Youtube, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Play, Pause, Eye, Skull, Mail, ScrollText, Video, ExternalLink } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story } from '@shared/types';
 import { toast } from 'sonner';
@@ -64,7 +64,8 @@ export function TeleprompterPage() {
   }, []);
   const getYoutubeId = (url?: string) => {
     if (!url) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    // Fixed regex: removed unnecessary escapes for & and ? to resolve lint errors
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
   };
@@ -163,7 +164,7 @@ Status: TOMB SEALED
         {story.mediaUrl && !stealthMode && (
           <div className="mt-40 border-t-2 border-white/10 pt-20">
             <h2 className="font-gothic text-3xl text-slime-green mb-10 flex items-center gap-4">
-              <Youtube className="w-8 h-8" /> MEDIA VAULT
+              <Video className="w-8 h-8" /> MEDIA VAULT
             </h2>
             {ytId ? (
               <div className="aspect-video w-full border-4 border-white/5 bg-black overflow-hidden shadow-2xl relative group">
@@ -178,7 +179,7 @@ Status: TOMB SEALED
                 />
               </div>
             ) : (
-              <a 
+              <a
                 href={story.mediaUrl} target="_blank" rel="noopener noreferrer"
                 className="retro-button-pink w-full py-10 flex items-center justify-center gap-6 text-2xl"
               >
