@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Skull, Zap, Ghost, MessageSquare, Megaphone, AlertCircle } from 'lucide-react';
+import { Skull, Zap, Ghost, MessageSquare, Megaphone, AlertCircle, Activity } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story, ZineContent } from '@shared/types';
 import { Toaster, toast } from 'sonner';
@@ -35,15 +35,13 @@ export function HomePage() {
     intro: 'The terminal flickers with the weight of unspeakable records...',
     announcements: [
       "The Shadow Market: Now accepting crypt currency",
-      "(Un)Alive Reading: Time, Date, and Realm TBD",
-      "Submit your chronicles or be forgotten",
-      "Vampire Facial Giveaway: Win a pint of O-Negative"
+      "Submit your chronicles or be forgotten"
     ],
-    featuredStoryId: null,
+    featuredStoryId: 's8',
     coverImageUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     lastUpdated: Date.now(),
     editorName: 'CreepQueen',
-    advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
+    advertisement: "O-NEGATIVE ENERGY DRINK - IT’S IN YOUR BLOOD."
   };
   const featuredStory = displayZine.featuredStoryId ? stories.find(s => s.id === displayZine.featuredStoryId) : null;
   const voidCoverUrl = 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
@@ -129,18 +127,22 @@ export function HomePage() {
                 <div className="lg:col-span-8 h-full">
                   <div className={cn(
                     "relative aspect-video lg:aspect-[4/3] border-4 md:border-8 group overflow-hidden shadow-[0_0_100px_rgba(0,0,0,1)] transition-all duration-700",
-                    isBreaking ? "border-phantom-pink/40 animate-pulse-glow" : "border-white/5"
+                    isBreaking ? "border-phantom-pink/60 shadow-[0_0_40px_rgba(179,27,77,0.3)]" : "border-white/5"
                   )}>
                     <img
-                      src={featuredStory ? displayZine.coverImageUrl : voidCoverUrl}
+                      src={featuredStory ? (displayZine.coverImageUrl || voidCoverUrl) : voidCoverUrl}
                       className="absolute inset-0 w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-70 transition-all duration-[2000ms] scale-110 group-hover:scale-100"
                       alt="Zine Cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                    {/* TERMINAL_LIVE Indicator */}
+                    <div className="absolute top-8 right-8 flex items-center gap-3 px-4 py-1.5 bg-black/80 border border-slime-green/40 font-pixel text-[10px] text-slime-green tracking-[0.3em] z-20">
+                      <Activity className="w-3 h-3 animate-pulse" /> TERMINAL_LIVE
+                    </div>
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:p-16 flex flex-col items-start gap-6 md:gap-10">
                       <div className="flex flex-col gap-4">
                         {isBreaking && (
-                          <div className="flex items-center gap-3 bg-blood-red border border-phantom-pink px-4 py-2 text-white font-pixel text-xs uppercase tracking-[0.4em] animate-blink w-fit">
+                          <div className="flex items-center gap-3 bg-blood-red border border-phantom-pink px-4 py-2 text-white font-pixel text-xs uppercase tracking-[0.4em] animate-blink w-fit shadow-[0_0_20px_rgba(179,27,77,0.5)]">
                             <AlertCircle className="w-4 h-4" /> MORALLY GRIM BULLETIN
                           </div>
                         )}
@@ -148,25 +150,25 @@ export function HomePage() {
                           <Zap className="w-4 h-4 fill-current" /> Featured Chronicle
                         </div>
                       </div>
-                      <div className="space-y-4">
+                      <div className="space-y-6">
                         <h2 className={cn(
-                          "font-gothic text-4xl md:text-7xl lg:text-8xl text-white tracking-[0.1em] leading-tight uppercase transition-all duration-700",
+                          "font-gothic text-4xl md:text-7xl lg:text-8xl text-white tracking-[0.1em] leading-[1.1] uppercase transition-all duration-700",
                           isBreaking && "text-white drop-shadow-[0_0_15px_rgba(179,27,77,0.8)]"
                         )}>
                           {featuredStory?.title || "VOID SELECTION"}
                         </h2>
-                        <p className="font-mono text-lg md:text-2xl text-white/50 line-clamp-3 max-w-3xl leading-relaxed">
+                        <p className="font-mono text-lg md:text-2xl text-white/60 line-clamp-4 max-w-4xl leading-[1.6]">
                           {featuredStory?.content || "The shadows remain silent this week. Check back for new unsealed chronicles."}
-                          {featuredStory?.content && " ... [UNSEALED]"}
+                          {featuredStory?.content && " ... [UNSEALED_DATA]"}
                         </p>
                       </div>
                       {featuredStory && (
-                        <Link 
-                          to={isAuthenticated ? `/read/${featuredStory.id}` : `/read/${featuredStory.id}`} 
+                        <Link
+                          to={`/read/${featuredStory.id}`}
                           className={cn(
-                            "font-pixel text-lg px-8 py-4 transition-all uppercase tracking-[0.3em] flex items-center gap-4",
-                            isBreaking 
-                              ? "bg-phantom-pink text-white hover:bg-white hover:text-black animate-pulse" 
+                            "font-pixel text-lg px-10 py-5 transition-all uppercase tracking-[0.3em] flex items-center gap-4 mt-4",
+                            isBreaking
+                              ? "bg-phantom-pink text-white hover:bg-white hover:text-black animate-pulse shadow-[0_0_30px_rgba(179,27,77,0.4)]"
                               : "bg-slime-green/5 text-slime-green border border-slime-green/40 hover:bg-slime-green hover:text-black"
                           )}
                         >

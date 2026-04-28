@@ -15,7 +15,12 @@ export class StoryEntity extends IndexedEntity<Story> {
     mediaUrl: "",
     metadata: {}
   };
-  static seedData = MOCK_STORIES.map(s => ({ ...s, kind: 'story' as const, metadata: {}, mediaUrl: "" }));
+  static seedData = MOCK_STORIES.map(s => ({ 
+    ...s, 
+    kind: (s.id === 's8' || s.title.includes('[SUBMISSION]')) ? s.kind || 'story' : 'story' as const, 
+    metadata: s.metadata || {}, 
+    mediaUrl: s.mediaUrl || "" 
+  }));
 }
 export class ZineEntity extends IndexedEntity<ZineContent> {
   static readonly entityName = "zine";
