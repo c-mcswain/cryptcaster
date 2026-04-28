@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Info, Skull, Mail, ScrollText } from 'lucide-react';
+import { ArrowLeft, Info, Skull, Mail, ScrollText, Link as LinkIcon } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import { toast } from 'sonner';
 import { RetroFooter } from '@/components/RetroFooter';
@@ -14,17 +14,17 @@ export function AddStoryPage() {
   const [loading, setLoading] = useState(false);
   const [isFocusMode, setIsFocusMode] = useState(false);
   const isInitialized = useRef(false);
-  const [storyDraft, setStoryDraft, clearStoryDraft] = useLocalStorage('cryptcaster_story_draft', { title: '', source: '', content: '' });
-  const [emailDraft, setEmailDraft, clearEmailDraft] = useLocalStorage('cryptcaster_email_draft', { senderEmail: '', subject: '', content: '' });
-  const [storyForm, setStoryForm] = useState({ title: '', source: '', content: '' });
-  const [emailForm, setEmailForm] = useState({ senderEmail: '', subject: '', content: '' });
+  const [storyDraft, setStoryDraft, clearStoryDraft] = useLocalStorage('cryptcaster_story_draft', { title: '', source: '', content: '', mediaUrl: '' });
+  const [emailDraft, setEmailDraft, clearEmailDraft] = useLocalStorage('cryptcaster_email_draft', { senderEmail: '', subject: '', content: '', mediaUrl: '' });
+  const [storyForm, setStoryForm] = useState({ title: '', source: '', content: '', mediaUrl: '' });
+  const [emailForm, setEmailForm] = useState({ senderEmail: '', subject: '', content: '', mediaUrl: '' });
   useEffect(() => {
     if (!isInitialized.current) {
       setStoryForm(storyDraft);
       setEmailForm(emailDraft);
       isInitialized.current = true;
     }
-  }, []);
+  }, [storyDraft, emailDraft]);
   useEffect(() => {
     if (!isInitialized.current) return;
     const timeoutId = setTimeout(() => {
@@ -67,6 +67,7 @@ export function AddStoryPage() {
           title: `[${ticketId}] ${emailForm.subject}`,
           source: emailForm.senderEmail || 'Anonymous Listener',
           content: emailForm.content,
+          mediaUrl: emailForm.mediaUrl,
           kind: 'email',
           metadata: {
             senderEmail: emailForm.senderEmail,
@@ -133,14 +134,25 @@ export function AddStoryPage() {
                           className="w-full bg-noir-gray border border-white/10 p-5 text-white font-gothic text-2xl focus:border-slime-green transition-all outline-none placeholder:text-white/5"
                         />
                       </div>
-                      <div>
-                        <label className="block font-pixel text-sm mb-3 text-slime-green/60 tracking-widest uppercase">Origin Source</label>
-                        <input
-                          value={storyForm.source}
-                          placeholder="r/NoSleep, Dark Web Archive, etc."
-                          onChange={(e) => setStoryForm(prev => ({ ...prev, source: e.target.value }))}
-                          className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-slime-green transition-all outline-none placeholder:text-white/5"
-                        />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div>
+                          <label className="block font-pixel text-sm mb-3 text-slime-green/60 tracking-widest uppercase">Origin Source</label>
+                          <input
+                            value={storyForm.source}
+                            placeholder="r/NoSleep, Dark Web Archive, etc."
+                            onChange={(e) => setStoryForm(prev => ({ ...prev, source: e.target.value }))}
+                            className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-slime-green transition-all outline-none placeholder:text-white/5"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-pixel text-sm mb-3 text-slime-green/60 tracking-widest uppercase">Media Reference (URL)</label>
+                          <input
+                            value={storyForm.mediaUrl}
+                            placeholder="YouTube / Article Link"
+                            onChange={(e) => setStoryForm(prev => ({ ...prev, mediaUrl: e.target.value }))}
+                            className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-slime-green transition-all outline-none placeholder:text-white/5"
+                          />
+                        </div>
                       </div>
                       <div>
                         <div className="flex justify-between mb-3">
@@ -193,6 +205,15 @@ export function AddStoryPage() {
                         </div>
                       </div>
                       <div>
+                        <label className="block font-pixel text-sm mb-3 text-phantom-pink/60 tracking-widest uppercase">Media Reference (URL)</label>
+                        <input
+                          value={emailForm.mediaUrl}
+                          placeholder="Supporting evidence (YouTube, Images, Links)"
+                          onChange={(e) => setEmailForm(prev => ({ ...prev, mediaUrl: e.target.value }))}
+                          className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-phantom-pink transition-all outline-none placeholder:text-white/5"
+                        />
+                      </div>
+                      <div>
                         <div className="flex justify-between mb-3">
                           <label className="block font-pixel text-sm text-phantom-pink/60 tracking-widest uppercase">Email Body</label>
                           <span className="font-pixel text-xs text-white/20 tracking-tighter">{stats.email.words} WORDS</span>
@@ -221,7 +242,7 @@ export function AddStoryPage() {
                   <div className="font-pixel text-base text-white/40 space-y-6 leading-relaxed">
                     <p>• NARRATIVES: Long-form stories destined for the main show block.</p>
                     <p>• TICKETS: Listener submissions requiring review or shorter segments.</p>
-                    <p>• AUTOMATION: Tickets are auto-prefixed with unique identifiers.</p>
+                    <p>• MEDIA: Supports YouTube embeds for react-style content.</p>
                   </div>
                 </div>
                 <div className="flex justify-center opacity-[0.03] py-20">

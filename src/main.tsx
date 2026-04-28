@@ -14,6 +14,7 @@ import '@/index.css'
 import { HomePage } from '@/pages/HomePage'
 import { AddStoryPage } from '@/pages/AddStoryPage'
 import { TeleprompterPage } from '@/pages/TeleprompterPage'
+import { SubmissionPage } from '@/pages/SubmissionPage'
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
@@ -29,6 +30,11 @@ const router = createBrowserRouter([
   {
     path: "/read/:id",
     element: <TeleprompterPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/submit",
+    element: <SubmissionPage />,
     errorElement: <RouteErrorBoundary />,
   },
 ]);

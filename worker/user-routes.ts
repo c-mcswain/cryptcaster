@@ -27,10 +27,36 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
       isRecorded: false,
       createdAt: Date.now(),
       kind: kind,
+      mediaUrl: body.mediaUrl || "",
       metadata: metadata
     };
     await StoryEntity.create(c.env, newStory);
     return ok(c, newStory);
+  });
+  // PUBLIC SUBMISSION ENDPOINT
+  app.post('/api/submit', async (c) => {
+    const body = await c.req.json();
+    if (!body.subject || !body.content) return bad(c, 'Subject and content required');
+    console.log('[SUBMISSION LOG] Intent to notify creepqueen@morallygrim.com');
+    const ticketId = `SUB-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const newSubmission = {
+      id: crypto.randomUUID(),
+      title: `[SUBMISSION] ${body.subject}`,
+      source: body.name || 'Unknown Listener',
+      content: body.content,
+      isRecorded: false,
+      createdAt: Date.now(),
+      kind: 'submission' as const,
+      mediaUrl: body.mediaUrl || "",
+      metadata: {
+        senderEmail: body.email,
+        subject: body.subject,
+        ticketId: ticketId,
+        submitterName: body.name
+      }
+    };
+    await StoryEntity.create(c.env, newSubmission);
+    return ok(c, newSubmission);
   });
   app.patch('/api/stories/:id', async (c) => {
     const id = c.req.param('id');

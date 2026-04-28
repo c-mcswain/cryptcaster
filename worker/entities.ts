@@ -12,9 +12,10 @@ export class StoryEntity extends IndexedEntity<Story> {
     isRecorded: false,
     createdAt: 0,
     kind: "story",
+    mediaUrl: "",
     metadata: {}
   };
-  static seedData = MOCK_STORIES.map(s => ({ ...s, kind: 'story' as const, metadata: {} }));
+  static seedData = MOCK_STORIES.map(s => ({ ...s, kind: 'story' as const, metadata: {}, mediaUrl: "" }));
 }
 export class UserEntity extends IndexedEntity<User> {
   static readonly entityName = "user";

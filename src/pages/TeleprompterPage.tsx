@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Play, Pause, Eye, Skull, Mail, ScrollText } from 'lucide-react';
+import { ArrowLeft, Play, Pause, Eye, Skull, Mail, ScrollText, Youtube, ExternalLink } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story } from '@shared/types';
 import { toast } from 'sonner';
@@ -43,7 +43,6 @@ export function TeleprompterPage() {
         setIsScrolling(false);
       }
     }
-    // Direct DOM manipulation for progress bar to avoid re-renders at 60fps
     if (progressBarRef.current && totalHeight > 0) {
       const progress = (currentScroll / totalHeight) * 100;
       progressBarRef.current.style.width = `${progress}%`;
@@ -63,10 +62,16 @@ export function TeleprompterPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+  const getYoutubeId = (url?: string) => {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
   const generateReport = useCallback(() => {
     if (!story) return '';
     const now = new Date().toLocaleString();
-    return `--- INVITE ME IN: ${story.kind?.toUpperCase() === 'EMAIL' ? 'POST TICKET' : 'GRIM NARRATIVE'} ---
+    return `--- INVITE ME IN: ${story.kind?.toUpperCase()} ---
 Title: ${story.title.toUpperCase()}
 Source: ${story.source}
 TicketID: ${story.metadata?.ticketId || 'N/A'}
@@ -91,6 +96,7 @@ Status: TOMB SEALED
     }
   };
   if (!story) return <div className="bg-black min-h-screen flex items-center justify-center font-gothic text-3xl text-white/20 tracking-widest">UNSEALING...</div>;
+  const ytId = getYoutubeId(story.mediaUrl);
   return (
     <div className={cn("bg-[#010003] min-h-screen transition-all duration-1000", stealthMode && "cursor-none")}>
       {!stealthMode && (
@@ -145,15 +151,42 @@ Status: TOMB SEALED
         </div>
       )}
       <div className="fixed bottom-0 left-0 w-full h-1 bg-black z-[110]">
-        <div 
+        <div
           ref={progressBarRef}
-          className="h-full bg-blood-red/80 transition-all duration-300 shadow-[0_0_10px_rgba(61,3,3,0.5)] w-0" 
+          className="h-full bg-blood-red/80 transition-all duration-300 shadow-[0_0_10px_rgba(61,3,3,0.5)] w-0"
         />
       </div>
       <main className="max-w-4xl mx-auto px-10 pt-40 pb-96 relative z-10">
         <div className="font-mono text-white/80 leading-[1.7] whitespace-pre-wrap select-none tracking-normal" style={{ fontSize: `${fontSize}px` }}>
           {story.content}
         </div>
+        {story.mediaUrl && !stealthMode && (
+          <div className="mt-40 border-t-2 border-white/10 pt-20">
+            <h2 className="font-gothic text-3xl text-slime-green mb-10 flex items-center gap-4">
+              <Youtube className="w-8 h-8" /> MEDIA VAULT
+            </h2>
+            {ytId ? (
+              <div className="aspect-video w-full border-4 border-white/5 bg-black overflow-hidden shadow-2xl relative group">
+                <div className="absolute inset-0 border border-slime-green/20 pointer-events-none z-10" />
+                <iframe
+                  src={`https://www.youtube.com/embed/${ytId}`}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full grayscale-[0.2] hover:grayscale-0 transition-all duration-500"
+                />
+              </div>
+            ) : (
+              <a 
+                href={story.mediaUrl} target="_blank" rel="noopener noreferrer"
+                className="retro-button-pink w-full py-10 flex items-center justify-center gap-6 text-2xl"
+              >
+                <ExternalLink className="w-8 h-8" /> OPEN EXTERNAL REFERENCE
+              </a>
+            )}
+          </div>
+        )}
         <div className="mt-80 text-center opacity-10 border-t border-white/5 pt-32">
           <Skull className="w-24 h-24 mx-auto mb-12" />
           <p className="font-gothic text-5xl tracking-[0.3em] uppercase">TOMB SEALED</p>

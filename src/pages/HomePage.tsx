@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Skull, X, Zap, Mail, ChevronRight } from 'lucide-react';
+import { Plus, Skull, X, Zap, Mail, ChevronRight, Send } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story } from '@shared/types';
 import { Toaster, toast } from 'sonner';
@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 export function HomePage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
-  const [kindFilter, setKindFilter] = useState<'all' | 'story' | 'email'>('all');
+  const [kindFilter, setKindFilter] = useState<'all' | 'story' | 'email' | 'submission'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'unread' | 'recorded'>('all');
   const fetchStories = async () => {
     try {
@@ -39,7 +39,7 @@ export function HomePage() {
     }
   };
   const filteredStories = stories.filter(s => {
-    const matchesKind = kindFilter === 'all' || s.kind === kindFilter;
+    const matchesKind = kindFilter === 'all' || s.kind === kindFilter || (kindFilter === 'email' && s.kind === 'submission');
     const matchesStatus = statusFilter === 'all' || (statusFilter === 'unread' ? !s.isRecorded : s.isRecorded);
     return matchesKind && matchesStatus;
   });
@@ -51,18 +51,21 @@ export function HomePage() {
           <header className="mb-20 text-center">
             <h1 className="gothic-header text-5xl md:text-8xl mb-6 animate-pulse-glow tracking-[0.2em]">INVITE ME IN</h1>
             <div className="font-pixel text-2xl text-phantom-pink tracking-[0.4em] uppercase opacity-60">MORALLY GRIM ARCHIVES</div>
-            <div className="mt-14 flex justify-center gap-6">
+            <div className="mt-14 flex flex-wrap justify-center gap-6">
               <Link to="/add" className="retro-button-pink px-16 py-5 font-gothic text-2xl flex items-center gap-4 transition-transform hover:scale-105 active:scale-100">
                 <Plus className="w-6 h-6" /> NEW INGESTION
+              </Link>
+              <Link to="/submit" className="retro-button px-16 py-5 font-gothic text-2xl flex items-center gap-4 border-slime-green transition-transform hover:scale-105 active:scale-100">
+                <Send className="w-6 h-6" /> SUBMIT TALE
               </Link>
             </div>
           </header>
           <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
-            <div className="flex gap-2 p-1.5 bg-black/60 border border-white/5 rounded-sm font-pixel">
+            <div className="flex gap-2 p-1.5 bg-black/60 border border-white/5 rounded-sm font-pixel overflow-x-auto max-w-full">
               {(['all', 'story', 'email'] as const).map(k => (
                 <button
                   key={k} onClick={() => setKindFilter(k)}
-                  className={cn("px-8 py-2.5 transition-all text-sm tracking-widest", kindFilter === k ? "bg-slime-green text-black" : "text-white/40 hover:text-white")}
+                  className={cn("px-8 py-2.5 transition-all text-sm tracking-widest whitespace-nowrap", kindFilter === k ? "bg-slime-green text-black" : "text-white/40 hover:text-white")}
                 >
                   {k === 'email' ? 'INBOX' : k.toUpperCase()}
                 </button>
@@ -89,12 +92,12 @@ export function HomePage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {filteredStories.map((story) => (
-                <div key={story.id} className={cn("retro-window group transition-all duration-500 hover:border-white/20", story.kind === 'email' ? "border-phantom-pink/20" : "border-slime-green/20")}>
-                  <div className={cn("retro-window-header opacity-80", story.kind === 'email' ? "bg-phantom-pink" : "bg-slime-green")}>
+                <div key={story.id} className={cn("retro-window group transition-all duration-500 hover:border-white/20", (story.kind === 'email' || story.kind === 'submission') ? "border-phantom-pink/20" : "border-slime-green/20")}>
+                  <div className={cn("retro-window-header opacity-80", (story.kind === 'email' || story.kind === 'submission') ? "bg-phantom-pink" : "bg-slime-green")}>
                     <div className="flex items-center gap-3">
-                      {story.kind === 'email' ? <Mail className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                      {(story.kind === 'email' || story.kind === 'submission') ? <Mail className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                       <span className="font-pixel text-xs truncate uppercase tracking-tighter">
-                        {story.kind === 'email' ? 'POST_REC' : 'NARR_REC'}_{story.id.slice(0, 6)}
+                        {story.kind?.toUpperCase() || 'NARR'}_REC_{story.id.slice(0, 6)}
                       </span>
                     </div>
                     <X className="w-4 h-4 opacity-30" />
@@ -104,9 +107,9 @@ export function HomePage() {
                       <span className="font-pixel text-xs text-white/30 uppercase tracking-widest tabular-nums">
                         {new Date(story.createdAt).toLocaleDateString()}
                       </span>
-                      {story.kind === 'email' && (
-                        <span className="bg-noir-gray text-phantom-pink/80 font-pixel text-xs px-3 py-1 border border-phantom-pink/20">
-                          ID: {story.metadata?.ticketId || 'NA'}
+                      {story.metadata?.ticketId && (
+                        <span className="bg-noir-gray text-phantom-pink/80 font-pixel text-[10px] px-3 py-1 border border-phantom-pink/20">
+                          {story.metadata.ticketId}
                         </span>
                       )}
                       {story.isRecorded && (
@@ -117,7 +120,7 @@ export function HomePage() {
                       {story.title}
                     </h3>
                     <p className="font-pixel text-xs text-white/40 mb-8 truncate tracking-wider">
-                      {story.kind === 'email' ? `SENDER: ${story.source}` : `SOURCE: ${story.source}`}
+                      {story.kind === 'story' ? `SOURCE: ${story.source}` : `SENDER: ${story.source}`}
                     </p>
                     <div className="mb-10 font-mono text-sm text-white/20 line-clamp-3 leading-relaxed h-[4.5rem]">
                       {story.content}
@@ -126,7 +129,7 @@ export function HomePage() {
                       <Link to={`/read/${story.id}`} className="retro-button flex-1 py-4 text-base flex items-center justify-center gap-3 font-gothic tracking-widest hover:scale-[1.02] transition-transform">
                         <Skull className="w-5 h-5 fill-current" /> OPEN TOMB
                       </Link>
-                      {story.kind === 'email' && (
+                      {(story.kind === 'email' || story.kind === 'submission') && (
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>

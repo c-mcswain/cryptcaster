@@ -10,11 +10,13 @@ export interface Story {
   content: string;
   isRecorded: boolean;
   createdAt: number;
-  kind?: 'story' | 'email';
+  kind?: 'story' | 'email' | 'submission';
+  mediaUrl?: string;
   metadata?: {
     senderEmail?: string;
     subject?: string;
     ticketId?: string;
+    submitterName?: string;
   };
 }
 export interface User {

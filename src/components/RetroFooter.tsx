@@ -1,11 +1,12 @@
 import React from 'react';
-import { Video, Hash, AtSign, ExternalLink, Skull } from 'lucide-react';
+import { Video, Hash, AtSign, ExternalLink, Skull, Send } from 'lucide-react';
+import { Link } from 'react-router-dom';
 export function RetroFooter() {
   const currentYear = new Date().getFullYear();
   return (
     <footer className="mt-auto border-t-4 border-lichen-green bg-crypt-purple py-20 px-8 relative overflow-hidden">
       {/* Subtle Background decoration */}
-      <div className="absolute top-0 right-0 opacity-[0.02] -rotate-12 translate-x-1/4">
+      <div className="absolute top-0 right-0 opacity-[0.02] -rotate-12 translate-x-1/4 pointer-events-none">
         <Skull className="w-[600px] h-[600px]" />
       </div>
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12 relative z-10">
@@ -14,7 +15,11 @@ export function RetroFooter() {
           <div className="font-pixel text-2xl text-phantom-pink/60 uppercase tracking-[0.3em]">
             A MORALLY GRIM PRODUCTION
           </div>
-          <p className="font-pixel text-base text-slime-green/40 mt-6 tracking-widest">
+          <Link to="/submit" className="inline-flex items-center gap-3 font-pixel text-base text-slime-green hover:text-white transition-colors tracking-[0.2em] uppercase mt-6 group">
+            <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            Contribute to the Void
+          </Link>
+          <p className="font-pixel text-base text-slime-green/40 mt-6 tracking-widest block">
             COPYRIGHT © {currentYear} ALL SOULS RESERVED.
           </p>
         </div>
