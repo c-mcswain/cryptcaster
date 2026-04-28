@@ -1,8 +1,31 @@
 import { Hono } from "hono";
 import type { Env } from './core-utils';
-import { StoryEntity } from "./entities";
+import { StoryEntity, ZineEntity } from "./entities";
 import { ok, bad, notFound } from './core-utils';
 export function userRoutes(app: Hono<{ Bindings: Env }>) {
+  // AUTH
+  app.post('/api/auth/login', async (c) => {
+    const { username, password } = await c.req.json();
+    if (username === 'admin' && password === 'morallygrim') {
+      return ok(c, {
+        token: 'grim-token-' + Math.random().toString(36).substring(7),
+        user: { id: 'u1', name: 'CryptMaster' }
+      });
+    }
+    return bad(c, 'Invalid credentials');
+  });
+  // ZINE
+  app.get('/api/zine', async (c) => {
+    await ZineEntity.ensureSeed(c.env);
+    const zine = new ZineEntity(c.env, 'singleton');
+    return ok(c, await zine.getState());
+  });
+  app.put('/api/zine', async (c) => {
+    const body = await c.req.json();
+    const zine = new ZineEntity(c.env, 'singleton');
+    await zine.patch({ ...body, lastUpdated: Date.now() });
+    return ok(c, await zine.getState());
+  });
   // STORIES
   app.get('/api/stories', async (c) => {
     await StoryEntity.ensureSeed(c.env);
@@ -37,7 +60,6 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
   app.post('/api/submit', async (c) => {
     const body = await c.req.json();
     if (!body.subject || !body.content) return bad(c, 'Subject and content required');
-    console.log('[SUBMISSION LOG] Intent to notify creepqueen@morallygrim.com');
     const ticketId = `SUB-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
     const newSubmission = {
       id: crypto.randomUUID(),

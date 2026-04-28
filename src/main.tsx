@@ -15,6 +15,9 @@ import { HomePage } from '@/pages/HomePage'
 import { AddStoryPage } from '@/pages/AddStoryPage'
 import { TeleprompterPage } from '@/pages/TeleprompterPage'
 import { SubmissionPage } from '@/pages/SubmissionPage'
+import { LoginPage } from '@/pages/LoginPage'
+import { ZineAdminPage } from '@/pages/ZineAdminPage'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
@@ -23,13 +26,23 @@ const router = createBrowserRouter([
     errorElement: <RouteErrorBoundary />,
   },
   {
+    path: "/login",
+    element: <LoginPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
     path: "/add",
-    element: <AddStoryPage />,
+    element: <ProtectedRoute><AddStoryPage /></ProtectedRoute>,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/zine-admin",
+    element: <ProtectedRoute><ZineAdminPage /></ProtectedRoute>,
     errorElement: <RouteErrorBoundary />,
   },
   {
     path: "/read/:id",
-    element: <TeleprompterPage />,
+    element: <ProtectedRoute><TeleprompterPage /></ProtectedRoute>,
     errorElement: <RouteErrorBoundary />,
   },
   {

@@ -19,6 +19,19 @@ export interface Story {
     submitterName?: string;
   };
 }
+export interface ZineContent {
+  id: string;
+  intro: string;
+  announcements: string[];
+  featuredStoryId: string | null;
+  coverImageUrl: string;
+  lastUpdated: number;
+  editorName: string;
+}
+export interface AuthResponse {
+  token: string;
+  user: User;
+}
 export interface User {
   id: string;
   name: string;
