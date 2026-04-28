@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Radio, Eye, Play, Pause, RotateCcw, Share2, Sliders, Skull, Mail, ScrollText, Hash } from 'lucide-react';
+import { ArrowLeft, Play, Pause, Eye, Skull, Mail, ScrollText } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story } from '@shared/types';
 import { toast } from 'sonner';
-import { wordCount, estimateReadTime, cn } from '@/lib/utils';
+import { wordCount, cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 export function TeleprompterPage() {
   const { id } = useParams();
@@ -17,6 +17,15 @@ export function TeleprompterPage() {
   const [isScrolling, setIsScrolling] = useState(false);
   const [scrollSpeed, setScrollSpeed] = useState(5);
   const requestRef = useRef<number>();
+  const isScrollingRef = useRef(isScrolling);
+  const scrollSpeedRef = useRef(scrollSpeed);
+  // Keep refs in sync with state to avoid stale closures in requestAnimationFrame
+  useEffect(() => {
+    isScrollingRef.current = isScrolling;
+  }, [isScrolling]);
+  useEffect(() => {
+    scrollSpeedRef.current = scrollSpeed;
+  }, [scrollSpeed]);
   useEffect(() => {
     if (id) {
       api<Story>(`/api/stories/${id}`)
@@ -28,20 +37,32 @@ export function TeleprompterPage() {
     const element = document.documentElement;
     const totalHeight = element.scrollHeight - element.clientHeight;
     const currentScroll = element.scrollTop;
-    if (isScrolling) {
-      if (currentScroll < totalHeight - 20) {
-        window.scrollBy(0, scrollSpeed / 5);
+    if (isScrollingRef.current) {
+      if (currentScroll < totalHeight - 5) {
+        window.scrollBy(0, scrollSpeedRef.current / 5);
       } else {
         setIsScrolling(false);
       }
     }
     setScrollProgress(totalHeight > 0 ? (currentScroll / totalHeight) * 100 : 0);
     requestRef.current = requestAnimationFrame(animate);
-  }, [isScrolling, scrollSpeed]);
+  }, []);
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
-    return () => { if (requestRef.current) cancelAnimationFrame(requestRef.current); };
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
   }, [animate]);
+  // Stealth mode escape listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setStealthMode(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
   const generateReport = useCallback(() => {
     if (!story) return '';
     const now = new Date().toLocaleString();
@@ -58,8 +79,12 @@ Status: TOMB SEALED
     if (!id) return;
     try {
       await api(`/api/stories/${id}`, { method: 'PATCH', body: JSON.stringify({ isRecorded: true }) });
-      navigator.clipboard.writeText(generateReport());
-      toast.success('Session report copied and tomb sealed.');
+      try {
+        await navigator.clipboard.writeText(generateReport());
+        toast.success('Session report copied and tomb sealed.');
+      } catch (err) {
+        toast.success('Tomb sealed.');
+      }
       navigate('/');
     } catch (err) {
       toast.error('Failed to seal the tomb');
@@ -87,7 +112,10 @@ Status: TOMB SEALED
           </div>
           <div className="flex flex-wrap items-center gap-4 lg:gap-8">
             <div className="flex items-center bg-black/60 border border-white/10 p-1 rounded-sm">
-              <button onClick={() => setIsScrolling(!isScrolling)} className={cn("p-2 rounded-sm", isScrolling ? "bg-phantom-pink text-white" : "text-white/40")}>
+              <button 
+                onClick={() => setIsScrolling(prev => !prev)} 
+                className={cn("p-2 rounded-sm", isScrolling ? "bg-phantom-pink text-white" : "text-white/40")}
+              >
                 {isScrolling ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
               </button>
               <div className="flex items-center gap-2 px-3">
@@ -102,7 +130,11 @@ Status: TOMB SEALED
             <div className="flex gap-2">
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger asChild><button onClick={() => setStealthMode(true)} className="p-2 border border-white/10 hover:border-white text-white/40 hover:text-white"><Eye className="w-5 h-5" /></button></TooltipTrigger>
+                  <TooltipTrigger asChild>
+                    <button onClick={() => setStealthMode(true)} className="p-2 border border-white/10 hover:border-white text-white/40 hover:text-white">
+                      <Eye className="w-5 h-5" />
+                    </button>
+                  </TooltipTrigger>
                   <TooltipContent className="font-pixel">STEALTH MODE (ESC)</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -124,7 +156,10 @@ Status: TOMB SEALED
         </div>
       </main>
       <div className="fixed bottom-10 right-10 flex flex-col items-end gap-3 z-50">
-        <button onClick={() => setIsRecording(!isRecording)} className={cn("flex items-center gap-3 px-6 py-3 font-gothic border-2 transition-all", isRecording ? "bg-blood-red border-phantom-pink text-white animate-pulse" : "bg-black text-white/40 border-white/10 hover:border-white")}>
+        <button 
+          onClick={() => setIsRecording(prev => !prev)} 
+          className={cn("flex items-center gap-3 px-6 py-3 font-gothic border-2 transition-all", isRecording ? "bg-blood-red border-phantom-pink text-white animate-pulse" : "bg-black text-white/40 border-white/10 hover:border-white")}
+        >
           <div className={cn("w-2 h-2 rounded-full", isRecording ? "bg-white animate-blink" : "bg-white/10")} />
           <span>{isRecording ? 'ON AIR' : 'START SESSION'}</span>
         </button>

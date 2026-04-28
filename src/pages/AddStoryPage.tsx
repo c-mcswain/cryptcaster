@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Terminal, Info, AlertTriangle, Sparkles, Skull, Maximize2, Minimize2, RotateCcw, Mail, ScrollText, Hash } from 'lucide-react';
+import { ArrowLeft, Info, Skull, Mail, ScrollText } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import { toast } from 'sonner';
 import { RetroFooter } from '@/components/RetroFooter';
@@ -14,24 +14,28 @@ export function AddStoryPage() {
   const [isFocusMode, setIsFocusMode] = useState(false);
   const isInitialized = useRef(false);
   const [activeTab, setActiveTab] = useState<'story' | 'email'>('story');
-  // Persistent drafts for both types
+  // Persistent drafts
   const [storyDraft, setStoryDraft, clearStoryDraft] = useLocalStorage('cryptcaster_story_draft', { title: '', source: '', content: '' });
   const [emailDraft, setEmailDraft, clearEmailDraft] = useLocalStorage('cryptcaster_email_draft', { senderEmail: '', subject: '', content: '' });
   const [storyForm, setStoryForm] = useState({ title: '', source: '', content: '' });
   const [emailForm, setEmailForm] = useState({ senderEmail: '', subject: '', content: '' });
+  // Sync draft to form only on mount
   useEffect(() => {
     if (!isInitialized.current) {
       setStoryForm(storyDraft);
       setEmailForm(emailDraft);
       isInitialized.current = true;
-      return;
     }
+  }, []); // Run once on mount
+  // Save form changes to drafts with debounce
+  useEffect(() => {
+    if (!isInitialized.current) return;
     const timeoutId = setTimeout(() => {
       setStoryDraft(storyForm);
       setEmailDraft(emailForm);
     }, 1000);
     return () => clearTimeout(timeoutId);
-  }, [storyForm, emailForm, setStoryDraft, setEmailDraft, storyDraft, emailDraft]);
+  }, [storyForm, emailForm, setStoryDraft, setEmailDraft]);
   const stats = useMemo(() => ({
     story: { words: wordCount(storyForm.content), time: estimateReadTime(storyForm.content) },
     email: { words: wordCount(emailForm.content), time: estimateReadTime(emailForm.content) }
@@ -127,7 +131,7 @@ export function AddStoryPage() {
                         <label className="block font-pixel text-xs mb-2 text-slime-green opacity-70">TALE TITLE</label>
                         <input
                           required value={storyForm.title}
-                          onChange={(e) => setStoryForm({ ...storyForm, title: e.target.value })}
+                          onChange={(e) => setStoryForm(prev => ({ ...prev, title: e.target.value }))}
                           className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-gothic text-xl focus:border-slime-green transition-all outline-none"
                         />
                       </div>
@@ -135,7 +139,7 @@ export function AddStoryPage() {
                         <label className="block font-pixel text-xs mb-2 text-slime-green opacity-70">ORIGIN SOURCE</label>
                         <input
                           value={storyForm.source}
-                          onChange={(e) => setStoryForm({ ...storyForm, source: e.target.value })}
+                          onChange={(e) => setStoryForm(prev => ({ ...prev, source: e.target.value }))}
                           className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-mono focus:border-slime-green transition-all outline-none"
                         />
                       </div>
@@ -146,7 +150,7 @@ export function AddStoryPage() {
                         </div>
                         <textarea
                           required rows={12} value={storyForm.content}
-                          onChange={(e) => setStoryForm({ ...storyForm, content: e.target.value })}
+                          onChange={(e) => setStoryForm(prev => ({ ...prev, content: e.target.value }))}
                           className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-mono leading-relaxed focus:border-slime-green transition-all outline-none resize-none"
                         />
                       </div>
@@ -173,7 +177,7 @@ export function AddStoryPage() {
                           <label className="block font-pixel text-xs mb-2 text-phantom-pink opacity-70">SENDER EMAIL</label>
                           <input
                             type="email" value={emailForm.senderEmail}
-                            onChange={(e) => setEmailForm({ ...emailForm, senderEmail: e.target.value })}
+                            onChange={(e) => setEmailForm(prev => ({ ...prev, senderEmail: e.target.value }))}
                             className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-mono focus:border-phantom-pink transition-all outline-none"
                             placeholder="listener@void.com"
                           />
@@ -182,7 +186,7 @@ export function AddStoryPage() {
                           <label className="block font-pixel text-xs mb-2 text-phantom-pink opacity-70">SUBJECT LINE</label>
                           <input
                             required value={emailForm.subject}
-                            onChange={(e) => setEmailForm({ ...emailForm, subject: e.target.value })}
+                            onChange={(e) => setEmailForm(prev => ({ ...prev, subject: e.target.value }))}
                             className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-mono focus:border-phantom-pink transition-all outline-none"
                           />
                         </div>
@@ -194,7 +198,7 @@ export function AddStoryPage() {
                         </div>
                         <textarea
                           required rows={12} value={emailForm.content}
-                          onChange={(e) => setEmailForm({ ...emailForm, content: e.target.value })}
+                          onChange={(e) => setEmailForm(prev => ({ ...prev, content: e.target.value }))}
                           className="w-full bg-black/40 border-2 border-white/10 p-4 text-white font-mono leading-relaxed focus:border-phantom-pink transition-all outline-none resize-none"
                         />
                       </div>
