@@ -34,7 +34,7 @@ export function AddStoryPage() {
       setEmailDraft(emailForm);
     }, 800);
     return () => clearTimeout(timeoutId);
-  }, [storyForm, emailForm]);
+  }, [storyForm, emailForm, setStoryDraft, setEmailDraft]);
   const stats = useMemo(() => ({
     story: { words: wordCount(storyForm.content), time: estimateReadTime(storyForm.content) },
     email: { words: wordCount(emailForm.content), time: estimateReadTime(emailForm.content) }

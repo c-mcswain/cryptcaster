@@ -54,9 +54,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary>
-        <RouterProvider router={router} />
-      </ErrorBoundary>
+      <RouterProvider router={router} />
     </QueryClientProvider>
   </StrictMode>,
 )
