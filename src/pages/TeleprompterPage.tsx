@@ -4,7 +4,7 @@ import { ArrowLeft, Play, Pause, Eye, Skull, Mail, ScrollText, Video, ExternalLi
 import { api } from '@/lib/api-client';
 import type { Story } from '@shared/types';
 import { toast } from 'sonner';
-import { wordCount, cn } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 export function TeleprompterPage() {
   const { id } = useParams();
@@ -19,6 +19,7 @@ export function TeleprompterPage() {
   const requestRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
   const scrollPosRef = useRef<number>(0);
+  const isManualScrolling = useRef(false);
   useEffect(() => {
     if (id) {
       api<Story>(`/api/stories/${id}`)
@@ -31,22 +32,26 @@ export function TeleprompterPage() {
     const deltaTime = time - lastTimeRef.current;
     lastTimeRef.current = time;
     const element = document.documentElement;
+    const currentY = window.scrollY;
     const totalHeight = element.scrollHeight - element.clientHeight;
-    if (isScrolling && totalHeight > 0) {
-      // Calculate smooth movement based on time rather than frames
-      const pixelsPerSecond = scrollSpeed * 10;
+    // Detection of manual scroll interruption
+    const drift = Math.abs(currentY - scrollPosRef.current);
+    if (drift > 20) {
+      scrollPosRef.current = currentY;
+    }
+    if (isScrolling && totalHeight > 0 && !isManualScrolling.current) {
+      const pixelsPerSecond = scrollSpeed * 15;
       const moveBy = (pixelsPerSecond * deltaTime) / 1000;
       scrollPosRef.current = Math.min(totalHeight, scrollPosRef.current + moveBy);
       window.scrollTo(0, scrollPosRef.current);
       if (scrollPosRef.current >= totalHeight) {
         setIsScrolling(false);
       }
-    } else {
-      // Sync ref with manual scrolling if not auto-scrolling
-      scrollPosRef.current = window.scrollY;
+    } else if (!isScrolling) {
+      scrollPosRef.current = currentY;
     }
     if (progressBarRef.current) {
-      const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
+      const progress = totalHeight > 0 ? (currentY / totalHeight) * 100 : 0;
       progressBarRef.current.style.width = `${Math.min(100, Math.max(0, progress))}%`;
     }
     requestRef.current = requestAnimationFrame(animate);
@@ -61,6 +66,7 @@ export function TeleprompterPage() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setStealthMode(false);
       if (e.code === 'Space' && !stealthMode) {
+        if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
         e.preventDefault();
         setIsScrolling(prev => !prev);
       }
@@ -68,12 +74,6 @@ export function TeleprompterPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [stealthMode]);
-  const getYoutubeId = (url?: string) => {
-    if (!url) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-  };
   const markRecorded = async () => {
     if (!id || !story) return;
     try {
@@ -85,7 +85,7 @@ export function TeleprompterPage() {
     }
   };
   if (!story) return <div className="bg-black min-h-screen flex items-center justify-center font-gothic text-3xl text-white/20 tracking-widest uppercase">Unsealing Record...</div>;
-  const ytId = getYoutubeId(story.mediaUrl);
+  const ytId = story.mediaUrl ? (story.mediaUrl.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/)?.[2] ?? null) : null;
   return (
     <div className={cn("bg-[#010003] min-h-screen transition-all duration-1000 selection:bg-phantom-pink selection:text-white", stealthMode && "cursor-none")}>
       {!stealthMode && (
@@ -146,7 +146,7 @@ export function TeleprompterPage() {
         />
       </div>
       <main className="max-w-4xl mx-auto px-10 pt-40 pb-96 relative z-10">
-        <div className="font-mono text-white leading-[1.7] whitespace-pre-wrap select-none tracking-normal" style={{ fontSize: `${fontSize}px` }}>
+        <div className="font-mono text-white leading-[1.8] whitespace-pre-wrap select-none tracking-normal" style={{ fontSize: `${fontSize}px` }}>
           {story.content}
         </div>
         {story.mediaUrl && !stealthMode && (
@@ -176,11 +176,6 @@ export function TeleprompterPage() {
             )}
           </div>
         )}
-        <div className="mt-80 text-center opacity-10 border-t border-white/5 pt-32">
-          <Skull className="w-24 h-24 mx-auto mb-12" />
-          <p className="font-gothic text-5xl tracking-[0.3em] uppercase">TOMB SEALED</p>
-          <p className="font-pixel text-xl mt-6 tracking-widest uppercase">END OF BROADCAST SESSION</p>
-        </div>
       </main>
       <div className="fixed bottom-12 right-12 flex flex-col items-end gap-6 z-[120]">
         <button

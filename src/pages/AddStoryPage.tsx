@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Info, Skull, Mail, ScrollText } from 'lucide-react';
+import { ArrowLeft, Info, Skull, Mail, ScrollText, Trash2, ShieldCheck } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import { toast } from 'sonner';
 import { RetroFooter } from '@/components/RetroFooter';
@@ -13,12 +13,12 @@ export function AddStoryPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isFocusMode, setIsFocusMode] = useState(false);
+  const [showSavedToast, setShowSavedToast] = useState(false);
   const isInitialized = useRef(false);
   const [storyDraft, setStoryDraft, clearStoryDraft] = useLocalStorage('cryptcaster_story_draft', { title: '', source: '', content: '', mediaUrl: '' });
   const [emailDraft, setEmailDraft, clearEmailDraft] = useLocalStorage('cryptcaster_email_draft', { senderEmail: '', subject: '', content: '', mediaUrl: '' });
   const [storyForm, setStoryForm] = useState({ title: '', source: '', content: '', mediaUrl: '' });
   const [emailForm, setEmailForm] = useState({ senderEmail: '', subject: '', content: '', mediaUrl: '' });
-  // Initialize once from storage
   useEffect(() => {
     if (!isInitialized.current) {
       setStoryForm(storyDraft);
@@ -26,13 +26,15 @@ export function AddStoryPage() {
       isInitialized.current = true;
     }
   }, [storyDraft, emailDraft]);
-  // Sync to storage
   useEffect(() => {
     if (!isInitialized.current) return;
     const timeoutId = setTimeout(() => {
       setStoryDraft(storyForm);
       setEmailDraft(emailForm);
-    }, 1000);
+      setShowSavedToast(true);
+      const hideTimeout = setTimeout(() => setShowSavedToast(false), 2000);
+      return () => clearTimeout(hideTimeout);
+    }, 1500);
     return () => clearTimeout(timeoutId);
   }, [storyForm, emailForm, setStoryDraft, setEmailDraft]);
   const stats = useMemo(() => ({
@@ -90,7 +92,7 @@ export function AddStoryPage() {
         <div className="py-8 md:py-12">
           <AnimatePresence>
             {!isFocusMode && (
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <Link to="/crypt" className="text-white/40 font-pixel text-2xl hover:text-slime-green flex items-center gap-4 mb-12 group w-fit transition-all tracking-[0.2em] uppercase">
                   <ArrowLeft className="w-7 h-7 group-hover:-translate-x-3 transition-transform" />
                   RETURN TO DASHBOARD
@@ -99,7 +101,7 @@ export function AddStoryPage() {
             )}
           </AnimatePresence>
           <div className={cn("grid grid-cols-1 gap-12 transition-all duration-700", !isFocusMode && "lg:grid-cols-12")}>
-            <div className={cn("transition-all duration-700", isFocusMode ? "max-w-4xl mx-auto w-full" : "lg:col-span-8")}>
+            <div className={cn("transition-all duration-700", isFocusMode ? "max-w-5xl mx-auto w-full" : "lg:col-span-8")}>
               <Tabs defaultValue="story" className="w-full">
                 {!isFocusMode && (
                   <TabsList className="grid w-full grid-cols-2 bg-black/60 border border-white/5 p-1.5 mb-10 h-auto">
@@ -118,9 +120,14 @@ export function AddStoryPage() {
                         <ScrollText className="w-5 h-5" />
                         <span className="tracking-widest uppercase">Ingestion_Protocol_04.1</span>
                       </div>
-                      <button type="button" onClick={() => setIsFocusMode(!isFocusMode)} className="text-xs font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-slime-green transition-colors">
-                        {isFocusMode ? 'RESTORE INTERFACE' : 'FOCUS TERMINAL'}
-                      </button>
+                      <div className="flex gap-4">
+                        <button type="button" onClick={() => { if(confirm('Purge current draft?')) { setStoryForm({ title: '', source: '', content: '', mediaUrl: '' }); clearStoryDraft(); }}} className="text-xs font-pixel uppercase border border-black/10 px-2 py-1 hover:bg-red-600 transition-colors">
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                        <button type="button" onClick={() => setIsFocusMode(!isFocusMode)} className="text-xs font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-slime-green transition-colors">
+                          {isFocusMode ? 'RESTORE INTERFACE' : 'FOCUS TERMINAL'}
+                        </button>
+                      </div>
                     </div>
                     <form onSubmit={handleStorySubmit} className="p-8 md:p-12 space-y-10 bg-black/40">
                       <div>
@@ -155,10 +162,7 @@ export function AddStoryPage() {
                       <div>
                         <div className="flex justify-between mb-3">
                           <label className="block font-pixel text-sm text-slime-green/60 tracking-widest uppercase">Content Ingestion</label>
-                          <span className={cn(
-                            "font-pixel text-xs tracking-widest transition-colors duration-500",
-                            stats.story.words > 0 && stats.story.words % 500 === 0 ? "text-slime-green animate-pulse" : "text-white/20"
-                          )}>
+                          <span className="font-pixel text-xs text-white/20 tracking-widest uppercase">
                             {stats.story.words} WORDS // EST. {stats.story.time}
                           </span>
                         </div>
@@ -169,22 +173,37 @@ export function AddStoryPage() {
                           className="w-full bg-noir-gray/50 border border-white/10 p-6 text-white font-mono text-lg leading-relaxed focus:border-slime-green transition-all outline-none resize-none min-h-[400px]"
                         />
                       </div>
-                      <button type="submit" disabled={loading} className="retro-button w-full text-2xl font-gothic py-8 tracking-[0.3em] uppercase">
-                        {loading ? 'INGESTING...' : 'SUMMON TO CRYPT'}
-                      </button>
+                      <div className="relative group">
+                        <AnimatePresence>
+                          {showSavedToast && (
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute -top-10 left-1/2 -translate-x-1/2 flex items-center gap-2 text-slime-green font-pixel text-xs uppercase tracking-widest">
+                              <ShieldCheck className="w-3 h-3" /> Pact Auto-Saved
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                        <button type="submit" disabled={loading} className="retro-button w-full text-2xl font-gothic py-8 tracking-[0.3em] uppercase">
+                          {loading ? 'INGESTING...' : 'SUMMON TO CRYPT'}
+                        </button>
+                      </div>
                     </form>
                   </div>
                 </TabsContent>
                 <TabsContent value="email">
-                  <div className="retro-window border-phantom-pink/20">
+                   {/* Email form follows same pattern with refined focus mode & toast */}
+                   <div className="retro-window border-phantom-pink/20">
                     <div className="retro-window-header bg-phantom-pink/80 text-black">
                       <div className="flex items-center gap-4">
                         <Mail className="w-5 h-5" />
                         <span className="tracking-widest uppercase">Midnight_Post_Ticket_v1.3</span>
                       </div>
-                      <button type="button" onClick={() => setIsFocusMode(!isFocusMode)} className="text-xs font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-phantom-pink transition-colors">
-                        {isFocusMode ? 'RESTORE INTERFACE' : 'FOCUS TERMINAL'}
-                      </button>
+                      <div className="flex gap-4">
+                        <button type="button" onClick={() => { if(confirm('Incinerate draft?')) { setEmailForm({ senderEmail: '', subject: '', content: '', mediaUrl: '' }); clearEmailDraft(); }}} className="text-xs font-pixel uppercase border border-black/10 px-2 py-1 hover:bg-red-600 transition-colors">
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                        <button type="button" onClick={() => setIsFocusMode(!isFocusMode)} className="text-xs font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-phantom-pink transition-colors">
+                          {isFocusMode ? 'RESTORE INTERFACE' : 'FOCUS TERMINAL'}
+                        </button>
+                      </div>
                     </div>
                     <form onSubmit={handleEmailSubmit} className="p-8 md:p-12 space-y-10 bg-black/40">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -227,32 +246,31 @@ export function AddStoryPage() {
                 </TabsContent>
               </Tabs>
             </div>
-            {!isFocusMode && (
-              <aside className="lg:col-span-4 space-y-10">
-                <div className="retro-panel bg-white/[0.02] border-white/5 p-8">
-                  <h3 className="font-gothic text-2xl mb-8 text-white flex items-center gap-3 tracking-widest uppercase">
-                    <Info className="w-6 h-6 text-slime-green/60" /> ARCHIVE RULES
-                  </h3>
-                  <div className="font-pixel text-base text-white/30 space-y-8 leading-relaxed uppercase tracking-widest">
-                    <div className="space-y-2">
-                      <p className="text-slime-green/60">NARRATIVES:</p>
-                      <p>Reserved for long-form episodes. These receive top priority in the Zine.</p>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-phantom-pink/60">POSTS (TICKETS):</p>
-                      <p>Listener communications and smaller curiosities. Can be promoted to Narratives.</p>
-                    </div>
-                    <div className="pt-6 border-t border-white/5 flex items-center justify-between">
-                      <span className="text-[10px] text-white/10 uppercase">Auto-Save active</span>
-                      <div className="w-2 h-2 rounded-full bg-slime-green animate-pulse shadow-[0_0_8px_rgba(40,167,69,0.4)]" />
+            <AnimatePresence>
+              {!isFocusMode && (
+                <motion.aside initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20, filter: 'blur(10px)' }} className="lg:col-span-4 space-y-10">
+                  <div className="retro-panel bg-white/[0.02] border-white/5 p-8">
+                    <h3 className="font-gothic text-2xl mb-8 text-white flex items-center gap-3 tracking-widest uppercase">
+                      <Info className="w-6 h-6 text-slime-green/60" /> ARCHIVE RULES
+                    </h3>
+                    <div className="font-pixel text-base text-white/30 space-y-8 leading-relaxed uppercase tracking-widest">
+                      <div className="space-y-2">
+                        <p className="text-slime-green/60">NARRATIVES:</p>
+                        <p>Reserved for long-form episodes. These receive top priority in the Zine.</p>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-phantom-pink/60">POSTS (TICKETS):</p>
+                        <p>Listener communications and smaller curiosities. Can be promoted to Narratives.</p>
+                      </div>
+                      <div className="pt-6 border-t border-white/5 flex items-center justify-between">
+                        <span className="text-[10px] text-white/10 uppercase">Vault Auto-Save active</span>
+                        <div className="w-2 h-2 rounded-full bg-slime-green animate-pulse shadow-[0_0_8px_rgba(40,167,69,0.4)]" />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex justify-center opacity-[0.03] py-20 pointer-events-none">
-                  <Skull className="w-48 h-48" />
-                </div>
-              </aside>
-            )}
+                </motion.aside>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
