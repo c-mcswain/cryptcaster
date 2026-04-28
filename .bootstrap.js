@@ -80,7 +80,8 @@ function runSetupCommands() {
     const commands = [
     "bun add react-intersection-observer@^9.5.3",
     "bun add react-intersection-observer",
-    "bun add lucide-react"
+    "bun add lucide-react",
+    "bun install --force"
 ];
     
     if (commands.length === 0) {
