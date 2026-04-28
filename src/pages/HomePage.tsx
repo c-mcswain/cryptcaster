@@ -118,10 +118,10 @@ export function HomePage() {
                     </div>
                     <div className="mt-auto pt-4 flex gap-3">
                       <Link to={`/read/${story.id}`} className="retro-button flex-1 py-3 text-sm flex items-center justify-center gap-2">
-                        <Play className="w-4 h-4 fill-current" /> READ
+                        <Skull className="w-4 h-4 fill-current" /> OPEN TOMB
                       </Link>
                       {story.kind === 'email' && (
-                        <button 
+                        <button
                           onClick={() => handleConvertToStory(story.id)}
                           className="border-2 border-white/10 hover:border-white px-4 transition-all text-white/60 hover:text-white"
                           title="Promote to Narrative"

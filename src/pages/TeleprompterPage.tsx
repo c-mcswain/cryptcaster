@@ -21,7 +21,7 @@ export function TeleprompterPage() {
     if (id) {
       api<Story>(`/api/stories/${id}`)
         .then(setStory)
-        .catch(() => toast.error('Story lost in the void'));
+        .catch(() => toast.error('Tale lost in the void'));
     }
   }, [id]);
   const animate = useCallback(() => {
@@ -51,7 +51,7 @@ Source: ${story.source}
 TicketID: ${story.metadata?.ticketId || 'N/A'}
 Words: ${wordCount(story.content)}
 Broadcast Time: ${now}
-Status: ARCHIVED
+Status: TOMB SEALED
 ---------------------------------------`;
   }, [story]);
   const markRecorded = async () => {
@@ -59,13 +59,13 @@ Status: ARCHIVED
     try {
       await api(`/api/stories/${id}`, { method: 'PATCH', body: JSON.stringify({ isRecorded: true }) });
       navigator.clipboard.writeText(generateReport());
-      toast.success('Session report copied and tale archived.');
+      toast.success('Session report copied and tomb sealed.');
       navigate('/');
     } catch (err) {
-      toast.error('Failed to seal the archive');
+      toast.error('Failed to seal the tomb');
     }
   };
-  if (!story) return <div className="bg-black min-h-screen flex items-center justify-center font-gothic text-2xl text-white">INVOKING...</div>;
+  if (!story) return <div className="bg-black min-h-screen flex items-center justify-center font-gothic text-2xl text-white">UNSEALING...</div>;
   return (
     <div className={cn("bg-[#020005] min-h-screen transition-opacity duration-1000", stealthMode && "cursor-none")}>
       {!stealthMode && (
@@ -106,7 +106,7 @@ Status: ARCHIVED
                   <TooltipContent className="font-pixel">STEALTH MODE (ESC)</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <button onClick={markRecorded} className="bg-white text-black px-6 py-2 font-gothic text-sm font-bold uppercase shadow-retro hover:bg-slime-green">FINISH</button>
+              <button onClick={markRecorded} className="bg-white text-black px-6 py-2 font-gothic text-sm font-bold uppercase shadow-retro hover:bg-slime-green">SEAL TOMB</button>
             </div>
           </div>
         </div>
@@ -120,7 +120,7 @@ Status: ARCHIVED
         </div>
         <div className="mt-64 text-center opacity-20 border-t border-white/10 pt-20">
           <Skull className="w-16 h-16 mx-auto mb-8" />
-          <p className="font-gothic text-4xl tracking-widest uppercase">END OF BROADCAST</p>
+          <p className="font-gothic text-4xl tracking-widest uppercase">TOMB SEALED: END OF BROADCAST</p>
         </div>
       </main>
       <div className="fixed bottom-10 right-10 flex flex-col items-end gap-3 z-50">
