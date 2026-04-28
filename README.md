@@ -1,6 +1,6 @@
 # CryptoCaster
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)] [cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)] [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/c-mcswain/cryptcaster)
 
 A production-ready full-stack chat application built with Cloudflare Workers, React, and shadcn/ui. Features real-time chat boards with Durable Objects for stateful entities (users, chats, messages), type-safe TypeScript, and a beautiful, responsive UI.
 
@@ -98,7 +98,7 @@ This builds assets and runs `wrangler deploy`.
 3. Deploy: `bunx wrangler deploy`
 4. Types: `bun cf-typegen` after deploy.
 
-[Deploy to Cloudflare Workers][cloudflarebutton]
+[Deploy to Cloudflare Workers][![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/c-mcswain/cryptcaster)
 
 **Custom Domain**: Add via Wrangler dashboard or `wrangler deploy --name my-app`.
 
