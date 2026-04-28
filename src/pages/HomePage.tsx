@@ -7,6 +7,7 @@ import { Toaster, toast } from 'sonner';
 import { RetroFooter } from '@/components/RetroFooter';
 import { VampiricAtmosphere } from '@/components/VampiricAtmosphere';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 export function HomePage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,7 +49,7 @@ export function HomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
         <div className="py-12 md:py-16">
           <header className="mb-20 text-center">
-            <h1 className="gothic-header text-5xl md:text-7xl mb-6 animate-pulse-glow tracking-[0.2em]">INVITE ME IN</h1>
+            <h1 className="gothic-header text-5xl md:text-8xl mb-6 animate-pulse-glow tracking-[0.2em]">INVITE ME IN</h1>
             <div className="font-pixel text-2xl text-phantom-pink tracking-[0.4em] uppercase opacity-60">MORALLY GRIM ARCHIVES</div>
             <div className="mt-14 flex justify-center gap-6">
               <Link to="/add" className="retro-button-pink px-16 py-5 font-gothic text-2xl flex items-center gap-4 transition-transform hover:scale-105 active:scale-100">
@@ -71,9 +72,9 @@ export function HomePage() {
                {(['all', 'unread', 'recorded'] as const).map(s => (
                 <button
                   key={s} onClick={() => setStatusFilter(s)}
-                  className={cn("border-b-2 px-6 py-2 transition-colors", statusFilter === s ? "border-phantom-pink text-phantom-pink" : "border-transparent text-white/30 hover:text-white/60")}
+                  className={cn("border-b-2 px-6 py-2 transition-colors uppercase tracking-widest", statusFilter === s ? "border-phantom-pink text-phantom-pink" : "border-transparent text-white/30 hover:text-white/60")}
                 >
-                  {s.toUpperCase()}
+                  {s}
                 </button>
               ))}
             </div>
@@ -81,9 +82,9 @@ export function HomePage() {
           {loading ? (
             <div className="py-32 text-center font-gothic text-3xl animate-pulse tracking-widest opacity-40">INVOKING DATABASE...</div>
           ) : filteredStories.length === 0 ? (
-            <div className="retro-panel py-40 text-center border-dashed border-white/10 bg-black/20">
-              <p className="font-gothic text-4xl mb-6 text-white/20">NOTHING LURKS HERE</p>
-              <p className="font-pixel text-xl text-white/10 tracking-widest">THE ARCHIVE IS VOID OF LIFE.</p>
+            <div className="retro-panel py-48 text-center border-dashed border-white/10 bg-black/20">
+              <p className="font-gothic text-6xl mb-6 text-white/10">VOID_DETECTED</p>
+              <p className="font-pixel text-2xl text-white/5 tracking-[0.3em] uppercase">The archive is empty of souls.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -108,6 +109,9 @@ export function HomePage() {
                           ID: {story.metadata?.ticketId || 'NA'}
                         </span>
                       )}
+                      {story.isRecorded && (
+                        <span className="bg-slime-green/10 text-slime-green font-pixel text-[10px] px-2 py-0.5 border border-slime-green/20 tracking-tighter uppercase">Recorded</span>
+                      )}
                     </div>
                     <h3 className="font-gothic text-2xl text-white/90 mb-4 line-clamp-2 min-h-[4rem] group-hover:text-slime-green transition-colors leading-relaxed">
                       {story.title}
@@ -115,21 +119,27 @@ export function HomePage() {
                     <p className="font-pixel text-xs text-white/40 mb-8 truncate tracking-wider">
                       {story.kind === 'email' ? `SENDER: ${story.source}` : `SOURCE: ${story.source}`}
                     </p>
-                    <div className="mb-10 font-mono text-sm text-white/20 line-clamp-3 leading-relaxed">
+                    <div className="mb-10 font-mono text-sm text-white/20 line-clamp-3 leading-relaxed h-[4.5rem]">
                       {story.content}
                     </div>
                     <div className="mt-auto pt-6 flex gap-4">
-                      <Link to={`/read/${story.id}`} className="retro-button flex-1 py-4 text-base flex items-center justify-center gap-3 font-gothic tracking-widest">
+                      <Link to={`/read/${story.id}`} className="retro-button flex-1 py-4 text-base flex items-center justify-center gap-3 font-gothic tracking-widest hover:scale-[1.02] transition-transform">
                         <Skull className="w-5 h-5 fill-current" /> OPEN TOMB
                       </Link>
                       {story.kind === 'email' && (
-                        <button
-                          onClick={() => handleConvertToStory(story.id)}
-                          className="border border-white/5 hover:border-white/20 bg-noir-gray/50 px-5 transition-all text-white/30 hover:text-white"
-                          title="Promote to Narrative"
-                        >
-                          <Zap className="w-5 h-5" />
-                        </button>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={() => handleConvertToStory(story.id)}
+                                className="border border-white/5 hover:border-white/20 bg-noir-gray/50 px-5 transition-all text-white/30 hover:text-white"
+                              >
+                                <Zap className="w-5 h-5" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-black border border-white/20 font-pixel text-xs">PROMOTE TO NARRATIVE</TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       )}
                     </div>
                   </div>

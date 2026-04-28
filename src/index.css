@@ -27,9 +27,9 @@
   }
   body {
     @apply bg-black text-slime-green font-mono min-h-screen relative overflow-x-hidden;
-    background-color: #030008;
+    background-color: #020005; /* Slightly darker for deeper contrast */
   }
-  /* Subtle CRT Scanline Effect */
+  /* Global CRT Scanline Effect - Highest Z-Index to cover all UI layers */
   body::before {
     content: " ";
     display: block;
@@ -38,11 +38,12 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.005), rgba(0, 0, 255, 0.01));
-    z-index: 100;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.08) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.015), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.015));
+    z-index: 9999;
     background-size: 100% 3px, 3px 100%;
-    pointer-events: none;
-    opacity: 0.25;
+    pointer-events: none; /* Critical: allows interactions through the overlay */
+    opacity: 0.3;
   }
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
@@ -78,5 +79,5 @@
   text-shadow: 0 0 10px rgba(179, 27, 77, 0.3);
 }
 .font-pixel {
-  @apply text-base md:text-lg; /* 20-30% bump */
+  @apply text-base md:text-lg;
 }

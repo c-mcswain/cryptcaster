@@ -13,9 +13,9 @@ export function TeleprompterPage() {
   const [fontSize, setFontSize] = useState(48);
   const [isRecording, setIsRecording] = useState(false);
   const [stealthMode, setStealthMode] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
   const [scrollSpeed, setScrollSpeed] = useState(5);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
   const isScrollingRef = useRef(isScrolling);
   const scrollSpeedRef = useRef(scrollSpeed);
@@ -37,13 +37,17 @@ export function TeleprompterPage() {
     const totalHeight = element.scrollHeight - element.clientHeight;
     const currentScroll = element.scrollTop;
     if (isScrollingRef.current) {
-      if (currentScroll < totalHeight - 5) {
+      if (currentScroll < totalHeight - 2) {
         window.scrollBy(0, scrollSpeedRef.current / 4);
       } else {
         setIsScrolling(false);
       }
     }
-    setScrollProgress(totalHeight > 0 ? (currentScroll / totalHeight) * 100 : 0);
+    // Direct DOM manipulation for progress bar to avoid re-renders at 60fps
+    if (progressBarRef.current && totalHeight > 0) {
+      const progress = (currentScroll / totalHeight) * 100;
+      progressBarRef.current.style.width = `${progress}%`;
+    }
     requestRef.current = requestAnimationFrame(animate);
   }, []);
   useEffect(() => {
@@ -90,7 +94,7 @@ Status: TOMB SEALED
   return (
     <div className={cn("bg-[#010003] min-h-screen transition-all duration-1000", stealthMode && "cursor-none")}>
       {!stealthMode && (
-        <div className="border-b border-white/5 p-6 md:px-12 flex flex-col md:flex-row justify-between items-center bg-black/95 sticky top-0 z-50 backdrop-blur-3xl gap-6">
+        <div className="border-b border-white/5 p-6 md:px-12 flex flex-col md:flex-row justify-between items-center bg-black/95 sticky top-0 z-[100] backdrop-blur-3xl gap-6">
           <div className="flex items-center gap-6 md:gap-10 w-full md:w-auto">
             <Link to="/" className="text-white/40 hover:text-slime-green transition-all"><ArrowLeft className="w-10 h-10" /></Link>
             <div className="min-w-0">
@@ -140,10 +144,13 @@ Status: TOMB SEALED
           </div>
         </div>
       )}
-      <div className="fixed bottom-0 left-0 w-full h-1 bg-black z-[100]">
-        <div className="h-full bg-blood-red/80 transition-all duration-300 shadow-[0_0_10px_rgba(61,3,3,0.5)]" style={{ width: `${scrollProgress}%` }} />
+      <div className="fixed bottom-0 left-0 w-full h-1 bg-black z-[110]">
+        <div 
+          ref={progressBarRef}
+          className="h-full bg-blood-red/80 transition-all duration-300 shadow-[0_0_10px_rgba(61,3,3,0.5)] w-0" 
+        />
       </div>
-      <main className="max-w-4xl mx-auto px-10 pt-40 pb-96">
+      <main className="max-w-4xl mx-auto px-10 pt-40 pb-96 relative z-10">
         <div className="font-mono text-white/80 leading-[1.7] whitespace-pre-wrap select-none tracking-normal" style={{ fontSize: `${fontSize}px` }}>
           {story.content}
         </div>
@@ -153,7 +160,7 @@ Status: TOMB SEALED
           <p className="font-pixel text-xl mt-6 tracking-widest uppercase">END OF BROADCAST SESSION</p>
         </div>
       </main>
-      <div className="fixed bottom-12 right-12 flex flex-col items-end gap-6 z-50">
+      <div className="fixed bottom-12 right-12 flex flex-col items-end gap-6 z-[120]">
         <button
           onClick={() => setIsRecording(prev => !prev)}
           className={cn("flex items-center gap-5 px-10 py-5 font-gothic text-xl border transition-all duration-700", isRecording ? "bg-blood-red/90 border-phantom-pink text-white shadow-[0_0_30px_rgba(179,27,77,0.4)]" : "bg-black/60 text-white/20 border-white/5 hover:border-white/20")}

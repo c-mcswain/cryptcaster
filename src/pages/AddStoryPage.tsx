@@ -8,26 +8,23 @@ import { VampiricAtmosphere } from '@/components/VampiricAtmosphere';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { wordCount, estimateReadTime } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion, AnimatePresence } from 'framer-motion';
 export function AddStoryPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isFocusMode, setIsFocusMode] = useState(false);
   const isInitialized = useRef(false);
-  // Persistent drafts
   const [storyDraft, setStoryDraft, clearStoryDraft] = useLocalStorage('cryptcaster_story_draft', { title: '', source: '', content: '' });
   const [emailDraft, setEmailDraft, clearEmailDraft] = useLocalStorage('cryptcaster_email_draft', { senderEmail: '', subject: '', content: '' });
   const [storyForm, setStoryForm] = useState({ title: '', source: '', content: '' });
   const [emailForm, setEmailForm] = useState({ senderEmail: '', subject: '', content: '' });
-  // Sync draft to form only on mount - Using ref to prevent double run or loop
   useEffect(() => {
     if (!isInitialized.current) {
       setStoryForm(storyDraft);
       setEmailForm(emailDraft);
       isInitialized.current = true;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); 
-  // Save form changes to drafts with debounce
+  }, []);
   useEffect(() => {
     if (!isInitialized.current) return;
     const timeoutId = setTimeout(() => {
@@ -47,11 +44,7 @@ export function AddStoryPage() {
     try {
       await api('/api/stories', {
         method: 'POST',
-        body: JSON.stringify({
-          ...storyForm,
-          kind: 'story',
-          metadata: {}
-        })
+        body: JSON.stringify({ ...storyForm, kind: 'story', metadata: {} })
       });
       toast.success('Grim narrative ingested.');
       clearStoryDraft();
@@ -96,13 +89,17 @@ export function AddStoryPage() {
       <VampiricAtmosphere />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
         <div className="py-12 md:py-16">
-          {!isFocusMode && (
-            <Link to="/" className="text-white/60 font-pixel text-2xl hover:text-slime-green flex items-center gap-4 mb-12 group w-fit transition-all tracking-widest">
-              <ArrowLeft className="w-7 h-7 group-hover:-translate-x-3 transition-transform" />
-              <span className="uppercase">BACK TO CRYPT</span>
-            </Link>
-          )}
-          <div className={`grid grid-cols-1 ${isFocusMode ? '' : 'lg:grid-cols-12'} gap-12`}>
+          <AnimatePresence>
+            {!isFocusMode && (
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+                <Link to="/" className="text-white/60 font-pixel text-2xl hover:text-slime-green flex items-center gap-4 mb-12 group w-fit transition-all tracking-widest">
+                  <ArrowLeft className="w-7 h-7 group-hover:-translate-x-3 transition-transform" />
+                  <span className="uppercase">BACK TO CRYPT</span>
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <div className={`grid grid-cols-1 ${isFocusMode ? '' : 'lg:grid-cols-12'} gap-12 transition-all duration-500`}>
             <div className={`${isFocusMode ? 'max-w-4xl mx-auto w-full' : 'lg:col-span-8'}`}>
               <Tabs defaultValue="story" className="w-full">
                 {!isFocusMode && (
@@ -120,42 +117,45 @@ export function AddStoryPage() {
                     <div className="retro-window-header bg-slime-green/80 text-black">
                       <div className="flex items-center gap-4">
                         <ScrollText className="w-5 h-5" />
-                        <span className="tracking-widest">INGESTION_PROTOCOL_V4.1</span>
+                        <span className="tracking-widest uppercase">Ingestion_Protocol_04.1</span>
                       </div>
                       <button onClick={() => setIsFocusMode(!isFocusMode)} className="text-sm font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-slime-green transition-colors">
-                        {isFocusMode ? 'MINIMIZE' : 'EXPAND'}
+                        {isFocusMode ? 'Minimize Interface' : 'Expand Terminal'}
                       </button>
                     </div>
                     <form onSubmit={handleStorySubmit} className="p-8 md:p-12 space-y-10 bg-black/40">
                       <div>
-                        <label className="block font-pixel text-sm mb-3 text-slime-green/60 tracking-widest uppercase">TALE TITLE</label>
+                        <label className="block font-pixel text-sm mb-3 text-slime-green/60 tracking-widest uppercase">Tale Title</label>
                         <input
                           required value={storyForm.title}
+                          placeholder="Untitled Grim Report..."
                           onChange={(e) => setStoryForm(prev => ({ ...prev, title: e.target.value }))}
-                          className="w-full bg-noir-gray border border-white/10 p-5 text-white font-gothic text-2xl focus:border-slime-green transition-all outline-none"
+                          className="w-full bg-noir-gray border border-white/10 p-5 text-white font-gothic text-2xl focus:border-slime-green transition-all outline-none placeholder:text-white/5"
                         />
                       </div>
                       <div>
-                        <label className="block font-pixel text-sm mb-3 text-slime-green/60 tracking-widest uppercase">ORIGIN SOURCE</label>
+                        <label className="block font-pixel text-sm mb-3 text-slime-green/60 tracking-widest uppercase">Origin Source</label>
                         <input
                           value={storyForm.source}
+                          placeholder="r/NoSleep, Dark Web Archive, etc."
                           onChange={(e) => setStoryForm(prev => ({ ...prev, source: e.target.value }))}
-                          className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-slime-green transition-all outline-none"
+                          className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-slime-green transition-all outline-none placeholder:text-white/5"
                         />
                       </div>
                       <div>
                         <div className="flex justify-between mb-3">
-                          <label className="block font-pixel text-sm text-slime-green/60 tracking-widest uppercase">BODY CONTENT</label>
+                          <label className="block font-pixel text-sm text-slime-green/60 tracking-widest uppercase">Body Content</label>
                           <span className="font-pixel text-xs text-white/20 tracking-tighter">{stats.story.words} WORDS / EST. {stats.story.time}</span>
                         </div>
                         <textarea
                           required rows={14} value={storyForm.content}
+                          placeholder="The void awaits your report..."
                           onChange={(e) => setStoryForm(prev => ({ ...prev, content: e.target.value }))}
-                          className="w-full bg-noir-gray border border-white/10 p-6 text-white font-mono text-lg leading-relaxed focus:border-slime-green transition-all outline-none resize-none"
+                          className="w-full bg-noir-gray border border-white/10 p-6 text-white font-mono text-lg leading-relaxed focus:border-slime-green transition-all outline-none resize-none placeholder:text-white/5"
                         />
                       </div>
                       <button type="submit" disabled={loading} className="retro-button w-full text-2xl font-gothic py-6 tracking-[0.2em]">
-                        {loading ? 'INGESTING...' : 'SUMMON TO CRYPT'}
+                        {loading ? 'Ingesting Record...' : 'Summon to the Crypt'}
                       </button>
                     </form>
                   </div>
@@ -165,45 +165,47 @@ export function AddStoryPage() {
                     <div className="retro-window-header bg-phantom-pink/80 text-black">
                       <div className="flex items-center gap-4">
                         <Mail className="w-5 h-5" />
-                        <span className="tracking-widest">MIDNIGHT_POST_TICKET_V1.3</span>
+                        <span className="tracking-widest uppercase">Midnight_Post_Ticket_v1.3</span>
                       </div>
                       <button onClick={() => setIsFocusMode(!isFocusMode)} className="text-sm font-pixel uppercase border border-black/20 px-4 py-1 hover:bg-black hover:text-phantom-pink transition-colors">
-                        {isFocusMode ? 'MINIMIZE' : 'EXPAND'}
+                        {isFocusMode ? 'Minimize Interface' : 'Expand Terminal'}
                       </button>
                     </div>
                     <form onSubmit={handleEmailSubmit} className="p-8 md:p-12 space-y-10 bg-black/40">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div>
-                          <label className="block font-pixel text-sm mb-3 text-phantom-pink/60 tracking-widest uppercase">SENDER EMAIL</label>
+                          <label className="block font-pixel text-sm mb-3 text-phantom-pink/60 tracking-widest uppercase">Sender Email</label>
                           <input
                             type="email" value={emailForm.senderEmail}
                             onChange={(e) => setEmailForm(prev => ({ ...prev, senderEmail: e.target.value }))}
                             className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-phantom-pink transition-all outline-none"
-                            placeholder="listener@void.com"
+                            placeholder="listener@the-void.com"
                           />
                         </div>
                         <div>
-                          <label className="block font-pixel text-sm mb-3 text-phantom-pink/60 tracking-widest uppercase">SUBJECT LINE</label>
+                          <label className="block font-pixel text-sm mb-3 text-phantom-pink/60 tracking-widest uppercase">Subject Line</label>
                           <input
                             required value={emailForm.subject}
+                            placeholder="RE: Something followed me home..."
                             onChange={(e) => setEmailForm(prev => ({ ...prev, subject: e.target.value }))}
-                            className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-phantom-pink transition-all outline-none"
+                            className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg focus:border-phantom-pink transition-all outline-none placeholder:text-white/5"
                           />
                         </div>
                       </div>
                       <div>
                         <div className="flex justify-between mb-3">
-                          <label className="block font-pixel text-sm text-phantom-pink/60 tracking-widest uppercase">EMAIL BODY</label>
+                          <label className="block font-pixel text-sm text-phantom-pink/60 tracking-widest uppercase">Email Body</label>
                           <span className="font-pixel text-xs text-white/20 tracking-tighter">{stats.email.words} WORDS</span>
                         </div>
                         <textarea
                           required rows={14} value={emailForm.content}
+                          placeholder="Paste the raw submission here..."
                           onChange={(e) => setEmailForm(prev => ({ ...prev, content: e.target.value }))}
-                          className="w-full bg-noir-gray border border-white/10 p-6 text-white font-mono text-lg leading-relaxed focus:border-phantom-pink transition-all outline-none resize-none"
+                          className="w-full bg-noir-gray border border-white/10 p-6 text-white font-mono text-lg leading-relaxed focus:border-phantom-pink transition-all outline-none resize-none placeholder:text-white/5"
                         />
                       </div>
                       <button type="submit" disabled={loading} className="retro-button-pink w-full text-2xl font-gothic py-6 tracking-[0.2em]">
-                        {loading ? 'FILING...' : 'GENERATE TICKET'}
+                        {loading ? 'Filing Report...' : 'Generate Broadcast Ticket'}
                       </button>
                     </form>
                   </div>
@@ -222,7 +224,7 @@ export function AddStoryPage() {
                     <p>• AUTOMATION: Tickets are auto-prefixed with unique identifiers.</p>
                   </div>
                 </div>
-                <div className="flex justify-center opacity-5 py-20">
+                <div className="flex justify-center opacity-[0.03] py-20">
                   <Skull className="w-48 h-48" />
                 </div>
               </aside>
