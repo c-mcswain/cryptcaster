@@ -7,6 +7,7 @@ import { Toaster, toast } from 'sonner';
 import { RetroFooter } from '@/components/RetroFooter';
 import { VampiricAtmosphere } from '@/components/VampiricAtmosphere';
 import { useAuth } from '@/hooks/use-auth';
+import { SubmissionHero } from '@/components/SubmissionHero';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 export function HomePage() {
@@ -87,6 +88,9 @@ export function HomePage() {
                 <h1 className="gothic-header text-6xl md:text-9xl mb-4 tracking-[0.3em] animate-pulse-glow">THE MIDNIGHT ZINE</h1>
                 <p className="font-pixel text-xl text-slime-green/60 uppercase tracking-[0.5em]">Issue: {new Date(zine.lastUpdated).toLocaleDateString()} // VOL. 4</p>
               </div>
+              
+              <SubmissionHero />
+
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Left Side: Introit */}
                 <div className="lg:col-span-4 flex flex-col gap-10">
