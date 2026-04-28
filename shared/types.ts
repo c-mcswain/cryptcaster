@@ -27,6 +27,7 @@ export interface ZineContent {
   coverImageUrl: string;
   lastUpdated: number;
   editorName: string;
+  advertisement?: string;
 }
 export interface AuthResponse {
   token: string;

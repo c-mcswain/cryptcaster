@@ -27,7 +27,8 @@ export class ZineEntity extends IndexedEntity<ZineContent> {
     featuredStoryId: null,
     coverImageUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop",
     lastUpdated: Date.now(),
-    editorName: "CreepQueen"
+    editorName: "CreepQueen",
+    advertisement: "THIS BROADCAST IS SPONSORED BY 'O-NEGATIVE ENERGY DRINK' - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
   };
   static seedData = [
     {
@@ -36,12 +37,14 @@ export class ZineEntity extends IndexedEntity<ZineContent> {
       announcements: [
         "The Shadow Market: Merch drop at midnight",
         "Live Reading: The Mojave Static - Friday",
-        "Submit your chronicles or be forgotten"
+        "Submit your chronicles or be forgotten",
+        "Vampire Facial Giveaway: Win a pint of O-Negative"
       ],
-      featuredStoryId: "s4",
+      featuredStoryId: "s7",
       coverImageUrl: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop",
       lastUpdated: Date.now(),
-      editorName: "CreepQueen"
+      editorName: "CreepQueen",
+      advertisement: "THIS BROADCAST IS SPONSORED BY 'O-NEGATIVE ENERGY DRINK' - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
     }
   ];
 }

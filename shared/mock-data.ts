@@ -47,6 +47,14 @@ export const MOCK_STORIES: Story[] = [
     content: 'The temperature in Rack 7 always drops to exactly -4 degrees Celsius at midnight, regardless of the cooling system settings. Yesterday, we found frosted handprints on the inside of the glass casing. The server has no internal fans.',
     isRecorded: true,
     createdAt: Date.now() - 250000000
+  },
+  {
+    id: 's7',
+    title: 'The Glitch in the Grave',
+    source: 'Grim Investigative Dept.',
+    content: 'Our recent investigation into "Smart Cemeteries" has uncovered a disturbing trend. The QR codes etched onto modern tombstones, intended to show digital memorials of the deceased, have begun to malfunction. Visitors report that scanning the codes no longer redirects to a biography, but instead opens a live, high-definition feed of their own front door. Even more unsettling, many report seeing a figure standing in the reflection of their screen—a figure that isn’t there when they turn around.',
+    isRecorded: false,
+    createdAt: Date.now()
   }
 ];
 export const MOCK_USERS: User[] = [{ id: 'u1', name: 'CreepQueen' }];

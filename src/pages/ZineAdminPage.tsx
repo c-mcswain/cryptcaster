@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Save, Layout, ListPlus, Trash2, Eye, Skull } from 'lucide-react';
+import { ArrowLeft, Save, Layout, ListPlus, Trash2, Eye, Skull, Megaphone } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import { toast, Toaster } from 'sonner';
 import { RetroFooter } from '@/components/RetroFooter';
@@ -87,10 +87,19 @@ export function ZineAdminPage() {
                   <div>
                     <label className="block font-pixel text-sm mb-4 text-slime-green/60 tracking-widest uppercase">Editor's Introit (Welcome Text)</label>
                     <textarea
-                      rows={8} value={zine.intro}
+                      rows={6} value={zine.intro}
                       onChange={e => setZine({ ...zine, intro: e.target.value })}
                       className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg leading-relaxed focus:border-slime-green transition-all outline-none resize-none placeholder:text-white/5"
                       placeholder="Welcome to the void..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-pixel text-sm mb-4 text-phantom-pink/60 tracking-widest uppercase">Grim Advertisement (Satirical Plug)</label>
+                    <textarea
+                      rows={3} value={zine.advertisement || ''}
+                      onChange={e => setZine({ ...zine, advertisement: e.target.value })}
+                      className="w-full bg-noir-gray border border-white/10 p-5 text-white font-mono text-lg leading-relaxed focus:border-phantom-pink transition-all outline-none resize-none placeholder:text-white/5 border-dashed"
+                      placeholder="e.g. Sponsored by O-Negative energy drink..."
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -167,9 +176,15 @@ export function ZineAdminPage() {
                         <div className="h-px bg-white/10 w-32 mx-auto mt-6" />
                      </div>
                      <div className="space-y-10 relative">
+                        {zine.advertisement && (
+                          <div className="p-4 border border-phantom-pink/40 bg-phantom-pink/5 font-mono text-[10px] text-phantom-pink uppercase italic text-center">
+                            <Megaphone className="w-3 h-3 inline mr-2" />
+                            {zine.advertisement}
+                          </div>
+                        )}
                         <div className="space-y-4">
                           <h3 className="font-gothic text-lg text-slime-green tracking-widest uppercase italic">Editor's Introit</h3>
-                          <p className="text-white/40 text-sm leading-relaxed italic line-clamp-6">"{zine.intro}"</p>
+                          <p className="text-white/40 text-sm leading-relaxed italic line-clamp-4">"{zine.intro}"</p>
                         </div>
                         <div className="aspect-video bg-noir-gray border border-white/5 relative overflow-hidden group-hover:border-slime-green/40 transition-colors">
                           <img src={zine.coverImageUrl} className="w-full h-full object-cover opacity-40 grayscale group-hover:grayscale-0 transition-all duration-1000" alt="Cover" />

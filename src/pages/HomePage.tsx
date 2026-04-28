@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Skull, Zap, ChevronRight, BookOpen, Ghost, MessageSquare } from 'lucide-react';
+import { Skull, Zap, ChevronRight, BookOpen, Ghost, MessageSquare, Megaphone } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import type { Story, ZineContent } from '@shared/types';
 import { Toaster, toast } from 'sonner';
@@ -11,21 +11,21 @@ import { SubmissionHero } from '@/components/SubmissionHero';
 export function HomePage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [zine, setZine] = useState<ZineContent | null>(null);
-
   const demoZine: ZineContent = {
     id: 'singleton',
     intro: 'Shadows whisper across the terminal, carrying the weight of a thousand unread screams. The Midnight Zine has returned to chronicle the morally grim. Stay vigilant.',
     announcements: [
       'The Shadow Market: Merch drop at midnight',
       'Live Reading: The Mojave Static - Friday',
-      'Submit your chronicles or be forgotten'
+      'Submit your chronicles or be forgotten',
+      'Vampire Facial Giveaway: Win a pint of O-Negative'
     ],
-    featuredStoryId: 's4',
+    featuredStoryId: 's7',
     coverImageUrl: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1000&auto=format&fit=crop',
     lastUpdated: Date.now(),
-    editorName: 'CreepQueen'
+    editorName: 'CreepQueen',
+    advertisement: "THIS BROADCAST IS SPONSORED BY 'O-NEGATIVE ENERGY DRINK' - IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION."
   };
-
   const [loading, setLoading] = useState(true);
   const displayZine = zine ?? demoZine;
   const { isAuthenticated } = useAuth();
@@ -83,7 +83,7 @@ export function HomePage() {
                 </p>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10">
-                {/* Left Side: Introit */}
+                {/* Left Side: Introit & Ad */}
                 <div className="lg:col-span-4 flex flex-col gap-8 md:gap-10">
                    <div className="retro-window border-white/10 flex-1">
                       <div className="retro-window-header bg-white/10 text-white italic">Editorial Introit</div>
@@ -94,6 +94,17 @@ export function HomePage() {
                         </div>
                       </div>
                    </div>
+                   {displayZine.advertisement && (
+                    <div className="retro-panel border-phantom-pink bg-phantom-pink/10 animate-pulse-glow">
+                      <div className="flex items-center gap-3 mb-4 text-phantom-pink">
+                        <Megaphone className="w-5 h-5 animate-bounce" />
+                        <span className="font-pixel text-sm uppercase tracking-[0.2em] font-black">SPONSOR SPOTLIGHT</span>
+                      </div>
+                      <p className="font-mono text-sm text-white/80 leading-relaxed uppercase italic">
+                        "{displayZine.advertisement}"
+                      </p>
+                    </div>
+                   )}
                    <div className="retro-panel bg-phantom-pink/5 border-phantom-pink/20">
                       <h3 className="font-gothic text-xl text-phantom-pink tracking-widest uppercase mb-6">Grim Announcements</h3>
                       <ul className="space-y-4 font-pixel text-base text-white/40 tracking-widest uppercase">
@@ -121,7 +132,7 @@ export function HomePage() {
                       <h2 className="font-gothic text-4xl md:text-7xl text-white tracking-widest leading-tight">
                         {featuredStory?.title || "VOID SELECTION"}
                       </h2>
-                      <p className="font-mono text-lg md:text-xl text-white/70 line-clamp-2 max-w-2xl">
+                      <p className="font-mono text-lg md:text-xl text-white/70 line-clamp-4 max-w-2xl leading-relaxed">
                         {featuredStory?.content || "The shadows remain silent this week. Check back for new unearthed chronicles."}
                       </p>
                     </div>
