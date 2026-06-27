@@ -140,18 +140,12 @@ export function HomePage() {
                 <p className="font-pixel text-xs md:text-sm text-phantom-pink/72 uppercase tracking-[0.28em] md:tracking-[0.36em] mb-3">
                   Current Issue
                 </p>
-<p className="font-pixel text-lg text-red-500 uppercase tracking-widest mb-4">
-  BUILD CHECK: NEW HOMEPAGE ACTIVE
-</p>
 
-<h1 className="gothic-header text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-3 tracking-[0.08em] md:tracking-[0.12em] animate-pulse-glow leading-[0.9]">
-  THE MIDNIGHT ZINE
-</h1>
-                <h1 className="gothic-header text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-3 tracking-[0.08em] md:tracking-[0.12em] animate-pulse-glow leading-[0.9]">
+                <h1 className="gothic-header text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl mb-3 tracking-[0.06em] md:tracking-[0.09em] animate-pulse-glow leading-[0.95] max-w-5xl mx-auto">
                   THE MIDNIGHT ZINE
                 </h1>
 
-                <p className="font-pixel text-sm md:text-lg text-slime-green/82 uppercase tracking-[0.18em] md:tracking-[0.25em] leading-relaxed">
+                <p className="font-pixel text-sm md:text-base text-slime-green/82 uppercase tracking-[0.18em] md:tracking-[0.24em] leading-relaxed">
                   ISSUE: {issueStr} // VOL. 04.2
                 </p>
               </div>
@@ -218,7 +212,7 @@ export function HomePage() {
                 <section className="lg:col-span-7 xl:col-span-8 h-full">
                   <div
                     className={cn(
-                      'relative min-h-[340px] md:min-h-[430px] lg:min-h-[610px] border-2 md:border-4 group overflow-hidden shadow-[0_0_55px_rgba(0,0,0,1)] transition-all duration-700 bg-black/80',
+                      'relative min-h-[360px] md:min-h-[440px] lg:min-h-[560px] border-2 md:border-4 group overflow-hidden shadow-[0_0_55px_rgba(0,0,0,1)] transition-all duration-700 bg-black/80',
                       isBreaking
                         ? 'border-phantom-pink/60 shadow-[0_0_36px_rgba(179,27,77,0.28)]'
                         : 'border-white/10',
@@ -241,7 +235,7 @@ export function HomePage() {
                       TERMINAL_LIVE
                     </div>
 
-                    <div className="relative z-10 min-h-[340px] md:min-h-[430px] lg:min-h-[610px] h-full p-5 md:p-7 lg:p-9 flex flex-col justify-end">
+                    <div className="relative z-10 min-h-[360px] md:min-h-[440px] lg:min-h-[560px] h-full p-5 md:p-7 lg:p-9 flex flex-col justify-end">
                       <div className="max-w-3xl space-y-4">
                         <div className="flex flex-col gap-3">
                           {isBreaking && (
