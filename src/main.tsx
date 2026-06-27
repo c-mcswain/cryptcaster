@@ -20,7 +20,8 @@ import { ZineAdminPage } from '@/pages/ZineAdminPage'
 import { CryptDashboardPage } from '@/pages/CryptDashboardPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 const queryClient = new QueryClient();
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
   {
     path: "/",
     element: <HomePage />,
@@ -52,9 +53,16 @@ const router = createBrowserRouter([
     errorElement: <RouteErrorBoundary />,
   },
   {
+  {
     path: "/submit",
     element: <SubmissionPage />,
     errorElement: <RouteErrorBoundary />,
+  },
+  ],
+  {
+    basename: "/cryptcaster",
+  }
+);
   },
 ]);
 createRoot(document.getElementById('root')!).render(
