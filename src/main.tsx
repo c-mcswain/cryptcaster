@@ -53,7 +53,6 @@ const router = createBrowserRouter(
     errorElement: <RouteErrorBoundary />,
   },
   {
-  {
     path: "/submit",
     element: <SubmissionPage />,
     errorElement: <RouteErrorBoundary />,
