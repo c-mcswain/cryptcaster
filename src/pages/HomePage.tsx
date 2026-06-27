@@ -77,7 +77,7 @@ export function HomePage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 mb-9 md:mb-12">
             <div className="flex items-center gap-3 group cursor-default">
               <Skull className="w-7 h-7 md:w-8 md:h-8 text-slime-green group-hover:rotate-180 transition-transform duration-700" />
-              <div className="font-pixel text-xs sm:text-sm md:text-base tracking-[0.22em] md:tracking-[0.3em] text-white/40 uppercase">
+              <div className="font-pixel text-sm md:text-base tracking-[0.2em] md:tracking-[0.26em] text-white/55 uppercase">
                 MORALLY GRIM BROADCASTS
               </div>
             </div>
@@ -85,7 +85,7 @@ export function HomePage() {
             <div className="flex gap-3 flex-wrap">
               <Link
                 to="/submit"
-                className="font-pixel text-[10px] md:text-xs text-phantom-pink hover:text-white uppercase tracking-widest px-3 md:px-5 py-2 border border-phantom-pink/20 bg-phantom-pink/5 transition-all"
+                className="font-pixel text-xs md:text-sm text-phantom-pink hover:text-white uppercase tracking-widest px-4 md:px-5 py-2.5 border border-phantom-pink/25 bg-phantom-pink/5 transition-all"
               >
                 SUBMIT TALE
               </Link>
@@ -93,14 +93,14 @@ export function HomePage() {
               {isAuthenticated ? (
                 <Link
                   to="/crypt"
-                  className="font-pixel text-[10px] md:text-xs text-slime-green hover:text-white uppercase tracking-widest px-3 md:px-5 py-2 border border-slime-green/20 bg-slime-green/5 transition-all"
+                  className="font-pixel text-xs md:text-sm text-slime-green hover:text-white uppercase tracking-widest px-4 md:px-5 py-2.5 border border-slime-green/25 bg-slime-green/5 transition-all"
                 >
                   DASHBOARD
                 </Link>
               ) : (
                 <Link
                   to="/login"
-                  className="font-pixel text-[10px] md:text-xs text-white/20 hover:text-white uppercase tracking-widest px-3 md:px-5 py-2 border border-white/5 transition-all"
+                  className="font-pixel text-xs md:text-sm text-white/35 hover:text-white uppercase tracking-widest px-4 md:px-5 py-2.5 border border-white/10 transition-all"
                 >
                   STAFF
                 </Link>
@@ -117,7 +117,7 @@ export function HomePage() {
                   THE MIDNIGHT ZINE
                 </h1>
 
-                <p className="font-pixel text-xs md:text-sm text-slime-green/60 uppercase tracking-[0.22em] md:tracking-[0.36em]">
+                <p className="font-pixel text-sm md:text-base text-slime-green/70 uppercase tracking-[0.2em] md:tracking-[0.32em]">
                   ISSUE: {issueStr} // VOL. 04.2
                 </p>
               </div>
@@ -141,8 +141,8 @@ export function HomePage() {
                   {displayZine.advertisement && (
                     <div className="retro-panel border-phantom-pink/40 bg-phantom-pink/5 group hover:bg-phantom-pink/10 transition-colors p-5 md:p-6">
                       <div className="flex items-center gap-3 mb-4 text-phantom-pink">
-                        <Megaphone className="w-4 h-4 md:w-5 md:h-5 animate-bounce" />
-                        <span className="font-pixel text-xs md:text-sm uppercase tracking-[0.18em] font-black">
+                        <Megaphone className="w-5 h-5 md:w-6 md:h-6 animate-bounce" />
+                        <span className="font-pixel text-sm md:text-base uppercase tracking-[0.18em] font-black">
                           OFFICIAL SPONSOR
                         </span>
                       </div>
