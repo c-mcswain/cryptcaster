@@ -8,6 +8,7 @@ import {
   Megaphone,
   AlertCircle,
   Activity,
+  BookOpen,
 } from 'lucide-react';
 
 import { api } from '@/lib/api-client';
@@ -83,8 +84,8 @@ export function HomePage() {
       <VampiricAtmosphere />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 z-10 w-full">
-        <div className="py-6 md:py-10">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 mb-10 md:mb-14">
+        <div className="py-6 md:py-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 mb-10 md:mb-12">
             <div className="flex items-center gap-4 group cursor-default">
               <Skull className="w-7 h-7 md:w-8 md:h-8 text-slime-green group-hover:rotate-180 transition-transform duration-700" />
               <div className="font-pixel text-sm md:text-base tracking-[0.22em] md:tracking-[0.3em] text-white/45 uppercase">
@@ -119,32 +120,36 @@ export function HomePage() {
           </div>
 
           {!loading && (
-            <section className="space-y-12 md:space-y-16 mb-16 md:mb-24">
-              <div className="text-center relative">
+            <section className="space-y-10 md:space-y-12 mb-14 md:mb-18">
+              <div className="text-center relative max-w-6xl mx-auto">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-px bg-gradient-to-r from-transparent via-slime-green/10 to-transparent -z-10" />
 
-                <h1 className="gothic-header text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl mb-5 tracking-[0.08em] md:tracking-[0.22em] animate-pulse-glow leading-[0.95] break-normal">
+                <p className="font-pixel text-sm md:text-base text-phantom-pink/65 uppercase tracking-[0.32em] md:tracking-[0.45em] mb-5">
+                  Current Issue
+                </p>
+
+                <h1 className="gothic-header text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl mb-6 tracking-[0.08em] md:tracking-[0.16em] animate-pulse-glow leading-[0.96] break-normal">
                   THE MIDNIGHT ZINE
                 </h1>
 
-                <p className="font-pixel text-lg md:text-2xl text-slime-green/70 uppercase tracking-[0.22em] md:tracking-[0.42em] leading-relaxed">
+                <p className="font-pixel text-xl md:text-3xl text-slime-green/80 uppercase tracking-[0.18em] md:tracking-[0.32em] leading-relaxed">
                   ISSUE: {issueStr} // VOL. 04.2
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 items-start">
-                <div className="lg:col-span-4 flex flex-col gap-7 md:gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 md:gap-9 items-stretch">
+                <div className="lg:col-span-4 flex flex-col gap-6 md:gap-7">
                   <div className="retro-window border-white/5 flex-1 shadow-2xl">
                     <div className="retro-window-header bg-white/5 text-white/65 italic tracking-widest">
                       Editorial_Introit.log
                     </div>
 
-                    <div className="p-6 md:p-8 bg-black/80 font-mono text-base md:text-lg leading-[1.75] text-white/68 italic space-y-5">
+                    <div className="p-6 md:p-7 bg-black/80 font-mono text-base md:text-lg leading-[1.7] text-white/68 italic space-y-5">
                       <p className="indent-6 break-words">
                         "{displayZine.intro}"
                       </p>
 
-                      <div className="pt-6 border-t border-white/5 font-pixel text-sm text-slime-green tracking-[0.22em] not-italic leading-relaxed">
+                      <div className="pt-5 border-t border-white/5 font-pixel text-sm text-slime-green tracking-[0.18em] not-italic leading-relaxed">
                         — {displayZine.editorName.toUpperCase()} // CHIEF
                         ARCHIVIST
                       </div>
@@ -190,10 +195,10 @@ export function HomePage() {
                 <div className="lg:col-span-8 h-full">
                   <div
                     className={cn(
-                      'relative aspect-video lg:aspect-[16/10] border-4 md:border-6 group overflow-hidden shadow-[0_0_70px_rgba(0,0,0,1)] transition-all duration-700',
+                      'relative min-h-[420px] md:min-h-[500px] lg:min-h-full border-4 md:border-6 group overflow-hidden shadow-[0_0_55px_rgba(0,0,0,1)] transition-all duration-700 bg-black/80',
                       isBreaking
-                        ? 'border-phantom-pink/60 shadow-[0_0_40px_rgba(179,27,77,0.3)]'
-                        : 'border-white/5',
+                        ? 'border-phantom-pink/60 shadow-[0_0_36px_rgba(179,27,77,0.28)]'
+                        : 'border-white/8',
                     )}
                   >
                     <img
@@ -202,68 +207,82 @@ export function HomePage() {
                           ? displayZine.coverImageUrl || voidCoverUrl
                           : voidCoverUrl
                       }
-                      className="absolute inset-0 w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-70 transition-all duration-[2000ms] scale-110 group-hover:scale-100"
+                      className="absolute inset-0 w-full h-full object-cover grayscale opacity-20 group-hover:grayscale-0 group-hover:opacity-52 transition-all duration-[2000ms] scale-105 group-hover:scale-100"
                       alt="Zine Cover"
                     />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30" />
 
                     <div className="absolute top-5 md:top-7 right-5 md:right-7 flex items-center gap-3 px-4 py-1.5 bg-black/80 border border-slime-green/40 font-pixel text-xs text-slime-green tracking-[0.24em] z-20">
                       <Activity className="w-3 h-3 animate-pulse" />
                       TERMINAL_LIVE
                     </div>
 
-                    <div className="absolute bottom-0 left-0 right-0 p-5 md:p-10 lg:p-12 flex flex-col items-start gap-5 md:gap-7">
-                      <div className="flex flex-col gap-3">
-                        {isBreaking && (
-                          <div className="flex items-center gap-3 bg-blood-red border border-phantom-pink px-4 py-2 text-white font-pixel text-xs md:text-sm uppercase tracking-[0.25em] animate-blink w-fit shadow-[0_0_20px_rgba(179,27,77,0.5)]">
-                            <AlertCircle className="w-4 h-4" />
-                            MORALLY GRIM BULLETIN
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
+                      <BookOpen className="w-24 h-24 md:w-32 md:h-32 text-white" />
+                    </div>
+
+                    <div className="relative z-10 min-h-[420px] md:min-h-[500px] h-full p-6 md:p-9 lg:p-10 flex flex-col justify-end">
+                      <div className="max-w-4xl space-y-5 md:space-y-6">
+                        <div className="flex flex-col gap-3">
+                          {isBreaking && (
+                            <div className="flex items-center gap-3 bg-blood-red border border-phantom-pink px-4 py-2 text-white font-pixel text-xs md:text-sm uppercase tracking-[0.25em] animate-blink w-fit shadow-[0_0_20px_rgba(179,27,77,0.5)]">
+                              <AlertCircle className="w-4 h-4" />
+                              MORALLY GRIM BULLETIN
+                            </div>
+                          )}
+
+                          <div className="flex items-center gap-3 bg-phantom-pink px-5 py-2 text-black font-pixel text-sm md:text-base uppercase tracking-[0.2em] shadow-lg w-fit">
+                            <Zap className="w-4 h-4 fill-current" />
+                            Featured Chronicle
                           </div>
-                        )}
-
-                        <div className="flex items-center gap-3 bg-phantom-pink px-5 py-2 text-black font-pixel text-sm md:text-base uppercase tracking-[0.2em] shadow-lg w-fit">
-                          <Zap className="w-4 h-4 fill-current" />
-                          Featured Chronicle
                         </div>
+
+                        <div className="space-y-4 md:space-y-5">
+                          <h2
+                            className={cn(
+                              'font-gothic text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white tracking-[0.06em] md:tracking-[0.08em] leading-[1.05] uppercase transition-all duration-700 max-w-4xl',
+                              isBreaking &&
+                                'text-white drop-shadow-[0_0_15px_rgba(179,27,77,0.8)]',
+                              !featuredStory && 'text-white/75',
+                            )}
+                          >
+                            {featuredStory?.title || 'Awaiting This Issue’s Feature'}
+                          </h2>
+
+                          <p className="font-mono text-base md:text-xl lg:text-2xl text-white/70 line-clamp-4 max-w-4xl leading-[1.55]">
+                            {featuredStory?.content ||
+                              'The Cryptcaster terminal is open, the inbox is humming, and the current featured chronicle has not yet been unsealed. Suspicious? Obviously.'}
+
+                            {featuredStory?.content && ' ... [UNSEALED_DATA]'}
+                          </p>
+                        </div>
+
+                        {featuredStory ? (
+                          <Link
+                            to={
+                              isAuthenticated
+                                ? `/read/${featuredStory.id}`
+                                : '/login'
+                            }
+                            className={cn(
+                              'font-pixel text-base md:text-lg px-7 md:px-9 py-4 transition-all uppercase tracking-[0.22em] flex items-center gap-4 w-fit mt-1',
+                              isBreaking
+                                ? 'bg-phantom-pink text-white hover:bg-white hover:text-black animate-pulse shadow-[0_0_30px_rgba(179,27,77,0.4)]'
+                                : 'bg-slime-green/5 text-slime-green border border-slime-green/40 hover:bg-slime-green hover:text-black',
+                            )}
+                          >
+                            ACCESS FULL RECORD
+                          </Link>
+                        ) : (
+                          <Link
+                            to="/submit"
+                            className="font-pixel text-sm md:text-base px-6 md:px-8 py-4 transition-all uppercase tracking-[0.22em] flex items-center gap-4 w-fit mt-1 bg-slime-green/5 text-slime-green border border-slime-green/35 hover:bg-slime-green hover:text-black"
+                          >
+                            SUBMIT A CHRONICLE
+                          </Link>
+                        )}
                       </div>
-
-                      <div className="space-y-4 md:space-y-5">
-                        <h2
-                          className={cn(
-                            'font-gothic text-4xl md:text-6xl lg:text-7xl text-white tracking-[0.08em] leading-[1.05] uppercase transition-all duration-700',
-                            isBreaking &&
-                              'text-white drop-shadow-[0_0_15px_rgba(179,27,77,0.8)]',
-                          )}
-                        >
-                          {featuredStory?.title || 'VOID SELECTION'}
-                        </h2>
-
-                        <p className="font-mono text-base md:text-xl lg:text-2xl text-white/68 line-clamp-4 max-w-4xl leading-[1.55]">
-                          {featuredStory?.content ||
-                            'The shadows remain silent this week. Check back for new unsealed chronicles.'}
-
-                          {featuredStory?.content && ' ... [UNSEALED_DATA]'}
-                        </p>
-                      </div>
-
-                      {featuredStory && (
-                        <Link
-                          to={
-                            isAuthenticated
-                              ? `/read/${featuredStory.id}`
-                              : '/login'
-                          }
-                          className={cn(
-                            'font-pixel text-base md:text-lg px-7 md:px-9 py-4 transition-all uppercase tracking-[0.22em] flex items-center gap-4 mt-1',
-                            isBreaking
-                              ? 'bg-phantom-pink text-white hover:bg-white hover:text-black animate-pulse shadow-[0_0_30px_rgba(179,27,77,0.4)]'
-                              : 'bg-slime-green/5 text-slime-green border border-slime-green/40 hover:bg-slime-green hover:text-black',
-                          )}
-                        >
-                          ACCESS FULL RECORD
-                        </Link>
-                      )}
                     </div>
                   </div>
                 </div>
