@@ -117,7 +117,7 @@ export function HomePage() {
                   THE MIDNIGHT ZINE
                 </h1>
 
-                <p className="font-pixel text-base md:text-lg text-slime-green/80 uppercase tracking-[0.16em] md:tracking-[0.24em] mt-2">
+                <p className="font-pixel text-base md:text-lg text-slime-green/80 uppercase tracking-[0.20em] md:tracking-[0.24em] mt-3">
                   ISSUE: {issueStr} // VOL. 04.2
                 </p>
               </div>
