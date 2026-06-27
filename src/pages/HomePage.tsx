@@ -140,7 +140,13 @@ export function HomePage() {
                 <p className="font-pixel text-xs md:text-sm text-phantom-pink/72 uppercase tracking-[0.28em] md:tracking-[0.36em] mb-3">
                   Current Issue
                 </p>
+<p className="font-pixel text-lg text-red-500 uppercase tracking-widest mb-4">
+  BUILD CHECK: NEW HOMEPAGE ACTIVE
+</p>
 
+<h1 className="gothic-header text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-3 tracking-[0.08em] md:tracking-[0.12em] animate-pulse-glow leading-[0.9]">
+  THE MIDNIGHT ZINE
+</h1>
                 <h1 className="gothic-header text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-3 tracking-[0.08em] md:tracking-[0.12em] animate-pulse-glow leading-[0.9]">
                   THE MIDNIGHT ZINE
                 </h1>
