@@ -292,30 +292,30 @@ export function HomePage() {
 
           <SubmissionHero />
 
-          <section className="pt-8 md:pt-10 pb-14 md:pb-20 border-t border-white/10 mt-8 md:mt-10 max-w-5xl mx-auto text-center">
-            <div className="flex justify-center gap-8 md:gap-12 mb-7 md:mb-9">
-              <Ghost className="w-10 h-10 md:w-14 md:h-14 text-slime-green/35 drop-shadow-[0_0_14px_rgba(40,167,69,0.45)]" />
-              <Skull className="w-10 h-10 md:w-14 md:h-14 text-phantom-pink/40 drop-shadow-[0_0_14px_rgba(179,27,77,0.45)]" />
-              <MessageSquare className="w-10 h-10 md:w-14 md:h-14 text-white/28 drop-shadow-[0_0_14px_rgba(255,255,255,0.18)]" />
+          <section className="pt-7 md:pt-8 pb-8 md:pb-10 border-t border-white/10 mt-6 md:mt-7 max-w-5xl mx-auto text-center">
+            <div className="flex justify-center gap-8 md:gap-12 mb-5 md:mb-6">
+              <Ghost className="w-11 h-11 md:w-15 md:h-15 text-slime-green/55 drop-shadow-[0_0_18px_rgba(40,167,69,0.58)]" />
+              <Skull className="w-11 h-11 md:w-15 md:h-15 text-phantom-pink/58 drop-shadow-[0_0_18px_rgba(179,27,77,0.58)]" />
+              <MessageSquare className="w-11 h-11 md:w-15 md:h-15 text-white/42 drop-shadow-[0_0_18px_rgba(255,255,255,0.24)]" />
             </div>
 
-            <h2 className="gothic-header text-3xl md:text-5xl tracking-[0.16em] md:tracking-[0.2em] text-white/85 uppercase leading-tight mb-7">
+            <h2 className="gothic-header text-4xl md:text-5xl tracking-[0.14em] md:tracking-[0.18em] text-white/90 uppercase leading-none mb-5">
               A Morally Grim Production
             </h2>
 
-            <div className="font-mono text-base md:text-xl text-white/42 leading-relaxed uppercase tracking-[0.12em] md:tracking-[0.18em] max-w-3xl mx-auto px-6">
+            <div className="font-mono text-base md:text-lg text-white/58 leading-snug uppercase tracking-[0.1em] md:tracking-[0.14em] max-w-3xl mx-auto px-6">
               <p>
                 CURATING THE UNEXPLAINED, THE MALICIOUS, AND THE MORALLY GRIM.
                 THE CRYPTCASTER IS THE FINAL RESTING PLACE FOR THE TRUTH NO ONE
                 WANTS TO HEAR.
               </p>
 
-              <div className="pt-9 flex flex-col gap-3 font-pixel">
-                <span className="text-slime-green/45 text-sm md:text-base tracking-[0.28em]">
+              <div className="pt-6 flex flex-col gap-2 font-pixel leading-tight">
+                <span className="text-slime-green/68 text-base md:text-lg tracking-[0.2em] md:tracking-[0.24em]">
                   ESTABLISHED 1996 // TERMINAL_ACTIVE
                 </span>
 
-                <span className="text-white/22 text-xs md:text-sm tracking-[0.38em]">
+                <span className="text-white/45 text-sm md:text-base tracking-[0.24em] md:tracking-[0.28em]">
                   BROADCASTING FROM SECTOR 0-V
                 </span>
               </div>
