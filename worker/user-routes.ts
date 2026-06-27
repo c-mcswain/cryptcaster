@@ -36,7 +36,6 @@ function isStaleDefaultZine(zine: ZineContent | null | undefined) {
 }
 
 export function userRoutes(app: Hono<{ Bindings: Env }>) {
-  // AUTH
   app.post("/api/auth/login", async (c) => {
     const { username, password } = await c.req.json();
 
@@ -50,7 +49,6 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     return bad(c, "Invalid credentials");
   });
 
-  // ZINE
   app.get("/api/zine", async (c) => {
     await ZineEntity.ensureSeed(c.env);
 
@@ -81,7 +79,6 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     return ok(c, await zine.getState());
   });
 
-  // STORIES
   app.get("/api/stories", async (c) => {
     await StoryEntity.ensureSeed(c.env);
 
@@ -131,7 +128,6 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     return ok(c, newStory);
   });
 
-  // PUBLIC SUBMISSION ENDPOINT
   app.post("/api/submit", async (c) => {
     const body = await c.req.json();
 
