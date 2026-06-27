@@ -45,7 +45,7 @@ export function HomePage() {
     fetchData();
   }, []);
 
-  const displayZine = zine || {
+  const currentIssueFallback = {
     intro:
       'Another evening, another inbox full of ghoulish complaints from humans who insist they are “probably not haunted,” which is exactly what haunted people say. The Cryptcaster terminal is open, the void is behaving poorly, and I remain deeply invested in the wellbeing of mortals for normal, unsuspicious reasons.',
     announcements: [
@@ -60,6 +60,18 @@ export function HomePage() {
     editorName: 'Vamp Von Vixen',
     advertisement:
       "O-NEGATIVE ENERGY DRINK — IT’S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION.",
+  };
+
+  const isOldDefaultZine =
+    zine?.featuredStoryId === 's8' ||
+    zine?.editorName === 'CreepQueen' ||
+    zine?.intro?.includes('forbidden orchards');
+
+  const displayZine = {
+    ...currentIssueFallback,
+    ...(zine && !isOldDefaultZine ? zine : {}),
+    featuredStoryId:
+      zine && !isOldDefaultZine ? zine.featuredStoryId ?? null : null,
   };
 
   const featuredStory = displayZine.featuredStoryId
