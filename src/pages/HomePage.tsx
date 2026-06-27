@@ -273,30 +273,30 @@ export function HomePage() {
 
           <SubmissionHero />
 
-          <section className="py-16 md:py-24 border-t border-white/5 mt-16 md:mt-24 max-w-5xl mx-auto text-center space-y-10">
-            <div className="flex justify-center gap-10 md:gap-16 opacity-10">
-              <Ghost className="w-12 h-12 md:w-16 md:h-16" />
-              <Skull className="w-12 h-12 md:w-16 md:h-16" />
-              <MessageSquare className="w-12 h-12 md:w-16 md:h-16" />
+          <section className="pt-8 md:pt-10 pb-14 md:pb-20 border-t border-white/10 mt-8 md:mt-10 max-w-5xl mx-auto text-center">
+            <div className="flex justify-center gap-8 md:gap-12 mb-7 md:mb-9">
+              <Ghost className="w-10 h-10 md:w-14 md:h-14 text-slime-green/35 drop-shadow-[0_0_14px_rgba(40,167,69,0.45)]" />
+              <Skull className="w-10 h-10 md:w-14 md:h-14 text-phantom-pink/40 drop-shadow-[0_0_14px_rgba(179,27,77,0.45)]" />
+              <MessageSquare className="w-10 h-10 md:w-14 md:h-14 text-white/28 drop-shadow-[0_0_14px_rgba(255,255,255,0.18)]" />
             </div>
 
-            <h2 className="gothic-header text-3xl md:text-5xl tracking-[0.18em] md:tracking-[0.22em] text-white/20 uppercase">
+            <h2 className="gothic-header text-3xl md:text-5xl tracking-[0.16em] md:tracking-[0.2em] text-white/85 uppercase leading-tight mb-7">
               A Morally Grim Production
             </h2>
 
-            <div className="font-mono text-base md:text-xl text-white/35 leading-relaxed space-y-8 uppercase tracking-widest max-w-3xl mx-auto px-6">
+            <div className="font-mono text-base md:text-xl text-white/42 leading-relaxed uppercase tracking-[0.12em] md:tracking-[0.18em] max-w-3xl mx-auto px-6">
               <p>
                 CURATING THE UNEXPLAINED, THE MALICIOUS, AND THE MORALLY GRIM.
                 THE CRYPTCASTER IS THE FINAL RESTING PLACE FOR THE TRUTH NO ONE
                 WANTS TO HEAR.
               </p>
 
-              <div className="pt-6 flex flex-col gap-2">
-                <span className="text-slime-green/35 text-sm tracking-[0.35em]">
+              <div className="pt-9 flex flex-col gap-3 font-pixel">
+                <span className="text-slime-green/45 text-sm md:text-base tracking-[0.28em]">
                   ESTABLISHED 1996 // TERMINAL_ACTIVE
                 </span>
 
-                <span className="text-white/14 text-xs tracking-[0.5em]">
+                <span className="text-white/22 text-xs md:text-sm tracking-[0.38em]">
                   BROADCASTING FROM SECTOR 0-V
                 </span>
               </div>
