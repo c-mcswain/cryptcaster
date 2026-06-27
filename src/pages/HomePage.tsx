@@ -77,7 +77,7 @@ export function HomePage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 mb-9 md:mb-12">
             <div className="flex items-center gap-3 group cursor-default">
               <Skull className="w-7 h-7 md:w-8 md:h-8 text-slime-green group-hover:rotate-180 transition-transform duration-700" />
-              <div className="font-pixel text-sm md:text-base tracking-[0.2em] md:tracking-[0.26em] text-white/55 uppercase">
+              <div className="font-pixel text-sm md:text-base tracking-[0.18em] md:tracking-[0.24em] text-white/60 uppercase">
                 MORALLY GRIM BROADCASTS
               </div>
             </div>
@@ -100,7 +100,7 @@ export function HomePage() {
               ) : (
                 <Link
                   to="/login"
-                  className="font-pixel text-xs md:text-sm text-white/35 hover:text-white uppercase tracking-widest px-4 md:px-5 py-2.5 border border-white/10 transition-all"
+                  className="font-pixel text-xs md:text-sm text-white/40 hover:text-white uppercase tracking-widest px-4 md:px-5 py-2.5 border border-white/10 transition-all"
                 >
                   STAFF
                 </Link>
@@ -113,11 +113,11 @@ export function HomePage() {
               <div className="text-center relative">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-px bg-gradient-to-r from-transparent via-slime-green/10 to-transparent -z-10" />
 
-                <h1 className="gothic-header text-[clamp(3rem,9vw,7.25rem)] mb-3 tracking-[0.08em] sm:tracking-[0.14em] md:tracking-[0.22em] animate-pulse-glow leading-[0.9] break-normal">
+                <h1 className="gothic-header text-[clamp(2.8rem,8vw,6.4rem)] mb-3 tracking-[0.07em] sm:tracking-[0.12em] md:tracking-[0.18em] animate-pulse-glow leading-[0.92] break-normal">
                   THE MIDNIGHT ZINE
                 </h1>
 
-                <p className="font-pixel text-base md:text-lg text-slime-green/80 uppercase tracking-[0.20em] md:tracking-[0.24em] mt-3">
+                <p className="font-pixel text-base md:text-lg text-slime-green/80 uppercase tracking-[0.14em] md:tracking-[0.22em] mt-2">
                   ISSUE: {issueStr} // VOL. 04.2
                 </p>
               </div>
@@ -125,14 +125,14 @@ export function HomePage() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-start">
                 <div className="lg:col-span-4 flex flex-col gap-5">
                   <div className="retro-window border-white/5 flex-1 shadow-2xl">
-                    <div className="retro-window-header bg-white/5 text-white/60 italic tracking-widest">
+                    <div className="retro-window-header bg-white/5 text-white/65 italic tracking-widest">
                       Editorial_Introit.log
                     </div>
 
-                    <div className="p-5 md:p-6 bg-black/80 font-mono text-sm md:text-base leading-[1.65] text-white/60 italic space-y-4">
+                    <div className="p-5 md:p-6 bg-black/80 font-mono text-base md:text-lg leading-[1.6] text-white/65 italic space-y-4">
                       <p className="indent-6 break-words">"{displayZine.intro}"</p>
 
-                      <div className="pt-5 border-t border-white/5 font-pixel text-[10px] md:text-xs text-slime-green tracking-[0.24em] not-italic">
+                      <div className="pt-5 border-t border-white/5 font-pixel text-xs md:text-sm text-slime-green/80 tracking-[0.18em] md:tracking-[0.24em] not-italic">
                         — {displayZine.editorName.toUpperCase()} // CHIEF ARCHIVIST
                       </div>
                     </div>
@@ -142,23 +142,23 @@ export function HomePage() {
                     <div className="retro-panel border-phantom-pink/40 bg-phantom-pink/5 group hover:bg-phantom-pink/10 transition-colors p-5 md:p-6">
                       <div className="flex items-center gap-3 mb-4 text-phantom-pink">
                         <Megaphone className="w-5 h-5 md:w-6 md:h-6 animate-bounce" />
-                        <span className="font-pixel text-sm md:text-base uppercase tracking-[0.18em] font-black">
+                        <span className="font-pixel text-sm md:text-base uppercase tracking-[0.16em] font-black">
                           OFFICIAL SPONSOR
                         </span>
                       </div>
 
-                      <p className="font-mono text-xs md:text-sm text-white/70 leading-relaxed uppercase italic break-words">
+                      <p className="font-mono text-sm md:text-base text-white/75 leading-relaxed uppercase italic break-words">
                         "{displayZine.advertisement}"
                       </p>
                     </div>
                   )}
 
                   <div className="retro-panel bg-black/40 border-white/5 p-5 md:p-6">
-                    <h3 className="font-gothic text-lg text-phantom-pink tracking-widest uppercase mb-5">
+                    <h3 className="font-gothic text-base md:text-lg text-phantom-pink tracking-widest uppercase mb-5">
                       Grim Announcements
                     </h3>
 
-                    <ul className="space-y-4 font-pixel text-xs md:text-sm text-white/40 tracking-widest uppercase">
+                    <ul className="space-y-4 font-pixel text-sm md:text-base text-white/50 tracking-[0.12em] uppercase">
                       {displayZine.announcements.map((a, i) => (
                         <li key={i} className="flex gap-3 group cursor-default">
                           <span className="text-phantom-pink group-hover:animate-blink">»</span>
@@ -186,19 +186,19 @@ export function HomePage() {
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
 
-                    <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2 px-3 py-1.5 bg-black/80 border border-slime-green/40 font-pixel text-[9px] md:text-[10px] text-slime-green tracking-[0.24em] z-20">
+                    <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2 px-3 py-1.5 bg-black/80 border border-slime-green/40 font-pixel text-[10px] md:text-xs text-slime-green tracking-[0.2em] z-20">
                       <Activity className="w-3 h-3 animate-pulse" /> TERMINAL_LIVE
                     </div>
 
                     <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8 flex flex-col items-start gap-4 md:gap-6">
                       <div className="flex flex-col gap-3">
                         {isBreaking && (
-                          <div className="flex items-center gap-2 bg-blood-red border border-phantom-pink px-3 py-2 text-white font-pixel text-[10px] md:text-xs uppercase tracking-[0.28em] animate-blink w-fit shadow-[0_0_20px_rgba(179,27,77,0.5)]">
+                          <div className="flex items-center gap-2 bg-blood-red border border-phantom-pink px-3 py-2 text-white font-pixel text-xs md:text-sm uppercase tracking-[0.2em] md:tracking-[0.26em] animate-blink w-fit shadow-[0_0_20px_rgba(179,27,77,0.5)]">
                             <AlertCircle className="w-4 h-4" /> MORALLY GRIM BULLETIN
                           </div>
                         )}
 
-                        <div className="flex items-center gap-3 bg-phantom-pink px-4 md:px-5 py-2 text-black font-pixel text-xs md:text-sm uppercase tracking-[0.22em] shadow-lg w-fit">
+                        <div className="flex items-center gap-3 bg-phantom-pink px-4 md:px-5 py-2 text-black font-pixel text-sm md:text-base uppercase tracking-[0.18em] md:tracking-[0.22em] shadow-lg w-fit">
                           <Zap className="w-4 h-4 fill-current" /> Featured Chronicle
                         </div>
                       </div>
@@ -206,14 +206,14 @@ export function HomePage() {
                       <div className="space-y-4">
                         <h2
                           className={cn(
-                            'font-gothic text-3xl md:text-5xl lg:text-6xl text-white tracking-[0.08em] leading-[1.05] uppercase transition-all duration-700',
+                            'font-gothic text-2xl md:text-4xl lg:text-5xl text-white tracking-[0.07em] leading-[1.08] uppercase transition-all duration-700',
                             isBreaking && 'text-white drop-shadow-[0_0_15px_rgba(179,27,77,0.8)]'
                           )}
                         >
                           {featuredStory?.title || 'VOID SELECTION'}
                         </h2>
 
-                        <p className="font-mono text-sm md:text-lg text-white/60 line-clamp-4 max-w-3xl leading-[1.55]">
+                        <p className="font-mono text-base md:text-xl text-white/65 line-clamp-4 max-w-3xl leading-[1.55]">
                           {featuredStory?.content ||
                             'The shadows remain silent this week. Check back for new unsealed chronicles.'}
                           {featuredStory?.content && ' ... [UNSEALED_DATA]'}
@@ -249,21 +249,21 @@ export function HomePage() {
               <MessageSquare className="w-10 h-10 md:w-14 md:h-14" />
             </div>
 
-            <h2 className="gothic-header text-3xl md:text-5xl tracking-[0.18em] md:tracking-[0.24em] text-white/20 uppercase">
+            <h2 className="gothic-header text-2xl md:text-4xl tracking-[0.14em] md:tracking-[0.2em] text-white/25 uppercase">
               A Morally Grim Production
             </h2>
 
-            <div className="font-mono text-sm md:text-lg text-white/30 leading-relaxed space-y-6 uppercase tracking-widest max-w-3xl mx-auto px-6">
+            <div className="font-mono text-base md:text-xl text-white/35 leading-relaxed space-y-6 uppercase tracking-[0.12em] max-w-3xl mx-auto px-6">
               <p>
                 CURATING THE UNEXPLAINED, THE MALICIOUS, AND THE MORALLY GRIM. THE CRYPTCASTER IS
                 THE FINAL RESTING PLACE FOR THE TRUTH NO ONE WANTS TO HEAR.
               </p>
 
               <div className="pt-6 flex flex-col gap-2">
-                <span className="text-slime-green/30 text-xs md:text-sm tracking-[0.35em] md:tracking-[0.5em]">
+                <span className="text-slime-green/40 text-sm md:text-base tracking-[0.25em] md:tracking-[0.35em]">
                   ESTABLISHED 1996 // TERMINAL_ACTIVE
                 </span>
-                <span className="text-white/10 text-[10px] tracking-[0.7em] md:tracking-[1em]">
+                <span className="text-white/15 text-xs md:text-sm tracking-[0.45em] md:tracking-[0.7em]">
                   BROADCASTING FROM SECTOR 0-V
                 </span>
               </div>
