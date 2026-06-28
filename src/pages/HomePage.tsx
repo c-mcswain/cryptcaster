@@ -47,20 +47,22 @@ export function HomePage() {
 
   const currentIssueFallback = {
     intro:
-      'Another evening, another inbox full of ghoulish complaints from humans who insist they are “probably not haunted,” which is exactly what haunted people say. The Cryptcaster terminal is open, the void is behaving poorly, and I remain deeply invested in the wellbeing of mortals for completely normal and not at all suspicious reasons.',
+      'Another evening, another inbox full of ghoulish complaints from humans who insist they are “probably not haunted,” which is exactly what haunted people say. The Midnight Zine desk is open, the void is behaving poorly, and I remain deeply invested in the wellbeing of mortals for completely normal and not at all suspicious reasons.',
     announcements: [
-      'The Cryptcaster inbox is accepting spooky complaints, haunted gossip, and suspiciously specific human problems.',
-      'The current issue is being assembled by candlelight, static, and questionable judgment.',
-      'Phantom friends are encouraged to submit chronicles before the void gets bored.',
+      'The Shadow Market: Now accepting crypt currency',
+      '(Un)Alive Reading: Time, Date, and Realm TBD',
+      'Submit your chronicles or be forgotten',
+      'Vampire Facial Giveaway: Win a pint of O-Negative',
     ],
     featuredStoryId: null,
-    coverImageUrl:
-      'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    coverImageUrl: '/images/midnightzine-image.png',
     lastUpdated: Date.now(),
     editorName: 'Vamp Von Vixen',
     advertisement:
       "O-NEGATIVE ENERGY DRINK — IT'S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION.",
   };
+
+  const defaultCoverUrl = '/images/midnightzine-image.png';
 
   const isOldDefaultZine =
     zine?.featuredStoryId === 's8' ||
@@ -77,10 +79,6 @@ export function HomePage() {
   const featuredStory = displayZine.featuredStoryId
     ? stories.find((story) => story.id === displayZine.featuredStoryId)
     : null;
-
-  const voidCoverUrl =
-    displayZine.coverImageUrl ||
-    'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
 
   const isBreaking =
     Boolean(featuredStory?.title?.includes('ILLEGAL')) ||
@@ -219,13 +217,9 @@ export function HomePage() {
                     )}
                   >
                     <img
-                      src={
-                        featuredStory
-                          ? displayZine.coverImageUrl || voidCoverUrl
-                          : voidCoverUrl
-                      }
-                      className="absolute inset-0 w-full h-full object-cover grayscale opacity-16 group-hover:grayscale-0 group-hover:opacity-40 transition-all duration-[2000ms] scale-105 group-hover:scale-100"
-                      alt="Zine Cover"
+                      src={defaultCoverUrl}
+                      className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:opacity-55 transition-all duration-[2000ms] scale-105 group-hover:scale-100"
+                      alt="The Midnight Zine cover"
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/78 to-black/38" />
@@ -266,7 +260,7 @@ export function HomePage() {
 
                           <p className="font-mono text-sm md:text-lg text-white/74 line-clamp-5 max-w-3xl leading-[1.5]">
                             {featuredStory?.content ||
-                              'The Cryptcaster terminal is open, the inbox is humming, and the current featured chronicle has not yet been unsealed. Suspicious? Obviously.'}
+                              'The Midnight Zine desk is open, the inbox is humming, and the current featured chronicle has not yet been unsealed. Suspicious? Obviously.'}
 
                             {featuredStory?.content && ' ... [UNSEALED_DATA]'}
                           </p>
@@ -324,8 +318,8 @@ export function HomePage() {
             <div className="font-mono text-sm md:text-base text-white/62 leading-snug uppercase tracking-[0.09em] md:tracking-[0.12em] max-w-2xl mx-auto px-4">
               <p>
                 CURATING THE UNEXPLAINED, THE MALICIOUS, AND THE MORALLY GRIM.
-                THE CRYPTCASTER IS THE FINAL RESTING PLACE FOR THE TRUTH NO ONE
-                WANTS TO HEAR.
+                THE MIDNIGHT ZINE IS THE FINAL RESTING PLACE FOR THE TRUTH NO
+                ONE WANTS TO HEAR.
               </p>
 
               <div className="pt-4 flex flex-col gap-1.5 font-pixel leading-tight">
@@ -334,7 +328,7 @@ export function HomePage() {
                 </span>
 
                 <span className="text-white/52 text-xs md:text-sm tracking-[0.18em] md:tracking-[0.22em]">
-                  BROADCASTING FROM SECTOR 0-V
+                  REPORTING FROM THE CRYPT
                 </span>
               </div>
             </div>
