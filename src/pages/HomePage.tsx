@@ -86,6 +86,12 @@ export function HomePage() {
       zine && !isOldDefaultZine ? zine.featuredStoryId ?? null : null,
   };
 
+  const publicIntro = displayZine.intro
+    .replaceAll('The Cryptcaster terminal', 'The Midnight Zine desk')
+    .replaceAll('Cryptcaster terminal', 'The Midnight Zine desk')
+    .replaceAll('Cryptcaster inbox', 'Midnight Zine inbox')
+    .replaceAll('The Cryptcaster inbox', 'The Midnight Zine inbox');
+
   const featuredStory = displayZine.featuredStoryId
     ? stories.find((story) => story.id === displayZine.featuredStoryId)
     : null;
@@ -166,9 +172,7 @@ export function HomePage() {
                     </div>
 
                     <div className="p-5 md:p-6 bg-black/80 font-mono text-sm md:text-base leading-[1.55] text-white/74 italic space-y-4">
-                      <p className="indent-5 break-words">
-                        “{displayZine.intro}”
-                      </p>
+                      <p className="indent-5 break-words">“{publicIntro}”</p>
 
                       <div className="pt-4 border-t border-white/5 font-pixel text-xs text-slime-green/90 tracking-[0.16em] not-italic leading-relaxed">
                         — {displayZine.editorName.toUpperCase()} // CHIEF
@@ -228,7 +232,7 @@ export function HomePage() {
                   >
                     <img
                       src={defaultCoverUrl}
-                      className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:opacity-55 transition-all duration-[2000ms] scale-105 group-hover:scale-100"
+                      className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:opacity-65 transition-all duration-[2000ms] scale-105 group-hover:scale-100"
                       alt=""
                       aria-hidden="true"
                       onError={() => {
@@ -280,7 +284,7 @@ export function HomePage() {
                               'Awaiting This Issue’s Feature'}
                           </h2>
 
-                          <p className="font-mono text-sm md:text-lg text-white/74 line-clamp-5 max-w-3xl leading-[1.5]">
+                          <p className="font-mono text-sm md:text-base text-white/74 line-clamp-5 max-w-3xl leading-[1.45]">
                             {featuredStory?.content ||
                               'The Midnight Zine desk is open, the inbox is humming, and the current featured chronicle has not yet been unsealed. Suspicious? Obviously.'}
 
