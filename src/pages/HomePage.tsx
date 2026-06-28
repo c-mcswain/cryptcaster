@@ -25,6 +25,8 @@ export function HomePage() {
   const [loading, setLoading] = useState(true);
   const { isAuthenticated } = useAuth();
 
+  const defaultCoverUrl = `${import.meta.env.BASE_URL}images/midnightzine-image.png`;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,14 +57,12 @@ export function HomePage() {
       'Vampire Facial Giveaway: Win a pint of O-Negative',
     ],
     featuredStoryId: null,
-    coverImageUrl: '/images/midnightzine-image.png',
+    coverImageUrl: defaultCoverUrl,
     lastUpdated: Date.now(),
     editorName: 'Vamp Von Vixen',
     advertisement:
       "O-NEGATIVE ENERGY DRINK — IT'S IN YOUR BLOOD. LITERALLY. USE CODE 'VOID' FOR 10% OFF YOUR NEXT INFUSION.",
   };
-
-  const defaultCoverUrl = '/images/midnightzine-image.png';
 
   const isOldDefaultZine =
     zine?.featuredStoryId === 's8' ||
