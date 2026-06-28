@@ -23,9 +23,19 @@ export function HomePage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [zine, setZine] = useState<ZineContent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [coverAttempt, setCoverAttempt] = useState(0);
   const { isAuthenticated } = useAuth();
 
-  const defaultCoverUrl = `${import.meta.env.BASE_URL}images/midnightzine-image.png`;
+  const coverImageCandidates = [
+    `${import.meta.env.BASE_URL}images/midnightzine-image.png`,
+    '/images/midnightzine-image.png',
+    './images/midnightzine-image.png',
+    `${import.meta.env.BASE_URL}midnightzine-image.png`,
+    '/midnightzine-image.png',
+  ];
+
+  const defaultCoverUrl =
+    coverImageCandidates[coverAttempt] || coverImageCandidates[0];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +67,7 @@ export function HomePage() {
       'Vampire Facial Giveaway: Win a pint of O-Negative',
     ],
     featuredStoryId: null,
-    coverImageUrl: defaultCoverUrl,
+    coverImageUrl: coverImageCandidates[0],
     lastUpdated: Date.now(),
     editorName: 'Vamp Von Vixen',
     advertisement:
@@ -219,7 +229,19 @@ export function HomePage() {
                     <img
                       src={defaultCoverUrl}
                       className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:opacity-55 transition-all duration-[2000ms] scale-105 group-hover:scale-100"
-                      alt="The Midnight Zine cover"
+                      alt=""
+                      aria-hidden="true"
+                      onError={() => {
+                        setCoverAttempt((currentAttempt) => {
+                          const nextAttempt = currentAttempt + 1;
+
+                          if (nextAttempt >= coverImageCandidates.length) {
+                            return currentAttempt;
+                          }
+
+                          return nextAttempt;
+                        });
+                      }}
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/78 to-black/38" />
